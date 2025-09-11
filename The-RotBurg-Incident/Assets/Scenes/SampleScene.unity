@@ -969,7 +969,7 @@ MonoBehaviour:
   rb: {fileID: 871734298}
   spriteRenderer: {fileID: 871734301}
   moveSpeed: 25
-  jumpForce: 55
+  jumpForce: 57
   gravityScale: 10
   terminalVelocity: -20
   groundCheck: {fileID: 955620206}
