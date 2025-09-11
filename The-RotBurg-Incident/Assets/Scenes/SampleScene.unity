@@ -543,6 +543,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2c7343d815a4a4459df65ae8f51f3e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 871734298}
+  spriteRenderer: {fileID: 871734301}
   moveSpeed: 25
   jumpForce: 50
   gravityScale: 10
@@ -555,6 +557,40 @@ MonoBehaviour:
   arm: {fileID: 13031102}
   aimLeft: {fileID: 848550725}
   aimRight: {fileID: 1787664900}
+  moveAction:
+    m_Name: Move
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 045dc360-26d8-4c1e-be34-8bdffcb5b05b
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 67b78b38-4ee9-4afe-aa93-47cfd595e7d2
+      m_Path: <Gamepad>/leftStick
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 0
+    m_Flags: 0
+  jumpAction:
+    m_Name: Jump
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: a31feae3-9ef3-4daf-b063-4a23f89c48d4
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 0374c8f7-2261-402e-a883-0b48a39afb09
+      m_Path: <Gamepad>/buttonSouth
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Jump
+      m_Flags: 0
+    m_Flags: 0
 --- !u!212 &871734301
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -641,6 +677,24 @@ MonoBehaviour:
   arm: {fileID: 1441290738}
   flipArmLeft: 1
   spriteRender: {fileID: 1441290739}
+  inputActions: {fileID: -944628639613478452, guid: 3a25a101b3580f843a5333425ba0133b, type: 3}
+  flashAction:
+    m_Name: Flash
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: bd892e57-36af-4a32-85ab-efb5574c2921
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 3d9ff8ff-a30e-4371-89c3-7c8db39eabe0
+      m_Path: <Gamepad>/rightTrigger
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Flash
+      m_Flags: 0
+    m_Flags: 0
   stunEffect: {fileID: 1361711127}
   cameraFlash: {fileID: 1361711128}
   flashLeft: {fileID: 2104750880}

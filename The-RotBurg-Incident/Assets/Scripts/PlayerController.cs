@@ -1,58 +1,67 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement Settings")]
+    [Header("Components")]
+    public Rigidbody2D rb;
+    public SpriteRenderer spriteRenderer;
+
+    [Header("Movement")]
     public float moveSpeed = 5f;
-    public float jumpForce = 12f;
-
-    [Header("Custom Gravity")]
-    public float gravityScale = 4f;       // Custom gravity strength
-    public float terminalVelocity = -20f; // Max fall speed
-
-    [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.2f;
-    public LayerMask groundLayer;
-
-    private SpriteRenderer spriteRenderer;
-    private Rigidbody2D rb;
-    private bool isGrounded;
-    private float moveInput;
+    private Vector2 moveInput;
     private Vector2 velocity;
+    public float jumpForce = 10f;
+    public float gravityScale = 3f;
+    public float terminalVelocity = -15f;
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.1f;
+    public LayerMask groundLayer;
+    private bool isGrounded;
 
+    [Header("Arm Aiming")]
     public Transform arm;
     public Transform aimLeft;
     public Transform aimRight;
 
-    void Start()
+    [Header("Input Actions")]
+    public InputAction moveAction;
+    public InputAction jumpAction;
+
+    void OnEnable()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0f; // Turn off built-in gravity
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        moveAction.Enable();
+        jumpAction.Enable();
+    }
+
+    void OnDisable()
+    {
+        moveAction.Disable();
+        jumpAction.Disable();
     }
 
     void Update()
     {
-        moveInput = Input.GetAxisRaw("Horizontal");
+        moveInput = moveAction.ReadValue<Vector2>();
 
         // Ground check
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
         // Jump
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (jumpAction.WasPressedThisFrame() && isGrounded)
         {
+            Debug.Log("Jump");
             velocity.y = jumpForce;
         }
 
-        if (moveInput > 0)
+        if (moveInput.x > 0)
         {
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
         }
-        else if (moveInput < 0)
+        else if (moveInput.x < 0)
         {
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
@@ -61,17 +70,18 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Apply horizontal movement
-        velocity.x = moveInput * moveSpeed;
+        velocity.x = moveInput.x * moveSpeed;
 
-        // Apply custom gravity
         if (!isGrounded || velocity.y > 0)
         {
             velocity.y += Physics2D.gravity.y * gravityScale * Time.fixedDeltaTime;
-            velocity.y = Mathf.Max(velocity.y, terminalVelocity); // Clamp to terminal velocity
+            velocity.y = Mathf.Max(velocity.y, terminalVelocity);
+        }
+        else
+        {
+            velocity.y = 0f; 
         }
 
-        // Apply velocity
         rb.velocity = velocity;
     }
 }

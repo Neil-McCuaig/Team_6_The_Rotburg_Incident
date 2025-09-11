@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerAim : MonoBehaviour
 {
@@ -9,6 +10,16 @@ public class PlayerAim : MonoBehaviour
     public bool flipArmLeft = true; 
     public SpriteRenderer spriteRender;
 
+    [Header("Input Mapping Controls")]
+    public InputActionAsset inputActions;
+    private InputAction aimAction;
+    [SerializeField] private InputAction flashAction;
+
+    private Vector2 aimInput;
+    Vector2 lastAimDirection = Vector2.right; 
+    float lastAngle = 0f;
+
+    [Header("References")]
     public GameObject stunEffect;
     public Transform cameraFlash;
     public Transform flashLeft;
@@ -16,28 +27,50 @@ public class PlayerAim : MonoBehaviour
     private bool canFlash = true;
     public SpriteRenderer effectRender;
 
+    private void Awake()
+    {
+        var playerActions = inputActions.FindActionMap("BaseGameplay");
+        aimAction = playerActions.FindAction("AimDirection");
+    }
+
+    private void OnEnable()
+    {
+        aimAction.Enable();
+        flashAction.Enable();
+    }
+
+    // Disable the input actions
+    private void OnDisable()
+    {
+        aimAction.Disable();
+        flashAction.Disable();
+    }
+
     void Update()
     {
-        AimAtMouse();
-        if (Input.GetMouseButtonDown(0) && canFlash) // Left mouse button
+        AimingDirection();
+
+        if (flashAction.WasPressedThisFrame() && canFlash)
         {
             ActivateFlash();
         }
     }
 
-    void AimAtMouse()
-    {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0f;
+    void AimingDirection()
+    {        
+        aimInput = aimAction.ReadValue<Vector2>();
 
-        Vector3 direction = mousePos - arm.position;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        if (aimInput.sqrMagnitude > 0.01f)
+        {
+            lastAimDirection = aimInput.normalized;
+            lastAngle = Mathf.Atan2(lastAimDirection.y, lastAimDirection.x) * Mathf.Rad2Deg;
+        }
 
-        arm.rotation = Quaternion.Euler(0f, 0f, angle);
+        arm.rotation = Quaternion.Euler(0f, 0f, lastAngle);
 
         if (flipArmLeft)
         {
-            if (angle > 90 || angle < -90)
+            if (lastAngle > 90 || lastAngle < -90)
             {
                 spriteRender.flipY = true;
                 cameraFlash.position = flashLeft.position;
