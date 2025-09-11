@@ -52,7 +52,6 @@ public class PlayerController : MonoBehaviour
         // Jump
         if (jumpAction.WasPressedThisFrame() && isGrounded)
         {
-            Debug.Log("Jump");
             velocity.y = jumpForce;
         }
 
