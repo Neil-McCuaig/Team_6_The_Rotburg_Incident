@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     public float gravityScale = 3f;
     public float terminalVelocity = -15f;
     public Transform groundCheck;
-    public float groundCheckRadius = 0.1f;
+    public float groundCheckRadius = 0.5f;
     public LayerMask groundLayer;
     private bool isGrounded;
 
