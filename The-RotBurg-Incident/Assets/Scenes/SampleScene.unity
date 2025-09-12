@@ -146,14 +146,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 13031101}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.09663494, w: 0.99531996}
-  m_LocalPosition: {x: -0.525682, y: 2.7172222, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.66, y: 2.26, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1441290738}
   m_Father: {fileID: 871734302}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -11.091}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &109706300
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,10 +871,9 @@ GameObject:
   - component: {fileID: 871734302}
   - component: {fileID: 871734301}
   - component: {fileID: 871734300}
-  - component: {fileID: 871734299}
   - component: {fileID: 871734298}
-  - component: {fileID: 871734303}
   - component: {fileID: 871734304}
+  - component: {fileID: 871734305}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -909,51 +908,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &871734299
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 871734297}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: 65c52042a86fd59468612ffc4d7cec41, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.14140236, y: 0.2828052}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 20, y: 12}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.8988311, y: 12.06978}
-  m_EdgeRadius: 0
 --- !u!114 &871734300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -971,7 +925,7 @@ MonoBehaviour:
   moveSpeed: 25
   jumpForce: 57
   gravityScale: 10
-  terminalVelocity: -20
+  terminalVelocity: -15
   groundCheck: {fileID: 955620206}
   groundCheckRadius: 0.2
   groundLayer:
@@ -980,40 +934,14 @@ MonoBehaviour:
   arm: {fileID: 13031102}
   aimLeft: {fileID: 848550725}
   aimRight: {fileID: 1787664900}
-  moveAction:
-    m_Name: Move
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 045dc360-26d8-4c1e-be34-8bdffcb5b05b
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 67b78b38-4ee9-4afe-aa93-47cfd595e7d2
-      m_Path: <Gamepad>/leftStick
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 0
-    m_Flags: 0
-  jumpAction:
-    m_Name: Jump
-    m_Type: 1
-    m_ExpectedControlType: Button
-    m_Id: a31feae3-9ef3-4daf-b063-4a23f89c48d4
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 0374c8f7-2261-402e-a883-0b48a39afb09
-      m_Path: <Gamepad>/buttonSouth
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Jump
-      m_Flags: 0
-    m_Flags: 0
+  flipArmLeft: 1
+  armRender: {fileID: 1441290739}
+  stunEffect: {fileID: 1361711127}
+  cameraFlash: {fileID: 1361711128}
+  flashLeft: {fileID: 2104750880}
+  flashRight: {fileID: 112947388}
+  effectRender: {fileID: 1361711129}
+  inputActions: {fileID: -944628639613478452, guid: 3a25a101b3580f843a5333425ba0133b, type: 3}
 --- !u!212 &871734301
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1086,44 +1014,6 @@ Transform:
   - {fileID: 519420032}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &871734303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 871734297}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df2f37fe39d7cbd45854a54126d9afc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arm: {fileID: 1441290738}
-  flipArmLeft: 1
-  spriteRender: {fileID: 1441290739}
-  inputActions: {fileID: -944628639613478452, guid: 3a25a101b3580f843a5333425ba0133b, type: 3}
-  flashAction:
-    m_Name: Flash
-    m_Type: 1
-    m_ExpectedControlType: Button
-    m_Id: bd892e57-36af-4a32-85ab-efb5574c2921
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 3d9ff8ff-a30e-4371-89c3-7c8db39eabe0
-      m_Path: <Gamepad>/rightTrigger
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Flash
-      m_Flags: 0
-    m_Flags: 0
-  stunEffect: {fileID: 1361711127}
-  cameraFlash: {fileID: 1361711128}
-  flashLeft: {fileID: 2104750880}
-  flashRight: {fileID: 112947388}
-  effectRender: {fileID: 1361711129}
 --- !u!114 &871734304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1139,6 +1029,41 @@ MonoBehaviour:
   health: 0
   maxHealth: 10
   tempTakeDamage: 2
+--- !u!70 &871734305
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871734297}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 6200000, guid: 65c52042a86fd59468612ffc4d7cec41, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.15238953, y: 0.030475616}
+  m_Size: {x: 2.7494507, y: 11.892853}
+  m_Direction: 0
 --- !u!1 &955620205
 GameObject:
   m_ObjectHideFlags: 0

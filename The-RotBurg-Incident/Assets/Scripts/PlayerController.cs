@@ -16,8 +16,10 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 10f;
     public float gravityScale = 3f;
     public float terminalVelocity = -15f;
+
+    [Header("Ground Check")]
     public Transform groundCheck;
-    public float groundCheckRadius = 0.5f;
+    public float groundCheckRadius = 1f;
     public LayerMask groundLayer;
     private bool isGrounded;
 
@@ -25,24 +27,64 @@ public class PlayerController : MonoBehaviour
     public Transform arm;
     public Transform aimLeft;
     public Transform aimRight;
+    private Vector2 aimInput;
+    Vector2 lastAimDirection = Vector2.right;
+    float lastAngle = 0f;
+    public bool flipArmLeft = true;
+    public SpriteRenderer armRender;
+
+    [Header("Flash References")]
+    public GameObject stunEffect;
+    public Transform cameraFlash;
+    public Transform flashLeft;
+    public Transform flashRight;
+    private bool canFlash = true;
+    public SpriteRenderer effectRender;
 
     [Header("Input Actions")]
-    public InputAction moveAction;
-    public InputAction jumpAction;
+    public InputActionAsset inputActions;
+    private InputAction moveAction;
+    private InputAction jumpAction;
+    private InputAction aimAction;
+    private InputAction flashAction;
+
+    private void Awake()
+    {
+        var playerActions = inputActions.FindActionMap("BaseGameplay");
+        moveAction = playerActions.FindAction("MoveX");
+        jumpAction = playerActions.FindAction("Jump");
+        aimAction = playerActions.FindAction("AimDirection");
+        flashAction = playerActions.FindAction("ActionFlash");
+    }
 
     void OnEnable()
     {
         moveAction.Enable();
         jumpAction.Enable();
+        aimAction.Enable();
+        flashAction.Enable();
     }
 
     void OnDisable()
     {
         moveAction.Disable();
         jumpAction.Disable();
+        aimAction.Disable();
+        flashAction.Disable();
     }
 
     void Update()
+    {
+        CheckInput();
+        AimingDirection();
+    }
+
+    void FixedUpdate()
+    {
+        HandleMovement();
+    }
+
+    void CheckInput()
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
@@ -67,7 +109,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void HandleMovement()
     {
         velocity.x = moveInput.x * moveSpeed;
 
@@ -78,9 +120,68 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            velocity.y = 0f; 
+            velocity.y = 0f;
         }
 
         rb.velocity = velocity;
+    }
+
+    void AimingDirection()
+    {
+        aimInput = aimAction.ReadValue<Vector2>();
+
+        if (aimInput.sqrMagnitude > 0.01f)
+        {
+            lastAimDirection = aimInput.normalized;
+            lastAngle = Mathf.Atan2(lastAimDirection.y, lastAimDirection.x) * Mathf.Rad2Deg;
+        }
+
+        arm.rotation = Quaternion.Euler(0f, 0f, lastAngle);
+
+        if (flipArmLeft)
+        {
+            if (lastAngle > 130 || lastAngle < -60)
+            {
+                armRender.flipY = true;
+                cameraFlash.position = flashLeft.position;
+            }
+            else
+            {
+                armRender.flipY = false;
+                cameraFlash.position = flashRight.position;
+            }
+        }
+
+        if (flashAction.WasPressedThisFrame() && canFlash)
+        {
+            ActivateFlash();
+        }
+    }
+
+    void ActivateFlash()
+    {
+        canFlash = false;
+        stunEffect.SetActive(true);
+        Color originalColor = effectRender.color;
+        effectRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
+        StartCoroutine(DecayFlash());
+    }
+
+    IEnumerator DecayFlash()
+    {
+        float elapsed = 0f;
+        Color originalColor = effectRender.color;
+
+        while (elapsed < 1f)
+        {
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / 1f);
+            effectRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        effectRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+        stunEffect.SetActive(false);
+        canFlash = true;
     }
 }
