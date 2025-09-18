@@ -48,6 +48,9 @@ public class PlayerController : MonoBehaviour
     private InputAction aimAction;
     private InputAction flashAction;
 
+    [Header("Power-Ups")]
+    public bool hasDoubleJump = false;
+
     private void Awake()
     {
         var playerActions = inputActions.FindActionMap("BaseGameplay");
