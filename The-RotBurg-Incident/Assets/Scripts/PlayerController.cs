@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour
     public float gravityScale = 3f;
     public float terminalVelocity = -15f;
 
+    [Header("Health")]
+    public int playerMaxHealth = 100;
+    public int playerCurrentHealth = 100;
+
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 1f;
@@ -50,6 +54,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
+
+
 
     private void Awake()
     {
@@ -187,4 +193,5 @@ public class PlayerController : MonoBehaviour
         stunEffect.SetActive(false);
         canFlash = true;
     }
+
 }
