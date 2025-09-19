@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
+    private int numOfJumps = 2;
 
     private void Awake()
     {
@@ -93,11 +94,31 @@ public class PlayerController : MonoBehaviour
 
         // Ground check
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-        // Jump
-        if (jumpAction.WasPressedThisFrame() && isGrounded)
+        if (!hasDoubleJump)
         {
-            velocity.y = jumpForce;
+            // Jump
+            if (jumpAction.WasPressedThisFrame() && isGrounded)
+            {
+                velocity.y = jumpForce;
+            }
+        }
+        else
+        {
+            // Jump
+            if (jumpAction.WasPressedThisFrame() && isGrounded)
+            {
+                velocity.y = jumpForce;
+                numOfJumps--;
+            }
+            if (jumpAction.WasPressedThisFrame() && !isGrounded && numOfJumps != 0)
+            {
+                velocity.y = jumpForce / 1.4f;
+                numOfJumps--;
+            }
+            else if (isGrounded)
+            {
+                numOfJumps = 2;
+            }
         }
 
         if (moveInput.x > 0)
