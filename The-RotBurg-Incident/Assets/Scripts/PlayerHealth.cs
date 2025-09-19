@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -17,20 +19,18 @@ public class PlayerHealth : MonoBehaviour
         tempTakeDamage = 20;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (health < 0) 
-        { 
-            //Goto the game over screen.
-        }
-    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
             health = health - tempTakeDamage;
+
+            if (health <= 0)
+            {
+                string currentSceneName = SceneManager.GetActiveScene().name;
+                SceneManager.LoadScene(currentSceneName);
+            }
         }
     }
 }
