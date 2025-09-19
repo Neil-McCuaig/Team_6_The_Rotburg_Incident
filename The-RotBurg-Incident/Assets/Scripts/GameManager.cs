@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Item String Names")]
     public string powerUp1 = "DoubleJump";
     PlayerController player;
 

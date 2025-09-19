@@ -13,13 +13,14 @@ public class EnemyController : MonoBehaviour
     bool hitWall = false;
     public bool isStunned = false;
 
-    public Transform wallCheck;
+    private Transform wallCheck;
     public LayerMask groundLayer;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        wallCheck = transform.Find("WallCheck");
     }
 
     private void Update()
@@ -58,6 +59,6 @@ public class EnemyController : MonoBehaviour
             velocity.x = 0f;
         }
 
-            rb.velocity = velocity;
+        rb.velocity = velocity;
     }
 }

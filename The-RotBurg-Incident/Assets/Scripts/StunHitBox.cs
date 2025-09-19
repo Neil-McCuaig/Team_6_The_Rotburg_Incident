@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class StunHitBox : MonoBehaviour
 {
-    public Animator enemyAnim;
-    public EnemyController enemyController;
+    private Animator enemyAnim;
+    private EnemyController enemyController;
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Enemy"))
         {
+            enemyAnim = other.GetComponent<Animator>();
+            enemyController = other.GetComponent<EnemyController>();
+
             Debug.Log("Player hit Enemy");
             StartCoroutine(StunTimer());
             enemyController.isStunned = true;
