@@ -109,11 +109,13 @@ public class PlayerController : MonoBehaviour
             {
                 velocity.y = jumpForce;
                 numOfJumps--;
+                Debug.Log(numOfJumps);
             }
             if (jumpAction.WasPressedThisFrame() && !isGrounded && numOfJumps != 0)
             {
                 velocity.y = jumpForce / 1.4f;
-                numOfJumps--;
+                numOfJumps = 0;
+                Debug.Log(numOfJumps);
             }
             else if (isGrounded)
             {
