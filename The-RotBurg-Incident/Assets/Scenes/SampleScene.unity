@@ -3627,6 +3627,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MockEnemy (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6918986019325375877, guid: d37896ea4be80b14db438e2346470e51, type: 3}
+      propertyPath: m_Mass
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8348830589876328215, guid: d37896ea4be80b14db438e2346470e51, type: 3}
       propertyPath: m_LocalPosition.x
       value: 254.32095
@@ -7999,6 +8003,10 @@ PrefabInstance:
     - target: {fileID: 3710715580269616559, guid: d37896ea4be80b14db438e2346470e51, type: 3}
       propertyPath: m_Name
       value: MockEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6918986019325375877, guid: d37896ea4be80b14db438e2346470e51, type: 3}
+      propertyPath: m_Mass
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8348830589876328215, guid: d37896ea4be80b14db438e2346470e51, type: 3}
       propertyPath: m_LocalPosition.x
