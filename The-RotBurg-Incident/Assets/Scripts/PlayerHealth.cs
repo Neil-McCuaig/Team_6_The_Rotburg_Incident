@@ -6,31 +6,59 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
+    public float maxHealth = 5;
+    private float currentHealth;
 
-    public int health;
-    public int maxHealth;
-    public int tempTakeDamage;
+    public float invincibilityDuration = 2f;
+    private bool isInvincible = false;
 
-    // Start is called before the first frame update
-    void Start()
+    private SpriteRenderer spriteRenderer;
+
+    private void Start()
     {
-        maxHealth = 100;
-        health = maxHealth;
-        tempTakeDamage = 20;
+        currentHealth = maxHealth;
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void TakeDamage(float damage)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (isInvincible)
         {
-            health = health - tempTakeDamage;
-            Debug.Log(health);
-            if (health <= 0)
-            {
-                string currentSceneName = SceneManager.GetActiveScene().name;
-                SceneManager.LoadScene(currentSceneName);
-            }
+            return;
         }
+
+        currentHealth -= damage;
+        Debug.Log("Player took damage! Health: " + currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            StartCoroutine(InvincibilityFrames());
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player Died!");
+        
+    }
+
+    private IEnumerator InvincibilityFrames()
+    {
+        isInvincible = true;
+
+        float elapsed = 0f;
+        while (elapsed < invincibilityDuration)
+        {
+            spriteRenderer.enabled = !spriteRenderer.enabled;
+            yield return new WaitForSeconds(0.1f);
+            elapsed += 0.1f;
+        }
+
+        spriteRenderer.enabled = true;
+        isInvincible = false;
     }
 }

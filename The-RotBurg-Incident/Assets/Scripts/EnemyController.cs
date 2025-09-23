@@ -86,4 +86,12 @@ public class EnemyController : MonoBehaviour, EnemyStunable
         rb.Sleep();
         Debug.Log("Stunned");
     }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+        }
+    }
 }
