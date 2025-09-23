@@ -25,7 +25,7 @@ public class PlayerHealth : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             health = health - tempTakeDamage;
-
+            Debug.Log(health);
             if (health <= 0)
             {
                 string currentSceneName = SceneManager.GetActiveScene().name;
