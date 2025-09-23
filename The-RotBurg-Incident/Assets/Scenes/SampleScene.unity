@@ -3455,8 +3455,6 @@ MonoBehaviour:
   jumpForce: 55
   gravityScale: 10
   terminalVelocity: -50
-  playerMaxHealth: 100
-  playerCurrentHealth: 100
   groundCheck: {fileID: 955620206}
   groundCheckRadius: 0.2
   groundLayer:
@@ -5415,7 +5413,7 @@ GameObject:
   - component: {fileID: 1474573846}
   m_Layer: 6
   m_Name: Spikes
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

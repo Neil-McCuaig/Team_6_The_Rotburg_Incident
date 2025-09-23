@@ -28,9 +28,9 @@ public class PlayerController : MonoBehaviour
     public float gravityScale = 3f;
     public float terminalVelocity = -15f;
 
-    [Header("Health")]
-    public int playerMaxHealth = 100;
-    public int playerCurrentHealth = 100;
+    //[Header("Health")]
+    //public int playerMaxHealth = 100;
+    //public int playerCurrentHealth = 100;
 
     [Header("Ground Check")]
     public Transform groundCheck;
