@@ -8,6 +8,17 @@ public class PlayerController : MonoBehaviour
     [Header("Components")]
     public Rigidbody2D rb;
     public SpriteRenderer spriteRenderer;
+    public Animator anim;
+
+    [Header("Attack Settings")]
+    public float attackCooldown = 1f;  
+    private float lastAttackTime = 0f;
+    public float damageAmount;
+    public GameObject attackPointA;
+    public GameObject attackPointB;
+    public GameObject attackPosition;
+    public float attackRadius;
+    public LayerMask enemies;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
@@ -49,11 +60,13 @@ public class PlayerController : MonoBehaviour
     public InputActionAsset inputActions;
     private InputAction moveAction;
     private InputAction jumpAction;
+    private InputAction attackAction;
     private InputAction aimAction;
     private InputAction flashAction;
 
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
+    private int numOfJumps = 2;
 
 
 
@@ -62,6 +75,7 @@ public class PlayerController : MonoBehaviour
         var playerActions = inputActions.FindActionMap("BaseGameplay");
         moveAction = playerActions.FindAction("MoveX");
         jumpAction = playerActions.FindAction("Jump");
+        attackAction = playerActions.FindAction("Attack");
         aimAction = playerActions.FindAction("AimDirection");
         flashAction = playerActions.FindAction("ActionFlash");
     }
@@ -70,6 +84,7 @@ public class PlayerController : MonoBehaviour
     {
         moveAction.Enable();
         jumpAction.Enable();
+        attackAction.Enable();
         aimAction.Enable();
         flashAction.Enable();
     }
@@ -78,6 +93,7 @@ public class PlayerController : MonoBehaviour
     {
         moveAction.Disable();
         jumpAction.Disable();
+        attackAction.Disable();
         aimAction.Disable();
         flashAction.Disable();
     }
@@ -99,23 +115,72 @@ public class PlayerController : MonoBehaviour
 
         // Ground check
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-        // Jump
-        if (jumpAction.WasPressedThisFrame() && isGrounded)
+        if (!hasDoubleJump)
         {
-            velocity.y = jumpForce;
+            // Jump
+            if (jumpAction.WasPressedThisFrame() && isGrounded)
+            {
+                velocity.y = jumpForce;
+            }
+        }
+        else
+        {
+            // Jump
+            if (jumpAction.WasPressedThisFrame() && isGrounded)
+            {
+                velocity.y = jumpForce;
+                numOfJumps--;
+            }
+            if (jumpAction.WasPressedThisFrame() && !isGrounded && numOfJumps != 0)
+            {
+                velocity.y = jumpForce / 1.4f;
+                numOfJumps = 0;
+            }
+            else if (isGrounded)
+            {
+                numOfJumps = 2;
+            }
         }
 
         if (moveInput.x > 0)
         {
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
+            attackPosition.transform.position = attackPointA.transform.position;
         }
         else if (moveInput.x < 0)
         {
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
+            attackPosition.transform.position = attackPointB.transform.position;
         }
+
+        if (attackAction.WasPressedThisFrame())
+        {
+            if (Time.time >= lastAttackTime + attackCooldown)
+            {
+                anim.SetBool("IsAttacking", true);
+                lastAttackTime = Time.time;
+            }
+        }
+    }
+
+    public void PlayerAttack()
+    {
+        Collider2D[] enemy = Physics2D.OverlapCircleAll(attackPosition.transform.position, attackRadius, enemies);
+
+        foreach (Collider2D enemyGameObject in enemy)
+        {
+            enemyGameObject.GetComponent<EnemyHealth>().health -= damageAmount;
+        }
+    }
+    public void EndAttack()
+    {
+        anim.SetBool("IsAttacking", false);
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(attackPosition.transform.position, attackRadius);
     }
 
     void HandleMovement()
