@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     public SpriteRenderer spriteRenderer;
     public Animator anim;
+    GameManager manager;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
@@ -45,6 +46,7 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer armRender;
 
     [Header("Flash References")]
+    public float drainAmount;
     public GameObject stunEffect;
     public Transform cameraFlash;
     public Transform flashLeft;
@@ -72,6 +74,8 @@ public class PlayerController : MonoBehaviour
         attackAction = playerActions.FindAction("Attack");
         aimAction = playerActions.FindAction("AimDirection");
         flashAction = playerActions.FindAction("ActionFlash");
+
+        manager = FindAnyObjectByType<GameManager>();
     }
 
     void OnEnable()
@@ -196,6 +200,11 @@ public class PlayerController : MonoBehaviour
 
     void AimingDirection()
     {
+        if (manager.batteryPercentage <= 0)
+        {
+            canFlash = false;
+        }
+
         aimInput = aimAction.ReadValue<Vector2>();
 
         if (aimInput.sqrMagnitude > 0.01f)
@@ -228,6 +237,7 @@ public class PlayerController : MonoBehaviour
 
     void ActivateFlash()
     {
+        manager.ReduceBattery(drainAmount);
         canFlash = false;
         stunEffect.SetActive(true);
         Color originalColor = effectRender.color;
