@@ -49,15 +49,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "WASD",
-                    "type": "Button",
-                    "id": "0c9a3dfc-86d5-4bcb-bf38-d84513bfdb67",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -89,7 +80,7 @@
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
+                    "groups": "Keyboard And Mouse",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -107,6 +98,17 @@
                 },
                 {
                     "name": "",
+                    "id": "5c7c4fcb-ffde-4e40-8e6f-1905c19e40bc",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard And Mouse",
+                    "action": "ActionFlash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "47755600-4a2e-437e-a088-388d5ed84334",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
@@ -118,11 +120,33 @@
                 },
                 {
                     "name": "",
+                    "id": "9a7cacbb-af45-4068-ac8c-10b694972d68",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard And Mouse",
+                    "action": "AimDirection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "9b279316-d27e-42df-9a81-60668b02bca0",
                     "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "Xbox 360",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "41e85de3-09be-477a-958b-744979160e62",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard And Mouse",
                     "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -144,7 +168,7 @@
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
+                    "groups": "Keyboard And Mouse",
                     "action": "MoveX",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -155,7 +179,7 @@
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
+                    "groups": "Keyboard And Mouse",
                     "action": "MoveX",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -166,7 +190,7 @@
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
+                    "groups": "Keyboard And Mouse",
                     "action": "MoveX",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -177,7 +201,7 @@
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
+                    "groups": "Keyboard And Mouse",
                     "action": "MoveX",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -187,11 +211,16 @@
     ],
     "controlSchemes": [
         {
-            "name": "Keyboard",
-            "bindingGroup": "Keyboard",
+            "name": "Keyboard And Mouse",
+            "bindingGroup": "Keyboard And Mouse",
             "devices": [
                 {
                     "devicePath": "<Keyboard>",
+                    "isOptional": true,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
                     "isOptional": true,
                     "isOR": false
                 }
