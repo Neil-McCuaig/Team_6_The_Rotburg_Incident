@@ -3455,6 +3455,8 @@ MonoBehaviour:
   jumpForce: 55
   gravityScale: 10
   terminalVelocity: -50
+  playerMaxHealth: 100
+  playerCurrentHealth: 100
   groundCheck: {fileID: 955620206}
   groundCheckRadius: 0.2
   groundLayer:
