@@ -72,7 +72,7 @@ public class EnemyController : MonoBehaviour, EnemyStunable
             {
                 isStunned = false;
                 stunCountdown = stunTimer;
-                rb.WakeUp();
+                rb.constraints = RigidbodyConstraints2D.None;
             }
             return;
         }
@@ -83,7 +83,7 @@ public class EnemyController : MonoBehaviour, EnemyStunable
     public void Stun()
     {
         isStunned = true;
-        rb.Sleep();
+        rb.constraints = RigidbodyConstraints2D.FreezePosition;
         Debug.Log("Stunned");
     }
 

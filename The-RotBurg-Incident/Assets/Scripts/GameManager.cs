@@ -15,10 +15,13 @@ public class GameManager : MonoBehaviour
     public float batteryPercentage = 100f;
     public float drainRatePerSecond = 5f; 
     public TextMeshProUGUI batteryText; 
+    public BatterySlider batterySlider;
 
     private void Start()
     {
         player = FindAnyObjectByType<PlayerController>();
+        batterySlider = FindAnyObjectByType<BatterySlider>();
+        batterySlider.SetMaxBattery(batteryPercentage);
     }
 
     public void Update()
@@ -27,6 +30,7 @@ public class GameManager : MonoBehaviour
         {
             batteryPercentage -= drainRatePerSecond * Time.deltaTime;
             batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
+            batterySlider.SetBattery(batteryPercentage);
         }
         else
         {
@@ -45,6 +49,7 @@ public class GameManager : MonoBehaviour
         {
             batteryPercentage -= amount;
             batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
+            batterySlider.SetBattery(batteryPercentage);
         }
 
         if (batteryPercentage <= 0f)
