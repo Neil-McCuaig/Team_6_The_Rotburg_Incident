@@ -13,11 +13,14 @@ public class PlayerHealth : MonoBehaviour
     private bool isInvincible = false;
 
     private SpriteRenderer spriteRenderer;
+    HealthBarSlider healthBar;
 
     private void Start()
     {
         currentHealth = maxHealth;
         spriteRenderer = GetComponent<SpriteRenderer>();
+        healthBar = FindAnyObjectByType<HealthBarSlider>();
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     public void TakeDamage(float damage)
@@ -28,7 +31,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         currentHealth -= damage;
-        Debug.Log("Player took damage! Health: " + currentHealth);
+        healthBar.SetHealth(currentHealth);
 
         if (currentHealth <= 0)
         {
