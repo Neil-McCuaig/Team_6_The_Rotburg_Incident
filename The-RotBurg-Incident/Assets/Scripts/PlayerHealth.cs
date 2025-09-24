@@ -46,7 +46,8 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log("Player Died!");
-        SceneManager.LoadScene("SampleScene");
+
+        SceneManager.LoadScene(2);
     }
 
     private IEnumerator InvincibilityFrames()
