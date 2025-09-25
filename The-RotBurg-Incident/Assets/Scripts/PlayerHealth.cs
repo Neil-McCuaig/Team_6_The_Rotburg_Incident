@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public float maxHealth = 5;
-    private float currentHealth;
+    public float maxHealth;
+    public float currentHealth;
 
     public float invincibilityDuration = 2f;
     private bool isInvincible = false;
@@ -17,10 +17,10 @@ public class PlayerHealth : MonoBehaviour
 
     private void Start()
     {
-        currentHealth = maxHealth;
         spriteRenderer = GetComponent<SpriteRenderer>();
         healthBar = FindAnyObjectByType<HealthBarSlider>();
-        healthBar.SetMaxHealth(maxHealth);
+
+        ResetHealthFull();
     }
 
     public void TakeDamage(float damage)
@@ -64,5 +64,11 @@ public class PlayerHealth : MonoBehaviour
 
         spriteRenderer.enabled = true;
         isInvincible = false;
+    }
+
+    public void ResetHealthFull()
+    {
+        currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
 }

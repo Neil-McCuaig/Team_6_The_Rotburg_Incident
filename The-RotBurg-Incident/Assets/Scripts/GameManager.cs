@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Item String Names")]
+    [Header("PowerUp String Names")]
     public string powerUp1 = "DoubleJump";
 
     PlayerController player;
@@ -41,6 +43,11 @@ public class GameManager : MonoBehaviour
         {
             batteryText.text = "Battery: " + Mathf.RoundToInt(batteryPercentage) + "%";
         }
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(1);
+        }
     }
 
     public void ReduceBattery(float amount)
@@ -50,11 +57,6 @@ public class GameManager : MonoBehaviour
             batteryPercentage -= amount;
             batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
             batterySlider.SetBattery(batteryPercentage);
-        }
-
-        if (batteryPercentage <= 0f)
-        {
-            Debug.Log("Battery Empty");
         }
     }
 

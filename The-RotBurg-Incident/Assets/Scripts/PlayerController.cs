@@ -23,15 +23,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 5f;
-    private Vector2 moveInput;
+    public Vector2 moveInput;
     private Vector2 velocity;
     public float jumpForce = 10f;
     public float gravityScale = 3f;
     public float terminalVelocity = -15f;
-
-    //[Header("Health")]
-    //public int playerMaxHealth = 100;
-    //public int playerCurrentHealth = 100;
+    public bool isSitting = false;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -55,14 +52,15 @@ public class PlayerController : MonoBehaviour
     public Transform cameraFlash;
     public Transform flashLeft;
     public Transform flashRight;
-    private bool canFlash = true;
+    public bool canFlash = true;
+    public bool batteryDead;
     public SpriteRenderer effectRender;
 
     [Header("Input Actions")]
     public InputActionAsset inputActions;
-    private InputAction moveAction;
-    private InputAction jumpAction;
-    private InputAction attackAction;
+    public InputAction moveAction;
+    public InputAction jumpAction;
+    public InputAction attackAction;
     private InputAction aimAction;
     private InputAction flashAction;
 
@@ -104,8 +102,13 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        CheckInput();
-        AimingDirection();
+        moveInput = moveAction.ReadValue<Vector2>();
+
+        if (!isSitting)
+        { 
+            CheckInput();
+            AimingDirection();
+        }
     }
 
     void FixedUpdate()
@@ -115,8 +118,6 @@ public class PlayerController : MonoBehaviour
 
     void CheckInput()
     {
-        moveInput = moveAction.ReadValue<Vector2>();
-
         // Ground check
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         if (!hasDoubleJump)
@@ -206,11 +207,6 @@ public class PlayerController : MonoBehaviour
 
     void AimingDirection()
     {
-        if (manager.batteryPercentage <= 0)
-        {
-            canFlash = false;
-        }
-
         aimInput = aimAction.ReadValue<Vector2>();
 
         if (aimInput.sqrMagnitude > 0.01f)
@@ -235,7 +231,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (flashAction.WasPressedThisFrame() && canFlash)
+        if (flashAction.WasPressedThisFrame() && canFlash && manager.batteryPercentage > 0)
         {
             ActivateFlash();
         }
