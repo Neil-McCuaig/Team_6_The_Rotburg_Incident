@@ -82,6 +82,7 @@ public class SafeStations : MonoBehaviour
     private void StopCharging()
     {
         isCharging = false;
+        hoverEffect.SetActive(true);
         rechargeText.color = Color.white;
         if (playerController != null)
         {
