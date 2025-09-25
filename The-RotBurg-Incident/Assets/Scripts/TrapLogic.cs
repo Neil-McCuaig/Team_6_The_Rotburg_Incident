@@ -15,4 +15,13 @@ public class TrapLogic : MonoBehaviour
     {
         
     }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("You stepped on spikes!");
+            FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+        }
+    }
 }

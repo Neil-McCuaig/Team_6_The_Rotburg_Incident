@@ -1193,7 +1193,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &293415175
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1213,7 +1213,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 18.690002, y: -6.674988}
+  m_AnchoredPosition: {x: 18.689941, y: -6.674988}
   m_SizeDelta: {x: -1174.79, y: -424.526}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &293415176
@@ -3574,9 +3574,10 @@ GameObject:
   - component: {fileID: 681670362}
   - component: {fileID: 681670361}
   - component: {fileID: 681670363}
+  - component: {fileID: 681670364}
   m_Layer: 6
   m_Name: Spikes
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3693,6 +3694,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.6642342, y: 2.8}
   m_EdgeRadius: 0
+--- !u!114 &681670364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 681670360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &684831599
 GameObject:
   m_ObjectHideFlags: 0
@@ -4368,6 +4381,7 @@ GameObject:
   - component: {fileID: 772639133}
   - component: {fileID: 772639135}
   - component: {fileID: 772639134}
+  - component: {fileID: 772639136}
   m_Layer: 6
   m_Name: Spikes (1)
   m_TagString: Enemy
@@ -4487,6 +4501,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &772639136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 772639132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &797439764
 GameObject:
   m_ObjectHideFlags: 0
@@ -6337,9 +6363,10 @@ GameObject:
   - component: {fileID: 1079301036}
   - component: {fileID: 1079301035}
   - component: {fileID: 1079301037}
+  - component: {fileID: 1079301038}
   m_Layer: 6
   m_Name: Spikes
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6456,6 +6483,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.8673263, y: 2.8}
   m_EdgeRadius: 0
+--- !u!114 &1079301038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079301034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1089653005
 GameObject:
   m_ObjectHideFlags: 0
@@ -8186,6 +8225,7 @@ GameObject:
   - component: {fileID: 1474573845}
   - component: {fileID: 1474573844}
   - component: {fileID: 1474573846}
+  - component: {fileID: 1474573847}
   m_Layer: 6
   m_Name: Spikes
   m_TagString: Enemy
@@ -8305,6 +8345,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.958507, y: 2.8}
   m_EdgeRadius: 0
+--- !u!114 &1474573847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474573843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1480100788
 GameObject:
   m_ObjectHideFlags: 0
@@ -11909,9 +11961,10 @@ GameObject:
   - component: {fileID: 2125017068}
   - component: {fileID: 2125017067}
   - component: {fileID: 2125017069}
+  - component: {fileID: 2125017070}
   m_Layer: 6
   m_Name: Spikes
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12028,6 +12081,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.1895785, y: 2.8}
   m_EdgeRadius: 0
+--- !u!114 &2125017070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125017066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1176406936520152884
 PrefabInstance:
   m_ObjectHideFlags: 0
