@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TrapLogic : MonoBehaviour
 {
+    public GameObject teleportPoint;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +32,7 @@ public class TrapLogic : MonoBehaviour
         {
             Debug.Log("You stepped on spikes!");
             FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+            
         }
     }
 }
