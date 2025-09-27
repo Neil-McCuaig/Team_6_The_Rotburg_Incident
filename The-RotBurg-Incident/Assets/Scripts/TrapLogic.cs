@@ -5,10 +5,12 @@ using UnityEngine;
 public class TrapLogic : MonoBehaviour
 {
     public GameObject teleportPoint;
+
+    private Transform destination;
     // Start is called before the first frame update
     void Start()
     {
-        
+        destination = teleportPoint.transform;
     }
 
     // Update is called once per frame
@@ -32,7 +34,7 @@ public class TrapLogic : MonoBehaviour
         {
             Debug.Log("You stepped on spikes!");
             FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
-            
+            other.transform.position = new Vector2(destination.position.x, destination.position.y);
         }
     }
 }
