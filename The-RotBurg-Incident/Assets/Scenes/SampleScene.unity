@@ -1967,7 +1967,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teleportPoint: {fileID: 0}
+  teleportPoint: {fileID: 1118456432}
 --- !u!61 &368357477
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10496,7 +10496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teleportPoint: {fileID: 0}
+  teleportPoint: {fileID: 1025221754}
 --- !u!61 &1713888630
 BoxCollider2D:
   m_ObjectHideFlags: 0
