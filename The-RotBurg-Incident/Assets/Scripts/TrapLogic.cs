@@ -8,8 +8,9 @@ public class TrapLogic : MonoBehaviour
 
     private Transform destination;
 
-    public GameObject fadeToBlack;
+    //public GameObject fadeToBlack;
 
+    FadeToBlack fadeToBlack;
 
     // Start is called before the first frame update
     void Start()
