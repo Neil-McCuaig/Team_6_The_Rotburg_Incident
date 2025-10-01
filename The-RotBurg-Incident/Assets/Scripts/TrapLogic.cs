@@ -10,14 +10,14 @@ public class TrapLogic : MonoBehaviour
 
     //public GameObject fadeToBlack;
 
-    FadeToBlack fadeToBlack;
+    FadeToBlack fade;
 
     // Start is called before the first frame update
     void Start()
     {
         destination = teleportPoint.transform;
 
-        //fadeToBlack = FindAnyObjectByType<FadeToBlack>();
+        fade = FindAnyObjectByType<FadeToBlack>();
     }
 
     // Update is called once per frame
@@ -41,8 +41,9 @@ public class TrapLogic : MonoBehaviour
         {
             Debug.Log("You stepped on spikes!");
             FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
-            //fadeToBlack.GetComponent<FadeToBlack>.FadeIn;
+            //fade.GetComponent<FadeToBlack>.FadeIn;
 
+            fade.FadeInObject();
 
             other.transform.position = new Vector2(destination.position.x, destination.position.y);
         }

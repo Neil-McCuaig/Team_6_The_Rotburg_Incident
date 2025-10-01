@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Security;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FadeToBlack : MonoBehaviour
 {
@@ -26,28 +27,30 @@ public class FadeToBlack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (FadeIn)
+        if (FadeIn == true)
         {
-            Color objectColor = this.GetComponent<Renderer>().material.color;
+            Debug.Log("Processing Fade In");
+            //This should a this.GetComponent<Image> instead of this.GetComponent<Renderer>. Fix later: https://discover.hubpages.com/technology/How-to-Fade-to-Black-in-Unity
+            Color objectColor = this.GetComponent<Image>().material.color;
             float fadeAmount = objectColor.a - (fadeSpeed * Time.deltaTime);
 
             objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            this.GetComponent<Renderer>().material.color = objectColor;
+            this.GetComponent<Image>().material.color = objectColor;
 
             if (objectColor.a >= fadeAmount)
             {
                 FadeIn = false;
-                FadeOut = true;
+                FadeOutObject();
             }
         }
 
-        if (FadeOut) 
+        if (FadeOut == true) 
         {
-            Color objectColor = this.GetComponent<Renderer>().material.color;
+            Color objectColor = this.GetComponent<Image>().material.color;
             float fadeAmount = objectColor.a - (fadeSpeed * Time.deltaTime);
 
             objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            this.GetComponent<Renderer>().material.color = objectColor;
+            this.GetComponent<Image>().material.color = objectColor;
 
             if (objectColor.a <= fadeAmount) 
             {
@@ -93,6 +96,7 @@ public class FadeToBlack : MonoBehaviour
     public void FadeInObject()
     {
         FadeIn = true;
+        Debug.Log("Fade In!");
     }
 
     public void FadeOutObject()
