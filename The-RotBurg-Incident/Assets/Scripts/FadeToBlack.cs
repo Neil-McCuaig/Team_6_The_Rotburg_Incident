@@ -27,15 +27,18 @@ public class FadeToBlack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //Maybe swich it from If to While?
         if (FadeIn == true)
         {
             Debug.Log("Processing Fade In");
             //This should a this.GetComponent<Image> instead of this.GetComponent<Renderer>. Fix later: https://discover.hubpages.com/technology/How-to-Fade-to-Black-in-Unity
-            Color objectColor = this.GetComponent<Image>().material.color;
+            //Previously it was .material.color
+            Color objectColor = this.GetComponent<Image>().color;
             float fadeAmount = objectColor.a - (fadeSpeed * Time.deltaTime);
 
             objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            this.GetComponent<Image>().material.color = objectColor;
+            this.GetComponent<Image>().color = objectColor;
 
             if (objectColor.a >= fadeAmount)
             {
@@ -46,11 +49,11 @@ public class FadeToBlack : MonoBehaviour
 
         if (FadeOut == true) 
         {
-            Color objectColor = this.GetComponent<Image>().material.color;
+            Color objectColor = this.GetComponent<Image>().color;
             float fadeAmount = objectColor.a - (fadeSpeed * Time.deltaTime);
 
             objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            this.GetComponent<Image>().material.color = objectColor;
+            this.GetComponent<Image>().color = objectColor;
 
             if (objectColor.a <= fadeAmount) 
             {
