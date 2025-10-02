@@ -174,7 +174,7 @@ MonoBehaviour:
   viewAngle: 90
   playerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 192
   isStunned: 0
   stunTimer: 3
   isDead: 0

@@ -51,6 +51,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
         playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<Collider2D>();
 
         idleStartPos = transform.position;
+        stunCountdown = stunTimer;
     }
 
     void Update()
@@ -167,8 +168,10 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
         {
             return true;
         }
-
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
     void DetectWallsAndGround()
