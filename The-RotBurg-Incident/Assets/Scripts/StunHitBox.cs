@@ -8,7 +8,6 @@ public class StunHitBox : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            Debug.Log("Enemy Stun");
             EnemyStunable stunnable = other.GetComponent<EnemyStunable>();
             if (stunnable != null)
             {

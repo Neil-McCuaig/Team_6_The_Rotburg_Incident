@@ -1,101 +1,226 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
-public class FlyingEnemyController : MonoBehaviour
+public class FlyingEnemyController : MonoBehaviour, EnemyStunable
 {
-    public Transform player;
-    public float hoverSpeed = 2f;
-    public float hoverDistance = 3f;
-    public float moveAboveSpeed = 5f;
-    public float slamSpeed = 15f;
-    public float returnSpeed = 7f;
-    public float slamCooldown = 2f;
-    public float groundCheckDistance = 0.5f;
+    public float moveSpeed = 3f;
+    public float bounceForce = 2f;
+    private bool wallBounce;
     public LayerMask groundLayer;
+    private float detectionDistance = 3f;
 
-    private enum State { Hovering, MovingAbovePlayer, Slamming, Returning }
-    private State currentState = State.Hovering;
+    private Vector2 currentDirection;
 
-    private Vector2 startPosition;
+    public float idleFloatSpeed = 0.5f;
+    public float idleFloatHeight = 0.5f;
+    private Vector2 idleStartPos;
+    private float floatTimer = 0f;
+
+    [Range(0, 360)]
+    public float viewDistance = 10f;
+    public float viewAngle = 45f;
+    public LayerMask playerMask;
+
+    public bool isStunned;
+    public float stunTimer;
+    private float stunCountdown;
+    public bool isDead = false;
+
+    private enum State { HoveringIdle, ChasePlayer, StunState, EnemyDeath}
+    private State currentState = State.HoveringIdle;
+
     private Rigidbody2D rb;
-    private float slamTimer;
+    private SpriteRenderer spriteRenderer;
+    private Transform player;
+    private EnemyHealth health;
+    private Animator anim;
+    private Collider2D enemyCollider;
+    private Collider2D playerCollider;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        slamTimer = slamCooldown;
-        startPosition = transform.position;
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
+        health = GetComponent<EnemyHealth>();
+        enemyCollider = GetComponent<Collider2D>();
+        playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<Collider2D>();
+
+        idleStartPos = transform.position;
     }
 
     void Update()
     {
-        if (player == null) return;
-
         switch (currentState)
         {
-            case State.Hovering:
+            case State.HoveringIdle:
+            {
                 Hover();
-                slamTimer -= Time.deltaTime;
-                if (slamTimer <= 0f)
+                if(CanSeePlayer())
                 {
-                    currentState = State.MovingAbovePlayer;
+                    currentState = State.ChasePlayer;
+                }
+
+                break;
+            }
+
+            case State.ChasePlayer:
+            { 
+                Vector2 targetDirection = ((Vector2)(player.position - transform.position)).normalized;
+                currentDirection = targetDirection;
+
+                break;
+            }
+
+            case State.StunState:
+            {
+                anim.SetBool("isStunned", true);
+                rb.velocity = Vector2.zero;
+                stunCountdown -= Time.deltaTime;
+                if (stunCountdown <= 0f)
+                {
+                    stunCountdown = stunTimer;
+                    isStunned = false;
+                    anim.SetBool("isStunned", false);
+                    currentState = State.ChasePlayer;
                 }
                 break;
+            }
 
-            case State.MovingAbovePlayer:
-                MoveAbovePlayer();
-                break;
+            case State.EnemyDeath:
+            {
+                isDead = true;
+                Physics2D.IgnoreCollision(enemyCollider, playerCollider, true);
+                rb.gravityScale = 5.0f;
 
-            case State.Slamming:
-                SlamDown();
                 break;
+            }
+        }
 
-            case State.Returning:
-                ReturnToAir();
-                break;
+        if (health.currentHealth > 0)
+        {
+            if (currentDirection.x > 0)
+            {
+                spriteRenderer.flipX = false;
+            }
+            else if (currentDirection.x < 0)
+            {
+                spriteRenderer.flipX = true;
+            }
+
+            DetectWallsAndGround();
+        }
+        else
+        {
+            currentState = State.EnemyDeath;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!wallBounce && !isStunned && !isDead)
+        {
+            rb.velocity = currentDirection * moveSpeed;
         }
     }
 
     void Hover()
     {
-        Vector2 targetPos = (Vector2)player.position + new Vector2(hoverDistance, Mathf.Sin(10));
-        transform.position = Vector2.Lerp(transform.position, targetPos, hoverSpeed);
+        floatTimer += Time.deltaTime;
+        float newY = idleStartPos.y + Mathf.Sin(floatTimer * idleFloatSpeed) * idleFloatHeight;
+        float newX = idleStartPos.x + Mathf.Sin(floatTimer * idleFloatSpeed) * 0.2f;
+        Vector2 targetPos = new Vector2(newX, newY);
+        currentDirection = (targetPos - (Vector2)transform.position).normalized;
     }
 
-    void MoveAbovePlayer()
+    bool CanSeePlayer()
     {
-        Vector2 targetPos = new Vector2(player.position.x, player.position.y + 10f);
-        transform.position = Vector2.MoveTowards(transform.position, targetPos, moveAboveSpeed);
+        Vector2 directionToPlayer = (player.position - transform.position).normalized;
 
-        float distanceAbove = transform.position.y - player.position.y;
-        if (distanceAbove <= 6f && distanceAbove >= 4.5f)
+        if (Vector2.Distance(transform.position, player.position) > viewDistance)
         {
-            currentState = State.Slamming;
+            return false;
+        }
+        if (currentDirection.x > 0)
+        {
+            float angleToPlayer = Vector2.Angle(transform.right, directionToPlayer);
+            if (angleToPlayer > viewAngle / 2)
+            {
+                return false;
+            }
+        }
+        else if (currentDirection.x < 0)
+        {
+            float angleToPlayer = Vector2.Angle(-transform.right, directionToPlayer);
+            if (angleToPlayer > viewAngle / 2)
+            {
+                return false;
+            }
+        }
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, viewDistance, playerMask);
+        if (hit.collider != null && hit.collider.transform == player)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    void DetectWallsAndGround()
+    {
+        Vector2[] directions = { Vector2.right, Vector2.left, Vector2.up, Vector2.down };
+
+        foreach (Vector2 dir in directions)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, detectionDistance, groundLayer);
+            if (hit.collider != null)
+            {
+                wallBounce = true;
+
+                Vector2 bounceDirection = Vector2.Reflect(currentDirection, hit.normal).normalized;
+                Vector2 toPlayer = ((Vector2)(player.position - transform.position)).normalized;
+                float blendTowardPlayer = 0.3f; 
+                Vector2 offsetDirection = Vector2.Lerp(bounceDirection, toPlayer, blendTowardPlayer).normalized;
+                currentDirection = offsetDirection;
+                rb.velocity = currentDirection * bounceForce;
+                StartCoroutine(BounceCooldown());
+
+                break;
+            }
         }
     }
 
-    void SlamDown()
+    IEnumerator BounceCooldown()
     {
-        rb.velocity = new Vector2(0, -slamSpeed);
-
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
-        if (hit.collider != null)
-        {
-            rb.velocity = Vector2.zero;
-            currentState = State.Returning;
-        }
+        yield return new WaitForSeconds(1f);
+        wallBounce = false;
     }
 
-    void ReturnToAir()
+    public void Stun()
     {
-        Vector2 targetPos = (Vector2)player.position + new Vector2(hoverDistance, 3f);
-        transform.position = Vector2.MoveTowards(transform.position, targetPos, returnSpeed * Time.deltaTime);
+        isStunned = true;
+        currentState = State.StunState;
+    }
 
-        if (Vector2.Distance(transform.position, targetPos) < 0.5f)
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
         {
-            slamTimer = slamCooldown;
-            currentState = State.Hovering;
+            FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+
+            wallBounce = true;
+            Vector2 bounceDirection = Vector2.Reflect(currentDirection, player.position).normalized;
+            Vector2 toPlayer = ((Vector2)(player.position - transform.position)).normalized;
+            float blendTowardPlayer = 0.3f;
+            Vector2 offsetDirection = Vector2.Lerp(bounceDirection, toPlayer, blendTowardPlayer).normalized;
+            currentDirection = offsetDirection;
+            rb.velocity = currentDirection * bounceForce;
+            StartCoroutine(BounceCooldown());
         }
     }
 }
