@@ -216,7 +216,7 @@ public class PlayerController : MonoBehaviour
         }
 
         arm.rotation = Quaternion.Euler(0f, 0f, lastAngle);
-
+        
         if (flipArmLeft)
         {
             if (lastAngle > 130 || lastAngle < -60)
@@ -264,5 +264,4 @@ public class PlayerController : MonoBehaviour
         stunEffect.SetActive(false);
         canFlash = true;
     }
-
 }
