@@ -9,6 +9,8 @@ public class EnemyController : MonoBehaviour, EnemyStunable
     private Vector2 velocity;
     private SpriteRenderer spriteRenderer;
     private Animator enemyAnim;
+    private EnemyHealth health;
+    private Collider2D collision;
 
     bool facingRight = true;
     bool hitWall = false;
@@ -24,6 +26,8 @@ public class EnemyController : MonoBehaviour, EnemyStunable
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         enemyAnim = GetComponent<Animator>();
+        health = GetComponent<EnemyHealth>();
+        collision = GetComponent<Collider2D>();
         wallCheck = transform.Find("WallCheck");
 
         isStunned = false;
@@ -77,14 +81,21 @@ public class EnemyController : MonoBehaviour, EnemyStunable
             return;
         }
 
-        rb.velocity = velocity;
+        if (health.currentHealth > 0)
+        {
+            rb.velocity = velocity;
+        }
+        else
+        {
+            collision.enabled = false;
+            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+        }
     }
 
     public void Stun()
     {
         isStunned = true;
         rb.constraints = RigidbodyConstraints2D.FreezePosition;
-        Debug.Log("Stunned");
     }
 
     private void OnCollisionEnter2D(Collision2D other)
