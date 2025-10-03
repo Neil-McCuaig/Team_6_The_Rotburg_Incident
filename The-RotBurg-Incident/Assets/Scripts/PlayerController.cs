@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Animator anim;
     GameManager manager;
+    private Vector2 respawnPoint;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
@@ -169,7 +170,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
     public void PlayerAttack()
     {
         Collider2D[] enemy = Physics2D.OverlapCircleAll(attackPosition.transform.position, attackRadius, enemies);
@@ -263,5 +263,15 @@ public class PlayerController : MonoBehaviour
         effectRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
         stunEffect.SetActive(false);
         canFlash = true;
+    }
+
+    public void SetRespawnPoint(Vector2 point)
+    {
+        respawnPoint = point;
+    }
+
+    public void Respawn()
+    {
+        transform.position = respawnPoint;
     }
 }

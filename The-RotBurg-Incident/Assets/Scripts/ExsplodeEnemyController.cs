@@ -24,7 +24,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
     private float patrolTimer;
     private bool patrolMovingRight = true; 
 
-    private enum State { DetectingIdle, ChasePlayer, StunState, EnemyIgnite }
+    private enum State { DetectingIdle, ChasePlayer, StunState, EnemyIgnite, DeathState }
     private State currentState = State.DetectingIdle;
 
     private Rigidbody2D rb;
@@ -95,8 +95,16 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
                     Physics2D.IgnoreCollision(enemyCollider, playerCollider, true);
                     break;
                 }
+
+            case State.DeathState:
+                {
+                    moveSpeed = moveSpeed = 0f;
+                    currentDirection.x = Vector2.zero.x;
+                    GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+
+                    break;
+                }
         }
-        Debug.Log(currentState);
     }
 
     private void FixedUpdate()
@@ -116,10 +124,6 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
                     spriteRenderer.flipX = true;
                 }
             }
-        }
-        else
-        {
-            currentState = State.EnemyIgnite;
         }
     }
 
@@ -183,7 +187,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
 
     public void Stun()
     {
-        if (currentState != State.EnemyIgnite)
+        if (currentState != State.EnemyIgnite && currentState != State.DeathState)
         {
             isStunned = true;
             currentState = State.StunState;
@@ -195,12 +199,12 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
         Instantiate(exsplosionObject, transform.position + new Vector3(0f, 3f, 0f), Quaternion.identity);
 
         Collider2D playerHit = Physics2D.OverlapCircle(transform.position, explosionRadius, playerMask);
-        if (playerHit.CompareTag("Player"))
+        if (playerHit != null && playerHit.CompareTag("Player"))
         {
             FindAnyObjectByType<PlayerHealth>().TakeDamage(20f);
         }
 
         isDead = true;
-        GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+        currentState = State.DeathState;
     }
 }

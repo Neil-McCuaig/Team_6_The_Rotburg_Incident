@@ -195,9 +195,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfb985787790d541a8eca1353499809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7
+  moveSpeed: 30
   isStunned: 0
-  stunTimer: 1
+  stunTimer: 2
+  patrolDuration: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64

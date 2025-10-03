@@ -13,11 +13,15 @@ public class PlayerHealth : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     HealthBarSlider healthBar;
+    PlayerController playerController;
+    EnemySpawnerManager enemySpawnerManager;
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         healthBar = FindAnyObjectByType<HealthBarSlider>();
+        playerController = FindAnyObjectByType<PlayerController>();
+        enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
 
         ResetHealthFull();
     }
@@ -34,19 +38,14 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Die();
+            playerController.Respawn();
+            enemySpawnerManager.SpawnEnemies();
+            ResetHealthFull();
         }
         else
         {
             StartCoroutine(InvincibilityFrames());
         }
-    }
-
-    private void Die()
-    {
-        Debug.Log("Player Died!");
-
-        SceneManager.LoadScene(2);
     }
 
     private IEnumerator InvincibilityFrames()

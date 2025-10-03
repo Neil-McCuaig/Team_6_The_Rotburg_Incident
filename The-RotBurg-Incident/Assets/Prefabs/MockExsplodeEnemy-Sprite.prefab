@@ -122,19 +122,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f94b3b6268885f3459d28ea02cf33848, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 30
+  moveSpeed: 41
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
   explosionRadius: 14
+  isDead: 0
   viewDistance: 41
   viewAngle: 45
   playerMask:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 128
   isStunned: 0
   stunTimer: 3
-  patrolDuration: 2
+  patrolDuration: 2.5
   exsplosionObject: {fileID: 8244426446869345070, guid: 914e74782594ea749a6a3b0899c50d3f, type: 3}
 --- !u!50 &8043417446039910953
 Rigidbody2D:
