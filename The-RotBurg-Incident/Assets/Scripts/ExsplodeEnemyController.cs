@@ -89,7 +89,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
 
             case State.EnemyIgnite:
                 {
-                    moveSpeed = moveSpeed = 25f;
+                    moveSpeed = moveSpeed = 35f;
                     Vector2 targetDirection = ((Vector2)(player.position - transform.position)).normalized;
                     currentDirection.x = targetDirection.x;
                     Physics2D.IgnoreCollision(enemyCollider, playerCollider, true);
@@ -183,8 +183,11 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
 
     public void Stun()
     {
-        isStunned = true;
-        currentState = State.StunState;
+        if (currentState != State.EnemyIgnite)
+        {
+            isStunned = true;
+            currentState = State.StunState;
+        }
     }
 
     public void ExsplodeEnemy()
