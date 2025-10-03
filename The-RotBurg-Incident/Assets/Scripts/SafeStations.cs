@@ -19,20 +19,23 @@ public class SafeStations : MonoBehaviour
 
     private TextMeshProUGUI rechargeText;
 
+    private void Awake()
+    {
+        enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
+
+        if (enemySpawnerManager != null)
+        {
+            enemySpawnerManager.SpawnEnemies();
+        }
+    }
     private void Start()
     {
         hoverEffect.SetActive(false);
         playerController = FindAnyObjectByType<PlayerController>();
         gameManager = FindAnyObjectByType<GameManager>();
         health = FindAnyObjectByType<PlayerHealth>();
-        enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         GameObject textObject = GameObject.Find("PercentageText");
         rechargeText = textObject.GetComponent<TextMeshProUGUI>();
-
-        if (enemySpawnerManager != null)
-        {
-            enemySpawnerManager.SpawnEnemies();
-        }
     }
 
     private void Update()
