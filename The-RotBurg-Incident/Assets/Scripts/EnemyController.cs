@@ -12,11 +12,13 @@ public class EnemyController : MonoBehaviour, EnemyStunable
     private EnemyHealth health;
     private Collider2D collision;
 
-    bool facingRight = true;
-    bool hitWall = false;
     public bool isStunned;
     public float stunTimer;
     private float stunCountdown;
+
+    public float patrolDuration = 2f;
+    private float patrolTimer;
+    private bool patrolMovingRight = true;
 
     private Transform wallCheck;
     public LayerMask groundLayer;
@@ -36,36 +38,18 @@ public class EnemyController : MonoBehaviour, EnemyStunable
 
     private void Update()
     {
-        hitWall = Physics2D.OverlapCircle(wallCheck.position, 0.1f, groundLayer);
-
         if (!isStunned)
         {
             enemyAnim.SetBool("isStunned", false);
-            if (facingRight)
+            patrolTimer -= Time.deltaTime;
+
+            if (patrolTimer <= 0f)
             {
-                velocity.x = moveSpeed;
-            }
-            else
-            {
-                velocity.x = -moveSpeed;
+                patrolMovingRight = !patrolMovingRight;
+                patrolTimer = patrolDuration;
             }
 
-            if (hitWall && facingRight)
-            {
-                Vector3 localScale = transform.localScale;
-                localScale.x *= -1;
-                transform.localScale = localScale;
-
-                facingRight = false;
-            }
-            else if (hitWall && !facingRight)
-            {
-                Vector3 localScale = transform.localScale;
-                localScale.x *= -1;
-                transform.localScale = localScale;
-
-                facingRight = true;
-            }
+            velocity.x = patrolMovingRight ? 1f : -1f;
         }
         else
         {
@@ -83,7 +67,16 @@ public class EnemyController : MonoBehaviour, EnemyStunable
 
         if (health.currentHealth > 0)
         {
-            rb.velocity = velocity;
+            rb.velocity = velocity * moveSpeed;
+
+            if (velocity.x > 0)
+            {
+                spriteRenderer.flipX = false;
+            }
+            else if (velocity.x < 0)
+            {
+                spriteRenderer.flipX = true;
+            }
         }
         else
         {

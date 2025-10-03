@@ -7,6 +7,7 @@ public class EnemyHealth : MonoBehaviour
     public float health;
     public float currentHealth;
     private Animator anim;
+    private bool isDead = false;
 
     void Start()
     {
@@ -17,13 +18,14 @@ public class EnemyHealth : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (health < currentHealth)
+        if (health < currentHealth && !isDead)
         {
             currentHealth = health;
             anim.SetTrigger("Attacked");
         }
         if (health <= 0)
         {
+            isDead = true;
             anim.SetBool("IsDead", true);
         }
     }

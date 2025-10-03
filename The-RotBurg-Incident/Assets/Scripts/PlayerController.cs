@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Animator anim;
     GameManager manager;
+    private Vector2 respawnPoint;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
@@ -169,7 +170,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
     public void PlayerAttack()
     {
         Collider2D[] enemy = Physics2D.OverlapCircleAll(attackPosition.transform.position, attackRadius, enemies);
@@ -216,7 +216,7 @@ public class PlayerController : MonoBehaviour
         }
 
         arm.rotation = Quaternion.Euler(0f, 0f, lastAngle);
-
+        
         if (flipArmLeft)
         {
             if (lastAngle > 130 || lastAngle < -60)
@@ -265,4 +265,13 @@ public class PlayerController : MonoBehaviour
         canFlash = true;
     }
 
+    public void SetRespawnPoint(Vector2 point)
+    {
+        respawnPoint = point;
+    }
+
+    public void Respawn()
+    {
+        transform.position = respawnPoint;
+    }
 }

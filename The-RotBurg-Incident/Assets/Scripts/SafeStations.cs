@@ -10,12 +10,24 @@ public class SafeStations : MonoBehaviour
 
     private bool playerInRange = false;
     private bool isCharging = false;
+    public Transform spawnPoint;
+
+    private EnemySpawnerManager enemySpawnerManager;
     private PlayerController playerController;
     private GameManager gameManager;
     private PlayerHealth health;
 
     private TextMeshProUGUI rechargeText;
 
+    private void Awake()
+    {
+        enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
+
+        if (enemySpawnerManager != null)
+        {
+            enemySpawnerManager.SpawnEnemies();
+        }
+    }
     private void Start()
     {
         hoverEffect.SetActive(false);
@@ -32,6 +44,7 @@ public class SafeStations : MonoBehaviour
         {
             StartCharging();
             health.ResetHealthFull();
+            Debug.Log("ResetHealth");
         }
 
         if (isCharging)
@@ -75,8 +88,12 @@ public class SafeStations : MonoBehaviour
         if (playerController != null)
         {
             playerController.isSitting = true;
+            playerController.SetRespawnPoint(spawnPoint.position);
         }
-        Debug.Log("Player is sitting at the save station.");
+        if (enemySpawnerManager != null)
+        {
+            enemySpawnerManager.SpawnEnemies();
+        }
     }
 
     private void StopCharging()
