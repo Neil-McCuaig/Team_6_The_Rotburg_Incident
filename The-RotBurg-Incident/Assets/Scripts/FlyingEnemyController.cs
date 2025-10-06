@@ -29,7 +29,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
     private float stunCountdown;
     public bool isDead = false;
 
-    private enum State { HoveringIdle, ChasePlayer, StunState, EnemyDeath}
+    private enum State { HoveringIdle, ChasePlayer, StunState, EnemyDeath }
     private State currentState = State.HoveringIdle;
 
     private Rigidbody2D rb;

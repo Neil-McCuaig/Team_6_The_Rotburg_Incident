@@ -92,9 +92,6 @@ public class PlayerController : MonoBehaviour
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
-
-
-        fader.FadeIn();
     }
 
     void OnEnable()

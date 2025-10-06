@@ -10,7 +10,13 @@ public class FadeToBlack : MonoBehaviour
     public float fadeDuration = 1f;    
 
     public void FadeIn() => StartCoroutine(Fade(1f, 0f)); 
-    public void FadeOut() => StartCoroutine(Fade(0f, 1f)); 
+    public void FadeOut() => StartCoroutine(Fade(0f, 1f));
+
+    private void Awake()
+    {
+        gameObject.SetActive(true);
+        FadeIn();
+    }
 
     private IEnumerator Fade(float from, float to)
     {
