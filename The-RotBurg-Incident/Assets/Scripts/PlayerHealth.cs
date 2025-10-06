@@ -38,9 +38,7 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            playerController.Respawn();
-            enemySpawnerManager.SpawnEnemies();
-            ResetHealthFull();
+            playerController.Die();
         }
         else
         {

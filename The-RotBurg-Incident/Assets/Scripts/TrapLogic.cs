@@ -43,8 +43,6 @@ public class TrapLogic : MonoBehaviour
             FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
             //fade.GetComponent<FadeToBlack>.FadeIn;
 
-            fade.FadeInObject();
-
             other.transform.position = new Vector2(destination.position.x, destination.position.y);
         }
     }
