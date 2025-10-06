@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,8 +10,14 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     public SpriteRenderer spriteRenderer;
     public Animator anim;
+    private Collider2D collision;
     GameManager manager;
+    FadeToBlack fader;
+    PlayerHealth health;
+    EnemySpawnerManager enemySpawnerManager;
     private Vector2 respawnPoint;
+    private bool isDead;
+    public float deathFadeDelay = 1f;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
@@ -80,7 +87,14 @@ public class PlayerController : MonoBehaviour
         aimAction = playerActions.FindAction("AimDirection");
         flashAction = playerActions.FindAction("ActionFlash");
 
+        health = FindAnyObjectByType<PlayerHealth>();
         manager = FindAnyObjectByType<GameManager>();
+        fader = FindAnyObjectByType<FadeToBlack>();
+        enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
+        collision = GetComponent<Collider2D>();
+
+
+        fader.FadeIn();
     }
 
     void OnEnable()
@@ -105,7 +119,7 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
-        if (!isSitting)
+        if (!isSitting && !isDead) 
         { 
             CheckInput();
             AimingDirection();
@@ -114,7 +128,14 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        HandleMovement();
+        if (!isDead)
+        {
+            HandleMovement();
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;
+        }
     }
 
     void CheckInput()
@@ -273,5 +294,35 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         transform.position = respawnPoint;
+        health.ResetHealthFull();
+    }
+
+    public void Die()
+    {
+        isDead = true;
+        collision.enabled = false;
+
+        anim.SetBool("IsDead", true);
+
+        StartCoroutine(HandleDeathFadeOut());
+    }
+
+    private IEnumerator HandleDeathFadeOut()
+    {
+        yield return new WaitForSeconds(deathFadeDelay);
+
+        fader.FadeOut();
+        StartCoroutine(HandleDeathFadeIn());
+    }
+    private IEnumerator HandleDeathFadeIn()
+    {
+        yield return new WaitForSeconds(deathFadeDelay);
+
+        isDead = false;
+        collision.enabled = true;
+        enemySpawnerManager.SpawnEnemies();
+        Respawn();
+        anim.SetBool("IsDead", false);
+        fader.FadeIn();
     }
 }

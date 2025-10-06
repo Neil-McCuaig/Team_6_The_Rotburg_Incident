@@ -6,104 +6,25 @@ using UnityEngine.UI;
 
 public class FadeToBlack : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public Image fadeImage;            
+    public float fadeDuration = 1f;    
 
-    //Need to find a command to set the referenced object of fadeToBlack at the start of the game's runtime,
-    //otherwise it will be a pain of going back and forth checking that every trap has it added to it.
-    //public Material fadeToBlack;
+    public void FadeIn() => StartCoroutine(Fade(1f, 0f)); 
+    public void FadeOut() => StartCoroutine(Fade(0f, 1f)); 
 
-    //[Range(0f, 1f)] public float alpha = 0f;
-
-    //public SpriteRenderer fadeRender;
-
-    public bool FadeIn, FadeOut;
-
-    public float fadeSpeed;
-    void Start()
+    private IEnumerator Fade(float from, float to)
     {
+        float t = 0f;
+        Color color = fadeImage.color;
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-        //Maybe swich it from If to While?
-        if (FadeIn == true)
+        while (t < fadeDuration)
         {
-            Debug.Log("Processing Fade In");
-            //This should a this.GetComponent<Image> instead of this.GetComponent<Renderer>. Fix later: https://discover.hubpages.com/technology/How-to-Fade-to-Black-in-Unity
-            //Previously it was .material.color
-            Color objectColor = this.GetComponent<Image>().color;
-            float fadeAmount = objectColor.a - (fadeSpeed * Time.deltaTime);
-
-            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            this.GetComponent<Image>().color = objectColor;
-
-            if (objectColor.a >= fadeAmount)
-            {
-                FadeIn = false;
-                FadeOutObject();
-            }
+            t += Time.deltaTime;
+            float alpha = Mathf.Lerp(from, to, t / fadeDuration);
+            fadeImage.color = new Color(color.r, color.g, color.b, alpha);
+            yield return null;
         }
 
-        if (FadeOut == true) 
-        {
-            Color objectColor = this.GetComponent<Image>().color;
-            float fadeAmount = objectColor.a - (fadeSpeed * Time.deltaTime);
-
-            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            this.GetComponent<Image>().color = objectColor;
-
-            if (objectColor.a <= fadeAmount) 
-            {
-                FadeOut = false;
-            }
-        }
-    }
-
-    //IEnumerator FadeIn()
-    //{
-        //float elapsed = 0f;
-        //Color originalColor = fadeRender.color;
-
-        //while (elapsed < 0.75f)
-        //{
-            //float alpha = Mathf.Lerp(1f, 0f, elapsed / 1f);
-            //fadeRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-            //elapsed += Time.deltaTime;
-            //yield return null;
-        //}
-        
-        //fadeRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
-
-    //}
-
-    //IEnumerator FadeOut()
-    //{
-        //float elapsed = 0f;
-        //Color originalColor = fadeRender.color;
-
-        //while (elapsed < 0.75f)
-        //{
-            //float alpha = Mathf.Lerp(1f, 0f, elapsed / 1f);
-            //fadeRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-            //elapsed += Time.deltaTime;
-            //yield return null;
-        //}
-
-        //fadeRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
-
-    //}
-
-    public void FadeInObject()
-    {
-        FadeIn = true;
-        Debug.Log("Fade In!");
-    }
-
-    public void FadeOutObject()
-    {
-        FadeOut = true;
+        fadeImage.color = new Color(color.r, color.g, color.b, to);
     }
 }

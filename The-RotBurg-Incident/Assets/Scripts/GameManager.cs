@@ -62,15 +62,14 @@ public class GameManager : MonoBehaviour
 
     void OnEnable()
     {
-        Inventory.OnItemAdded += CheckForItem; // Subscribe to the event
+        Inventory.OnItemAdded += CheckForItem; 
     }
 
     void OnDisable()
     {
-        Inventory.OnItemAdded -= CheckForItem; // Unsubscribe to avoid memory leaks
+        Inventory.OnItemAdded -= CheckForItem; 
     }
 
-    // Check if the required item was added
     private void CheckForItem(string itemName)
     {
         if (itemName == powerUp1)
