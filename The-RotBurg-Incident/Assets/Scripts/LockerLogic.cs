@@ -30,6 +30,7 @@ public class LockerLogic : MonoBehaviour
         }
         if (inLocker)
         {
+            Debug.Log("Player has hidden inside the locker.");
             playerController.isHiding = true;
 
             if (playerController.moveInput.x != 0)
