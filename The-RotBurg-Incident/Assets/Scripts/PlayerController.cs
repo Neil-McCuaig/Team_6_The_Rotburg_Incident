@@ -85,6 +85,9 @@ public class PlayerController : MonoBehaviour
     public bool hasDoubleJump = false;
     private int numOfJumps = 2;
 
+    [Header("Locker")]
+    public bool isHiding = false;
+
     private void Awake()
     {
         var playerActions = inputActions.FindActionMap("BaseGameplay");

@@ -23,6 +23,8 @@ public class EnemyController : MonoBehaviour, EnemyStunable
     private Transform wallCheck;
     public LayerMask groundLayer;
 
+    private PlayerController playerController;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -93,7 +95,7 @@ public class EnemyController : MonoBehaviour, EnemyStunable
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") && playerController.isHiding == false)
         {
             FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
         }
