@@ -37,12 +37,21 @@ public class PlayerController : MonoBehaviour
     public float gravityScale = 3f;
     public float terminalVelocity = -15f;
     public bool isSitting = false;
+    private bool cutJump = false;
+    public float jumpCutMultiplier = 0.5f;
+    public float coyoteTime = 0.2f;
+    private float coyoteTimeCounter;
 
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 1f;
     public LayerMask groundLayer;
     private bool isGrounded;
+
+    [Header("Ceiling Check")]
+    public Transform ceilingCheck;
+    public float ceilingCheckRadius = 0.1f;
+    private bool isTouchingCeiling;
 
     [Header("Arm Aiming")]
     public Transform arm;
@@ -75,8 +84,6 @@ public class PlayerController : MonoBehaviour
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
     private int numOfJumps = 2;
-
-
 
     private void Awake()
     {
@@ -137,33 +144,50 @@ public class PlayerController : MonoBehaviour
 
     void CheckInput()
     {
-        // Ground check
+        isTouchingCeiling = Physics2D.OverlapCircle(ceilingCheck.position, ceilingCheckRadius, groundLayer);
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+        if (isGrounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+
         if (!hasDoubleJump)
         {
-            // Jump
-            if (jumpAction.WasPressedThisFrame() && isGrounded)
+            if (jumpAction.WasPressedThisFrame() && coyoteTimeCounter > 0f)
             {
                 velocity.y = jumpForce;
+                coyoteTimeCounter = 0f; 
             }
         }
         else
         {
-            // Jump
-            if (jumpAction.WasPressedThisFrame() && isGrounded)
+            if (jumpAction.WasPressedThisFrame() && (isGrounded || coyoteTimeCounter > 0f))
             {
                 velocity.y = jumpForce;
                 numOfJumps--;
+                coyoteTimeCounter = 0f;
             }
-            if (jumpAction.WasPressedThisFrame() && !isGrounded && numOfJumps != 0)
+            else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && !isGrounded)
             {
                 velocity.y = jumpForce / 1.4f;
                 numOfJumps = 0;
             }
-            else if (isGrounded)
+
+            if (isGrounded)
             {
                 numOfJumps = 2;
             }
+        }
+
+        if (jumpAction.WasReleasedThisFrame() && rb.velocity.y > 0f)
+        {
+            cutJump = true;
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * jumpCutMultiplier);
         }
 
         if (moveInput.x > 0)
@@ -212,21 +236,34 @@ public class PlayerController : MonoBehaviour
 
         if (!isGrounded || velocity.y > 0)
         {
-            velocity.y += Physics2D.gravity.y * gravityScale * Time.fixedDeltaTime;
-            velocity.y = Mathf.Max(velocity.y, terminalVelocity);
+            if (isTouchingCeiling && velocity.y > 0f)
+            {
+                velocity.y = -2f; 
+            }
+            else
+            {
+                velocity.y += Physics2D.gravity.y * gravityScale * Time.fixedDeltaTime;
+
+                if (cutJump && velocity.y > 0)
+                {
+                    velocity.y *= jumpCutMultiplier;
+                    cutJump = false;
+                }
+
+                velocity.y = Mathf.Max(velocity.y, terminalVelocity);
+            }
         }
         else
         {
             velocity.y = 0f;
         }
-
         rb.velocity = velocity;
     }
 
     void AimingDirection()
     {
         aimInput = aimAction.ReadValue<Vector2>();
-
+        Debug.Log(aimInput);
         if (aimInput.sqrMagnitude > 0.01f)
         {
             lastAimDirection = aimInput.normalized;

@@ -120,17 +120,6 @@
                 },
                 {
                     "name": "",
-                    "id": "9a7cacbb-af45-4068-ac8c-10b694972d68",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard And Mouse",
-                    "action": "AimDirection",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "9b279316-d27e-42df-9a81-60668b02bca0",
                     "path": "<Gamepad>/buttonWest",
                     "interactions": "",
