@@ -40,6 +40,8 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
     private Collider2D enemyCollider;
     private Collider2D playerCollider;
 
+    private PlayerController playerController;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -61,7 +63,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
             case State.HoveringIdle:
             {
                 Hover();
-                if(CanSeePlayer())
+                if(CanSeePlayer() && playerController.isHiding == false)
                 {
                     currentState = State.ChasePlayer;
                 }
