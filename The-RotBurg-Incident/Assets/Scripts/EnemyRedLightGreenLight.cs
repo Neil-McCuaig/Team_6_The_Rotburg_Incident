@@ -8,12 +8,14 @@ public class EnemyRedLightGreenLight : MonoBehaviour
     public float currentPhaseTimer = 0f;
     public DomainZoneLogic DomainZone;
     private PlayerController playerController;
+    public Light lightColor;
 
     // Start is called before the first frame update
     void Start()
     {
         playerController = FindAnyObjectByType<PlayerController>();
         DomainZone = FindAnyObjectByType<DomainZoneLogic>();
+        lightColor = GetComponent<Light>();
     }
 
     // Update is called once per frame
