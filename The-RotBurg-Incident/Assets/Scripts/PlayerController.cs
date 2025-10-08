@@ -266,7 +266,7 @@ public class PlayerController : MonoBehaviour
     void AimingDirection()
     {
         aimInput = aimAction.ReadValue<Vector2>();
-        Debug.Log(aimInput);
+        //Debug.Log(aimInput);
         if (aimInput.sqrMagnitude > 0.01f)
         {
             lastAimDirection = aimInput.normalized;

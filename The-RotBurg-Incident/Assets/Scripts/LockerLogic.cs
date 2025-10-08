@@ -40,6 +40,28 @@ public class LockerLogic : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = true;
+            hoverEffect.SetActive(true);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = false;
+            hoverEffect.SetActive(false);
+            if (inLocker)
+            {
+                StopHiding();
+            }
+        }
+    }
+
     private void StartHiding()
     {
         inLocker = true;

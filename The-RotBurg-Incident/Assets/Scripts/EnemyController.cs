@@ -36,6 +36,8 @@ public class EnemyController : MonoBehaviour, EnemyStunable
 
         isStunned = false;
         stunCountdown = stunTimer;
+
+        playerController = FindAnyObjectByType<PlayerController>();
     }
 
     private void Update()

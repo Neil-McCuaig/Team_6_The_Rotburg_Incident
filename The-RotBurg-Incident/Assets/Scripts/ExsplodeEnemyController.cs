@@ -50,6 +50,8 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
         playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<Collider2D>();
 
         stunCountdown = stunTimer;
+
+        playerController = FindAnyObjectByType<PlayerController>();
     }
 
 

@@ -54,6 +54,8 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
 
         idleStartPos = transform.position;
         stunCountdown = stunTimer;
+
+        playerController = FindAnyObjectByType<PlayerController>();
     }
 
     void Update()
