@@ -8,7 +8,14 @@ public class EnemyRedLightGreenLight : MonoBehaviour
     public float currentPhaseTimer = 0f;
     public DomainZoneLogic DomainZone;
     private PlayerController playerController;
+    
+    //Colors
     public Light lightColor;
+    Color Sleeping = Color.black;
+    Color Go = Color.green;
+    Color Hide = Color.yellow;
+    Color Attack = Color.red;
+
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +44,8 @@ public class EnemyRedLightGreenLight : MonoBehaviour
             currentPhaseTimer = maxPhaseTimer;
             currentPhaseTimer -= Time.deltaTime;
 
+            lightColor.color = Sleeping;
+
             if (currentPhaseTimer < 0f && playerController.inLocker == false)
             {
                 PhaseGreen();
@@ -49,6 +58,7 @@ public class EnemyRedLightGreenLight : MonoBehaviour
         maxPhaseTimer = 5f;
         currentPhaseTimer = maxPhaseTimer;
         currentPhaseTimer -= Time.deltaTime;
+        lightColor.color = Go;
 
         if (currentPhaseTimer < 0f && playerController.inLocker == false)
         {
@@ -61,6 +71,7 @@ public class EnemyRedLightGreenLight : MonoBehaviour
         maxPhaseTimer = 5f;
         currentPhaseTimer = maxPhaseTimer;
         currentPhaseTimer -= Time.deltaTime;
+        lightColor.color = Hide;
 
         if (currentPhaseTimer < 0f && playerController.inLocker == false)
         {
@@ -78,6 +89,8 @@ public class EnemyRedLightGreenLight : MonoBehaviour
         maxPhaseTimer = 5f;
         currentPhaseTimer = maxPhaseTimer;
         currentPhaseTimer -= Time.deltaTime;
+        lightColor.color = Attack;
+
         if (currentPhaseTimer < 0f && playerController.inLocker == true)
         {
             SleepPhase();
