@@ -158,8 +158,9 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
         }
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, viewDistance, playerMask);
-        if (hit.collider != null && hit.collider.transform == player && playerController.isHiding == false)
+        if (hit.collider != null && hit.collider.transform == player)
         {
+            //&& playerController.isHiding == false
             return true;
         }
         else
@@ -183,8 +184,9 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Player") && playerController.isHiding == false)
+        if (other.gameObject.CompareTag("Player"))
         {
+            //&& playerController.isHiding == false
             currentState = State.EnemyIgnite;
             anim.SetBool("IsDead", true);
         }

@@ -65,8 +65,9 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
             case State.HoveringIdle:
             {
                 Hover();
-                if(CanSeePlayer() && playerController.isHiding == false)
+                if(CanSeePlayer())
                 {
+                    //&& playerController.isHiding == false
                     currentState = State.ChasePlayer;
                 }
 
