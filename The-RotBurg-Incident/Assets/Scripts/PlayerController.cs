@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Components")]
+    [Header("References")]
     public Rigidbody2D rb;
     public SpriteRenderer spriteRenderer;
     public Animator anim;
@@ -15,9 +15,13 @@ public class PlayerController : MonoBehaviour
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
+
+    [Header("Player Checks")]
     private Vector2 respawnPoint;
     private bool isDead;
     public float deathFadeDelay = 1f;
+    public bool isSitting = false;
+    public bool inLocker = false;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
@@ -33,10 +37,11 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public Vector2 moveInput;
     private Vector2 velocity;
+
+    [Header("Jumping")]
     public float jumpForce = 10f;
     public float gravityScale = 3f;
     public float terminalVelocity = -15f;
-    public bool isSitting = false;
     private bool cutJump = false;
     public float jumpCutMultiplier = 0.5f;
     public float coyoteTime = 0.2f;
@@ -63,7 +68,7 @@ public class PlayerController : MonoBehaviour
     public bool flipArmLeft = true;
     public SpriteRenderer armRender;
 
-    [Header("Flash References")]
+    [Header("Stun-Ability Settings")]
     public float drainAmount;
     public GameObject stunEffect;
     public Transform cameraFlash;
@@ -84,9 +89,6 @@ public class PlayerController : MonoBehaviour
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
     private int numOfJumps = 2;
-
-    [Header("Locker")]
-    public bool isHiding = false;
 
     private void Awake()
     {
@@ -126,7 +128,7 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
-        if (!isSitting && !isDead) 
+        if (!isSitting && !isDead && !inLocker) 
         { 
             CheckInput();
             AimingDirection();
@@ -135,7 +137,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDead)
+        if (!isDead && !inLocker)
         {
             HandleMovement();
         }
@@ -161,10 +163,10 @@ public class PlayerController : MonoBehaviour
 
         if (!hasDoubleJump)
         {
-            if (jumpAction.WasPressedThisFrame() && coyoteTimeCounter > 0f)
+            if (jumpAction.WasPressedThisFrame() && isGrounded && coyoteTimeCounter > 0f)
             {
                 velocity.y = jumpForce;
-                coyoteTimeCounter = 0f; 
+                coyoteTimeCounter = 0f;
             }
         }
         else
@@ -177,7 +179,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && !isGrounded)
             {
-                velocity.y = jumpForce / 1.4f;
+                velocity.y = jumpForce / 1.2f;
                 numOfJumps = 0;
             }
 
@@ -266,7 +268,6 @@ public class PlayerController : MonoBehaviour
     void AimingDirection()
     {
         aimInput = aimAction.ReadValue<Vector2>();
-        //Debug.Log(aimInput);
         if (aimInput.sqrMagnitude > 0.01f)
         {
             lastAimDirection = aimInput.normalized;
