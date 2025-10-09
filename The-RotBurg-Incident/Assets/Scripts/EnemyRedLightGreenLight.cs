@@ -22,6 +22,8 @@ public class EnemyRedLightGreenLight : MonoBehaviour
     Color Hide = Color.yellow;
     Color Attack = Color.red;
 
+    public int currentPhaseCount;
+
     public bool Active = false;
 
     // Start is called before the first frame update
@@ -34,43 +36,50 @@ public class EnemyRedLightGreenLight : MonoBehaviour
 
         maxPhaseTimer = 5f;
         currentPhaseTimer = maxPhaseTimer;
+
+        currentPhaseCount = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (DomainZone.playerInDomain == true && Active == false)
+        if (DomainZone.playerInDomain == true && Active == false && currentPhaseCount == 0)
         {
-            //These being here was not working?
-            //maxPhaseTimer = 5f;
-            //currentPhaseTimer = maxPhaseTimer;
             SleepPhase();
             Active = true;
-            Debug.Log("Is it looping in Update");
-
-            //Just sets it to 0 and goes instandly negative, if you have the maxPhaseTime and currentPhaseTime set to 5 or no.
-            //while (currentPhaseTimer > 0f) 
-            //{
-            //currentPhaseTimer -= Time.deltaTime;
-            //}
-
-            //Tried this as a while, it instantly sets it to 0. As an if, only goes for 1 tick.
-            //while (currentPhaseTimer > 0f) 
-            //{
-            //currentPhaseTimer = currentPhaseTimer -= Time.deltaTime;
-            //}
-
-            //This sets it back to 5 and it never lowers below like 4.7
-            //currentPhaseTimer = currentPhaseTimer -= Time.deltaTime;
-
-            //currentPhaseTimer -= Time.deltaTime;
+            //Debug.Log("Is it looping in Update");
+        }
+        if (DomainZone.playerInDomain == true && Active == true && currentPhaseCount == 1 && currentPhaseTimer <= 0f) 
+        {
+            PhaseGreen();
+        }
+        if (DomainZone.playerInDomain == true && Active == true && currentPhaseCount == 2 && currentPhaseTimer <= 0f)
+        {
+            PhaseYellow();
+        }
+        if (DomainZone.playerInDomain == true && Active == true && currentPhaseCount == 3 && currentPhaseTimer <= 0f)
+        {
+            PhaseRed();
+        }
+        //Do we want it to count down again here, or just have a check of "Oh. Player is in locker. Back to bed."
+        if (DomainZone.playerInDomain == true && Active == true && currentPhaseCount == 4 && currentPhaseTimer <= 0f && playerController.inLocker == true)
+        {
+            SleepPhase();
+        }
+        if (DomainZone.playerInDomain == true && Active == true && currentPhaseCount == 4 && currentPhaseTimer <= 0f && playerController.inLocker == false)
+        {
+            AttackPhase();
         }
         if (DomainZone.playerInDomain == false && Active == true)
         {
             Active = false;
+            currentPhaseCount = 0;
+            maxPhaseTimer = 5f;
+            currentPhaseTimer = maxPhaseTimer;
         }
 
-        //This is the working version. Nothing else works.
+        //This is the working version. Nothing else works. Probably just replace it with an IEnumerator like Parker suggested, namely:
+        //StartCoroutine(StartTimer()); IEnumerator StartTimer() { startTimer = true; yield return new WaitForSeconds(3f); startTimer = false;}
         if (DomainZone.playerInDomain == true && currentPhaseTimer > 0f)
         {
            currentPhaseTimer -= Time.deltaTime;
@@ -79,65 +88,60 @@ public class EnemyRedLightGreenLight : MonoBehaviour
 
     private void SleepPhase()
     {
-        //MaxPhaseTimer should be randomized here, and every time it gets called for a new phase, at random, in a small range.
+        //MaxPhaseTimer should be randomized, and every time it gets called for a new phase, at random, in a small range.
         //Leave the player guessing a bit. Just doing it as 5 so I can process with other code for the moment.
         maxPhaseTimer = 5f;
         currentPhaseTimer = maxPhaseTimer;
-        Debug.Log("Is it looping in SleepPhase");
+        lt.color = Sleeping;
+        currentPhaseCount = 1;
 
-        //Maybe change some of these to a "While" or otherwise add some sort of a cutoff for if the player just leaves in the middle of
-        //a phase?
-        if (DomainZone.playerInDomain == true)
-        {
-            //MaxPhase, CurrentPhase = maxphase, and currentphase -= Time.deltaTime were all here. The first two worked,
-            //the last one only went for a tick. Going to try to make it a while loop.
-            //currentPhaseTimer -= Time.deltaTime;
+        //Need to figure out a cutoff for if the player just leaves in the middle of a phase?
+        //if (DomainZone.playerInDomain == true)
+        //{
+            //Debug.Log("Is it looping in the If");
 
-            Debug.Log("Is it looping in the If");
 
-            lt.color = Sleeping;
 
-            //This didn't work. Try putting it in update and then seeing if that breaks anything across the different Phases
-            //while (currentPhaseTimer > 0f)
+            //These need to be ported up into Update, they don't get checked every frame and that is the problem.
+            //if (currentPhaseTimer <= 0f && playerController.inLocker == false)
             //{
-                //currentPhaseTimer -= Time.deltaTime;
+                //PhaseGreen();
             //}
-
-            if (currentPhaseTimer <= 0f && playerController.inLocker == false)
-            {
-                PhaseGreen();
-            }
-        }
+        //}
     }
 
     private void PhaseGreen() 
     {
         maxPhaseTimer = 5f;
         currentPhaseTimer = maxPhaseTimer;
-        currentPhaseTimer -= Time.deltaTime;
         lt.color = Go;
+        currentPhaseCount = 2;
 
-        if (currentPhaseTimer < 0f && playerController.inLocker == false)
-        {
-            PhaseYellow();
-        }
+        //if (currentPhaseTimer < 0f && playerController.inLocker == false)
+        //{
+            //PhaseYellow();
+        //}
     }
 
     private void PhaseYellow()
     {
         maxPhaseTimer = 5f;
         currentPhaseTimer = maxPhaseTimer;
-        currentPhaseTimer -= Time.deltaTime;
         lt.color = Hide;
+        currentPhaseCount = 3;
 
-        if (currentPhaseTimer < 0f && playerController.inLocker == false)
-        {
-            PhaseRed();
-        }
-        //Originally put this here. Maybe it would work better is phase red?
+        //if (currentPhaseTimer < 0f && playerController.inLocker == false)
+        //{
+        //PhaseRed();
+        //}
+
+
+        //Originally put this here. Maybe it would work better in phase red? It's for if the player does hide in the locker. Do we want it
+        //To reach Phase Red and you have to keep hiding through it, or do we want it to just check "it's Phase Yellow, their Hidden, back
+        //to sleep"
         //else if (currentPhaseTimer < 0f && playerController.inLocker == true)
         //{
-            //SleepPhase();
+        //SleepPhase();
         //}
     }
 
@@ -145,21 +149,22 @@ public class EnemyRedLightGreenLight : MonoBehaviour
     {
         maxPhaseTimer = 5f;
         currentPhaseTimer = maxPhaseTimer;
-        currentPhaseTimer -= Time.deltaTime;
         lt.color = Attack;
+        currentPhaseCount = 4;
 
-        if (currentPhaseTimer < 0f && playerController.inLocker == true)
-        {
-            SleepPhase();
-        }
-        else if (currentPhaseTimer < 0f && playerController.inLocker == false)
-        {
-            AttackPhase();
-        }
+        //if (currentPhaseTimer < 0f && playerController.inLocker == true)
+        //{
+        //SleepPhase();
+        //}
+        //else if (currentPhaseTimer < 0f && playerController.inLocker == false)
+        //{
+        //AttackPhase();
+        //}
     }
 
     private void AttackPhase()
     {
-
+        //Insert Parker's attack code here. Also will need some way to reset the whole thing.
+        Debug.Log("Attacking now!");
     }
 }
