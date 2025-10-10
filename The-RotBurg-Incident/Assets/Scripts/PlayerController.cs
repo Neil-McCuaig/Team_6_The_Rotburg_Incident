@@ -336,6 +336,7 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         transform.position = respawnPoint;
+        armRender.enabled = true;
         health.ResetHealthFull();
     }
 
@@ -343,7 +344,7 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
         collision.enabled = false;
-
+        armRender.enabled = false;
         anim.SetBool("IsDead", true);
 
         StartCoroutine(HandleDeathFadeOut());
