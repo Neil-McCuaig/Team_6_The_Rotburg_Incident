@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dce91af0f2e7c54ba0f806668cf4a6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  greenLightDuration: 2
+  greenLightDuration: 20
   yellowLightDuration: 5
   orbitRadius: 20
   orbitSpeed: 300

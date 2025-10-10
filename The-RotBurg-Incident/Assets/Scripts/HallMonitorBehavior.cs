@@ -76,6 +76,7 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
         {
             case State.GreenLight:
             {
+                anim.SetBool("IsClosed", true);
                 lt.color = Go;
                 if (!greenLightBegun)
                 {
@@ -92,6 +93,7 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
             }
             case State.YellowLight:
             {
+                anim.SetBool("IsClosed", true);
                 lt.color = Hide;
                 if (!yellowLightBegun)
                 {
@@ -109,17 +111,15 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
             case State.RedLight:
             {
                 lt.color = Attack;
-                if (isStunned)
-                {
-                    currentState = State.GreenLight;
-                }
-
                 if (isOrbiting)
                 {
                     anim.SetBool("IsClosed", true);
                     OrbitAroundPlayer();
                     orbitTimer -= Time.deltaTime;
-
+                    if(playerController.inLocker == false)
+                    {
+                        playerCaught = true;
+                    }
                     if (orbitTimer <= 0f)
                     {
                         if (playerCaught)
@@ -129,7 +129,6 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
                         }
                         else
                         {
-                            currentState = State.GreenLight;
                             playerCaught = false;
                             ResetOrbit();
                         }
@@ -224,6 +223,8 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     {
         isStunned = false;
         anim.SetBool("IsStunned", false);
+        ResetOrbit();
+        currentState = State.GreenLight;
     }
 
     void ResetOrbit()
