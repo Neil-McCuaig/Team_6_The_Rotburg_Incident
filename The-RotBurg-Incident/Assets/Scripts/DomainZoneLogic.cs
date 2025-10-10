@@ -13,6 +13,14 @@ public class DomainZoneLogic : MonoBehaviour
         playerController = FindAnyObjectByType<PlayerController>();
     }
 
+    private void Update()
+    {
+        if(playerController.isDead)
+        {
+            playerInDomain = false;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))

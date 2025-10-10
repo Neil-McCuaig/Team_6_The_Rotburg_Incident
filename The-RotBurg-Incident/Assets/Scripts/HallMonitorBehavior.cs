@@ -131,6 +131,7 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
                         {
                             playerCaught = false;
                             ResetOrbit();
+                            currentState = State.GreenLight;
                         }
                     }
                 }

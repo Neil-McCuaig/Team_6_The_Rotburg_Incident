@@ -67,7 +67,6 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
                 Hover();
                 if(CanSeePlayer())
                 {
-                    //&& playerController.isHiding == false
                     currentState = State.ChasePlayer;
                 }
 
@@ -78,7 +77,10 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
             { 
                 Vector2 targetDirection = ((Vector2)(player.position - transform.position)).normalized;
                 currentDirection = targetDirection;
-
+                if (!CanSeePlayer())
+                {
+                    currentState = State.HoveringIdle;
+                }
                 break;
             }
 

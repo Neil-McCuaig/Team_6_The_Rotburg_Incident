@@ -1,6 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using UnityEngine.Rendering.Universal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player Checks")]
     private Vector2 respawnPoint;
-    private bool isDead;
+    public bool isDead;
     public float deathFadeDelay = 1f;
     public bool isSitting = false;
     public bool inLocker = false;
@@ -74,6 +73,9 @@ public class PlayerController : MonoBehaviour
     public Transform cameraFlash;
     public Transform flashLeft;
     public Transform flashRight;
+    public Transform lightLeft;
+    public Transform lightRight;
+    public Light2D flashLight;
     public bool canFlash = true;
     public bool batteryDead;
     public SpriteRenderer effectRender;
@@ -278,15 +280,17 @@ public class PlayerController : MonoBehaviour
         
         if (flipArmLeft)
         {
-            if (lastAngle > 130 || lastAngle < -60)
+            if (lastAngle > 90 || lastAngle < -90)
             {
                 armRender.flipY = true;
                 cameraFlash.position = flashLeft.position;
+                flashLight.transform.position = lightLeft.position;
             }
             else
             {
                 armRender.flipY = false;
                 cameraFlash.position = flashRight.position;
+                flashLight.transform.position = lightRight.position;
             }
         }
 

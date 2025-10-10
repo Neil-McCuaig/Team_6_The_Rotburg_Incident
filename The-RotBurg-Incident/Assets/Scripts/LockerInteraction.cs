@@ -8,6 +8,7 @@ public class LockerInteraction : MonoBehaviour
     private bool playerInside = false;
     PlayerController playerController;
     private GameObject player;
+    PlayerHealth health;
     private GameObject arm;
     private SpriteRenderer playerSprite;
     private Rigidbody2D playerRb;
@@ -17,6 +18,7 @@ public class LockerInteraction : MonoBehaviour
     {
         playerController = FindAnyObjectByType<PlayerController>();
         player = GameObject.Find("Player");
+        health = player.GetComponent<PlayerHealth>();
         arm = GameObject.Find("Arm");
         anim = GetComponent<Animator>();
     }
@@ -60,6 +62,11 @@ public class LockerInteraction : MonoBehaviour
         playerRb.simulated = false;
         playerSprite.enabled = false;
         player.transform.position = transform.position;
+
+        if (health.currentHealth <= 0)
+        {
+            ExitLocker();
+        }
     }
 
     private void ExitLocker()
