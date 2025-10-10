@@ -6,17 +6,11 @@ using UnityEngine;
 public class DomainZoneLogic : MonoBehaviour
 {
     public bool playerInDomain = false;
+    PlayerController playerController;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        playerController = FindAnyObjectByType<PlayerController>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -31,7 +25,14 @@ public class DomainZoneLogic : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerInDomain = false;
+            if (playerController != null && playerController.inLocker == false)
+            {
+                playerInDomain = false;
+            }
+            else
+            {
+                return;
+            }
         }
     }
 }
