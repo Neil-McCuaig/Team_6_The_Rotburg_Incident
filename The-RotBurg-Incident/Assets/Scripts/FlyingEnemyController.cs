@@ -108,7 +108,6 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
                 break;
             }
         }
-
         if (health.currentHealth > 0)
         {
             if (currentDirection.x > 0)

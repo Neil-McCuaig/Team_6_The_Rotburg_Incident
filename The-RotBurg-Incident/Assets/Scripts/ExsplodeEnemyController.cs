@@ -36,7 +36,6 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
     private Collider2D playerCollider;
     public GameObject exsplosionObject;
 
-    //Used for the locker at the moment.
     private PlayerController playerController;
 
     void Start()
@@ -160,7 +159,6 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
         RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, viewDistance, playerMask);
         if (hit.collider != null && hit.collider.transform == player)
         {
-            //&& playerController.isHiding == false
             return true;
         }
         else
@@ -186,7 +184,6 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            //&& playerController.isHiding == false
             currentState = State.EnemyIgnite;
             anim.SetBool("IsDead", true);
         }
