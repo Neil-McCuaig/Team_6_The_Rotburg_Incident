@@ -18,6 +18,7 @@ public class SafeStations : MonoBehaviour
     private PlayerHealth health;
 
     private TextMeshProUGUI rechargeText;
+    [SerializeField] private AudioClip rechargeSound;
 
     private void Awake()
     {
@@ -42,6 +43,7 @@ public class SafeStations : MonoBehaviour
     {
         if (playerInRange && !isCharging && playerController.attackAction.WasPressedThisFrame())
         {
+            SoundManager.instance.PlaySound(rechargeSound);
             StartCharging();
             health.ResetHealthFull();
             Debug.Log("ResetHealth");

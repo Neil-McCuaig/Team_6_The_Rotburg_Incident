@@ -3,24 +3,37 @@ using UnityEngine;
 
 public class JumpingEnemyController : MonoBehaviour, EnemyStunable
 {
+    [Header("Movement Settings")]
+    public float moveSpeed = 3f;
+    public float jumpForceX = 5f;
+    public float jumpForceY = 8f;
+    public float maxJumpY;
+    public float jumpDistance = 3f;
+    public float jumpCooldown = 1.5f;
+    private bool isJumping = false;
+    private float jumpTimer = 0f;
+
+    [Header("Patrol Settings")]
     public float patrolDuration = 2f;
     private float patrolTimer;
     private bool patrolMovingRight = true;
     private Vector2 currentDirection;
-    private bool isBounce = false;
-    public float bounceForce = 5f;
-    public float bounceCooldownTime = 0.5f;
-    public float attackDamage;
-
-    public bool isStunned = false;
-    public float stunTimer;
-    private float stunCountdown;
-    public bool isDead;
-
     [Range(0, 360)]
     public float viewDistance = 10f;
     public float viewAngle = 45f;
     public LayerMask playerMask;
+
+    [Header("Damage/Recoil Settings")]
+    public float attackDamage;
+    public bool isDead;
+    private bool isBounce = false;
+    public float bounceForce = 5f;
+    public float bounceCooldownTime = 0.5f;
+
+    [Header("Stunned Settings")]
+    public bool isStunned = false;
+    public float stunTimer;
+    private float stunCountdown;
 
     [Header("References")]
     public Transform player;
@@ -29,17 +42,6 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
     private Collider2D enemyCollider;
     private Collider2D playerCollider;
     EnemyHealth health;
-
-    [Header("Movement Settings")]
-    public float moveSpeed = 3f;
-    public float jumpForceX = 5f;
-    public float jumpForceY = 8f;
-    public float maxJumpY;
-    public float jumpDistance = 3f; 
-    public float jumpCooldown = 1.5f; 
-
-    private bool isJumping = false;
-    private float jumpTimer = 0f;
 
     enum State { Idle, Attack, Stunned, Death }
     State currentState = State.Idle;

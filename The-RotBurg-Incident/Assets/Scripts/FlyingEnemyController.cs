@@ -110,15 +110,16 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
         }
         if (health.currentHealth > 0)
         {
+            Vector3 scale = transform.localScale;
             if (currentDirection.x > 0)
             {
-                spriteRenderer.flipX = false;
+                scale.x = Mathf.Abs(scale.x);
             }
             else if (currentDirection.x < 0)
             {
-                spriteRenderer.flipX = true;
+                scale.x = -Mathf.Abs(scale.x);
             }
-
+            transform.localScale = scale;
             DetectWallsAndGround();
         }
         else

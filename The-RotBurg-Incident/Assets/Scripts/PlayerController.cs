@@ -172,6 +172,7 @@ public class PlayerController : MonoBehaviour
         {
             if (jumpAction.WasPressedThisFrame() && isGrounded && coyoteTimeCounter > 0f)
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce;
                 coyoteTimeCounter = 0f;
             }
@@ -180,12 +181,14 @@ public class PlayerController : MonoBehaviour
         {
             if (jumpAction.WasPressedThisFrame() && (isGrounded || coyoteTimeCounter > 0f))
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce;
                 numOfJumps--;
                 coyoteTimeCounter = 0f;
             }
             else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && !isGrounded)
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce / 1.2f;
                 numOfJumps = 0;
             }
@@ -220,6 +223,7 @@ public class PlayerController : MonoBehaviour
             if (Time.time >= lastAttackTime + attackCooldown)
             {
                 anim.SetBool("IsAttacking", true);
+                SoundManager.instance.PlaySound(SoundManager.instance.playerAttack);
                 lastAttackTime = Time.time;
             }
         }
@@ -331,6 +335,7 @@ public class PlayerController : MonoBehaviour
 
     void ActivateFlash()
     {
+        SoundManager.instance.PlaySound(SoundManager.instance.playerFlash);
         manager.ReduceBattery(drainAmount);
         canFlash = false;
         stunEffect.SetActive(true);
