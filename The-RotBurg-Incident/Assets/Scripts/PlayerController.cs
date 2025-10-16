@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
+    [SerializeField] private Camera mainCamera;
 
     [Header("Player Checks")]
     private Vector2 respawnPoint;
@@ -62,6 +63,8 @@ public class PlayerController : MonoBehaviour
     public Transform aimLeft;
     public Transform aimRight;
     private Vector2 aimInput;
+    private Vector3 lastMousePosition;
+    private float idleTimer;
     Vector2 lastAimDirection = Vector2.right;
     float lastAngle = 0f;
     public bool flipArmLeft = true;
@@ -106,6 +109,8 @@ public class PlayerController : MonoBehaviour
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
+
+        lastMousePosition = Input.mousePosition;
     }
 
     void OnEnable()
@@ -269,15 +274,39 @@ public class PlayerController : MonoBehaviour
 
     void AimingDirection()
     {
-        aimInput = aimAction.ReadValue<Vector2>();
-        if (aimInput.sqrMagnitude > 0.01f)
+        Vector2 stickInput = aimAction.ReadValue<Vector2>();
+        Vector3 mouseScreenPos = Input.mousePosition;
+
+        if (Input.mousePosition != lastMousePosition)
         {
-            lastAimDirection = aimInput.normalized;
-            lastAngle = Mathf.Atan2(lastAimDirection.y, lastAimDirection.x) * Mathf.Rad2Deg;
+            idleTimer = 0f;
+            lastMousePosition = Input.mousePosition;
+        }
+        else
+        {
+            idleTimer += Time.deltaTime;
+        }
+
+        if (idleTimer >= 1f)
+        {
+            if (stickInput.sqrMagnitude > 0.01f)
+            {
+                aimInput = stickInput.normalized;
+                lastAimDirection = aimInput.normalized;
+                lastAngle = Mathf.Atan2(lastAimDirection.y, lastAimDirection.x) * Mathf.Rad2Deg;
+                arm.rotation = Quaternion.Euler(0f, 0f, lastAngle);
+            }
+        }
+        else
+        {
+            Vector3 mouseWorldPos3D = Camera.main.ScreenToWorldPoint(mouseScreenPos);
+            mouseWorldPos3D.z = 0f;
+            Vector2 direction = (mouseWorldPos3D - transform.position).normalized;
+            lastAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         }
 
         arm.rotation = Quaternion.Euler(0f, 0f, lastAngle);
-        
+
         if (flipArmLeft)
         {
             if (lastAngle > 90 || lastAngle < -90)

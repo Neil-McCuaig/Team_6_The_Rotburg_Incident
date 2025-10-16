@@ -11674,6 +11674,7 @@ MonoBehaviour:
   rb: {fileID: 871734298}
   spriteRenderer: {fileID: 871734301}
   anim: {fileID: 871734306}
+  mainCamera: {fileID: 519420031}
   isDead: 0
   deathFadeDelay: 2
   isSitting: 0
