@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public Animator anim;
     private Collider2D collision;
     GameManager manager;
+    PauseMenuManager pauseManager;
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
@@ -106,6 +107,7 @@ public class PlayerController : MonoBehaviour
 
         health = FindAnyObjectByType<PlayerHealth>();
         manager = FindAnyObjectByType<GameManager>();
+        pauseManager = FindAnyObjectByType<PauseMenuManager>();
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
@@ -135,7 +137,7 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
-        if (!isSitting && !isDead && !inLocker) 
+        if (!isSitting && !isDead && !inLocker && !pauseManager.isPaused) 
         { 
             CheckInput();
             AimingDirection();

@@ -23,7 +23,6 @@ public class SafeStations : MonoBehaviour
     private void Awake()
     {
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
-
         if (enemySpawnerManager != null)
         {
             enemySpawnerManager.SpawnEnemies();
@@ -33,6 +32,7 @@ public class SafeStations : MonoBehaviour
     {
         hoverEffect.SetActive(false);
         playerController = FindAnyObjectByType<PlayerController>();
+        playerController.SetRespawnPoint(playerController.transform.position);
         gameManager = FindAnyObjectByType<GameManager>();
         health = FindAnyObjectByType<PlayerHealth>();
         GameObject textObject = GameObject.Find("PercentageText");
