@@ -67,7 +67,6 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
                 Hover();
                 if(CanSeePlayer())
                 {
-                    //&& playerController.isHiding == false
                     currentState = State.ChasePlayer;
                 }
 
@@ -78,7 +77,10 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
             { 
                 Vector2 targetDirection = ((Vector2)(player.position - transform.position)).normalized;
                 currentDirection = targetDirection;
-
+                if (!CanSeePlayer())
+                {
+                    currentState = State.HoveringIdle;
+                }
                 break;
             }
 
@@ -106,18 +108,18 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
                 break;
             }
         }
-
         if (health.currentHealth > 0)
         {
+            Vector3 scale = transform.localScale;
             if (currentDirection.x > 0)
             {
-                spriteRenderer.flipX = false;
+                scale.x = Mathf.Abs(scale.x);
             }
             else if (currentDirection.x < 0)
             {
-                spriteRenderer.flipX = true;
+                scale.x = -Mathf.Abs(scale.x);
             }
-
+            transform.localScale = scale;
             DetectWallsAndGround();
         }
         else

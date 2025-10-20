@@ -5,20 +5,22 @@ using UnityEngine;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    PlayerController playerController;
+    [Header("UI Panels")]
     public GameObject pauseMenuUI;
-    private bool isPaused = false;
+    public GameObject audioSettingsUI;
 
-    // Start is called before the first frame update
-    void Start()
+    public bool isPaused = false;
+    private bool inAudioSettings = false;
+    PlayerController playerController;
+
+    private void Start()
     {
         playerController = FindAnyObjectByType<PlayerController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.Escape) && !inAudioSettings)
         {
             if (isPaused)
             {
@@ -26,23 +28,45 @@ public class PauseMenuManager : MonoBehaviour
             }
             else
             {
-                Pause();
+                PauseGame();
             }
         }
+        if (inAudioSettings && Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseAudioSettings();
+        }
+    }
+
+    public void PauseGame()
+    {
+        pauseMenuUI.SetActive(true);
+        audioSettingsUI.SetActive(false);
+        Time.timeScale = 0f;
+        isPaused = true;
+        inAudioSettings = false;
     }
 
     public void Resume()
     {
         pauseMenuUI.SetActive(false);
+        audioSettingsUI.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
+        inAudioSettings = false;
     }
 
-    void Pause()
+    public void OpenAudioSettings()
     {
+        pauseMenuUI.SetActive(false);
+        audioSettingsUI.SetActive(true);
+        inAudioSettings = true;
+    }
+
+    public void CloseAudioSettings()
+    {
+        audioSettingsUI.SetActive(false);
         pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f; 
-        isPaused = true;
+        inAudioSettings = false;
     }
 
     public void QuitGame()

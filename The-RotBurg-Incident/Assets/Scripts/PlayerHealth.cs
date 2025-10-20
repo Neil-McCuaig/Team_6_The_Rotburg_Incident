@@ -40,7 +40,7 @@ public class PlayerHealth : MonoBehaviour
         {
             playerController.Die();
         }
-        else
+        else if(spriteRenderer != null) 
         {
             StartCoroutine(InvincibilityFrames());
         }
@@ -51,14 +51,19 @@ public class PlayerHealth : MonoBehaviour
         isInvincible = true;
 
         float elapsed = 0f;
+        Color originalColor = spriteRenderer.color;
+
         while (elapsed < invincibilityDuration)
         {
-            spriteRenderer.enabled = !spriteRenderer.enabled;
+            float newAlpha = spriteRenderer.color.a == 1f ? 0f : 1f;
+            spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, newAlpha);
+
             yield return new WaitForSeconds(0.1f);
             elapsed += 0.1f;
         }
 
-        spriteRenderer.enabled = true;
+        // Reset to fully visible
+        spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
         isInvincible = false;
     }
 

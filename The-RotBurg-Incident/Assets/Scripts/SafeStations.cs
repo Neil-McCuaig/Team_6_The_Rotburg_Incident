@@ -18,11 +18,11 @@ public class SafeStations : MonoBehaviour
     private PlayerHealth health;
 
     private TextMeshProUGUI rechargeText;
+    [SerializeField] private AudioClip rechargeSound;
 
     private void Awake()
     {
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
-
         if (enemySpawnerManager != null)
         {
             enemySpawnerManager.SpawnEnemies();
@@ -32,6 +32,7 @@ public class SafeStations : MonoBehaviour
     {
         hoverEffect.SetActive(false);
         playerController = FindAnyObjectByType<PlayerController>();
+        playerController.SetRespawnPoint(playerController.transform.position);
         gameManager = FindAnyObjectByType<GameManager>();
         health = FindAnyObjectByType<PlayerHealth>();
         GameObject textObject = GameObject.Find("PercentageText");
@@ -42,6 +43,7 @@ public class SafeStations : MonoBehaviour
     {
         if (playerInRange && !isCharging && playerController.attackAction.WasPressedThisFrame())
         {
+            SoundManager.instance.PlaySound(rechargeSound);
             StartCharging();
             health.ResetHealthFull();
             Debug.Log("ResetHealth");

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -17,6 +18,7 @@ public class GameManager : MonoBehaviour
     public float drainRatePerSecond = 5f; 
     public TextMeshProUGUI batteryText; 
     public BatterySlider batterySlider;
+    public Light2D playerLight;
 
     private void Start()
     {
@@ -29,13 +31,14 @@ public class GameManager : MonoBehaviour
     {
         if (batteryPercentage > 0f)
         {
+            playerLight.enabled = true;
             batteryPercentage -= drainRatePerSecond * Time.deltaTime;
             batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
             batterySlider.SetBattery(batteryPercentage);
         }
         else
         {
-            Debug.Log("Battery Empty");
+            playerLight.enabled = false;
         }
 
         if (batteryText != null)

@@ -1,6 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using UnityEngine.Rendering.Universal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,13 +11,15 @@ public class PlayerController : MonoBehaviour
     public Animator anim;
     private Collider2D collision;
     GameManager manager;
+    PauseMenuManager pauseManager;
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
+    [SerializeField] private Camera mainCamera;
 
     [Header("Player Checks")]
     private Vector2 respawnPoint;
-    private bool isDead;
+    public bool isDead;
     public float deathFadeDelay = 1f;
     public bool isSitting = false;
     public bool inLocker = false;
@@ -63,6 +64,8 @@ public class PlayerController : MonoBehaviour
     public Transform aimLeft;
     public Transform aimRight;
     private Vector2 aimInput;
+    private Vector3 lastMousePosition;
+    private float idleTimer;
     Vector2 lastAimDirection = Vector2.right;
     float lastAngle = 0f;
     public bool flipArmLeft = true;
@@ -74,6 +77,9 @@ public class PlayerController : MonoBehaviour
     public Transform cameraFlash;
     public Transform flashLeft;
     public Transform flashRight;
+    public Transform lightLeft;
+    public Transform lightRight;
+    public Light2D flashLight;
     public bool canFlash = true;
     public bool batteryDead;
     public SpriteRenderer effectRender;
@@ -101,9 +107,12 @@ public class PlayerController : MonoBehaviour
 
         health = FindAnyObjectByType<PlayerHealth>();
         manager = FindAnyObjectByType<GameManager>();
+        pauseManager = FindAnyObjectByType<PauseMenuManager>();
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
+
+        lastMousePosition = Input.mousePosition;
     }
 
     void OnEnable()
@@ -128,7 +137,7 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
-        if (!isSitting && !isDead && !inLocker) 
+        if (!isSitting && !isDead && !inLocker && !pauseManager.isPaused) 
         { 
             CheckInput();
             AimingDirection();
@@ -165,6 +174,7 @@ public class PlayerController : MonoBehaviour
         {
             if (jumpAction.WasPressedThisFrame() && isGrounded && coyoteTimeCounter > 0f)
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce;
                 coyoteTimeCounter = 0f;
             }
@@ -173,12 +183,14 @@ public class PlayerController : MonoBehaviour
         {
             if (jumpAction.WasPressedThisFrame() && (isGrounded || coyoteTimeCounter > 0f))
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce;
                 numOfJumps--;
                 coyoteTimeCounter = 0f;
             }
             else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && !isGrounded)
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce / 1.2f;
                 numOfJumps = 0;
             }
@@ -213,6 +225,7 @@ public class PlayerController : MonoBehaviour
             if (Time.time >= lastAttackTime + attackCooldown)
             {
                 anim.SetBool("IsAttacking", true);
+                SoundManager.instance.PlaySound(SoundManager.instance.playerAttack);
                 lastAttackTime = Time.time;
             }
         }
@@ -267,26 +280,52 @@ public class PlayerController : MonoBehaviour
 
     void AimingDirection()
     {
-        aimInput = aimAction.ReadValue<Vector2>();
-        if (aimInput.sqrMagnitude > 0.01f)
+        Vector2 stickInput = aimAction.ReadValue<Vector2>();
+        Vector3 mouseScreenPos = Input.mousePosition;
+
+        if (Input.mousePosition != lastMousePosition)
         {
-            lastAimDirection = aimInput.normalized;
-            lastAngle = Mathf.Atan2(lastAimDirection.y, lastAimDirection.x) * Mathf.Rad2Deg;
+            idleTimer = 0f;
+            lastMousePosition = Input.mousePosition;
+        }
+        else
+        {
+            idleTimer += Time.deltaTime;
+        }
+
+        if (idleTimer >= 1f)
+        {
+            if (stickInput.sqrMagnitude > 0.01f)
+            {
+                aimInput = stickInput.normalized;
+                lastAimDirection = aimInput.normalized;
+                lastAngle = Mathf.Atan2(lastAimDirection.y, lastAimDirection.x) * Mathf.Rad2Deg;
+                arm.rotation = Quaternion.Euler(0f, 0f, lastAngle);
+            }
+        }
+        else
+        {
+            Vector3 mouseWorldPos3D = Camera.main.ScreenToWorldPoint(mouseScreenPos);
+            mouseWorldPos3D.z = 0f;
+            Vector2 direction = (mouseWorldPos3D - transform.position).normalized;
+            lastAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         }
 
         arm.rotation = Quaternion.Euler(0f, 0f, lastAngle);
-        
+
         if (flipArmLeft)
         {
-            if (lastAngle > 130 || lastAngle < -60)
+            if (lastAngle > 90 || lastAngle < -90)
             {
                 armRender.flipY = true;
                 cameraFlash.position = flashLeft.position;
+                flashLight.transform.position = lightLeft.position;
             }
             else
             {
                 armRender.flipY = false;
                 cameraFlash.position = flashRight.position;
+                flashLight.transform.position = lightRight.position;
             }
         }
 
@@ -298,6 +337,7 @@ public class PlayerController : MonoBehaviour
 
     void ActivateFlash()
     {
+        SoundManager.instance.PlaySound(SoundManager.instance.playerFlash);
         manager.ReduceBattery(drainAmount);
         canFlash = false;
         stunEffect.SetActive(true);
@@ -332,6 +372,7 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         transform.position = respawnPoint;
+        armRender.enabled = true;
         health.ResetHealthFull();
     }
 
@@ -339,7 +380,7 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
         collision.enabled = false;
-
+        armRender.enabled = false;
         anim.SetBool("IsDead", true);
 
         StartCoroutine(HandleDeathFadeOut());

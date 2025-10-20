@@ -1,22 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 public class DomainZoneLogic : MonoBehaviour
 {
     public bool playerInDomain = false;
+    PlayerController playerController;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        playerController = FindAnyObjectByType<PlayerController>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if(playerController.isDead)
+        {
+            playerInDomain = false;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -31,7 +32,14 @@ public class DomainZoneLogic : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerInDomain = false;
+            if (playerController != null && playerController.inLocker == false)
+            {
+                playerInDomain = false;
+            }
+            else
+            {
+                return;
+            }
         }
     }
 }
