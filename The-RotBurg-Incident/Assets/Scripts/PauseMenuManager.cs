@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
 {
@@ -13,8 +13,15 @@ public class PauseMenuManager : MonoBehaviour
     private bool inAudioSettings = false;
     PlayerController playerController;
 
+    [Header("Cursor Settings")]
+    public Texture2D cursorCamTexture;
+    public Texture2D cursorFingerTexture;
+    public Vector2 hotspot = Vector2.zero;
+    public CursorMode cursorMode = CursorMode.Auto;
+
     private void Start()
     {
+        Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
         playerController = FindAnyObjectByType<PlayerController>();
     }
 
@@ -39,6 +46,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void PauseGame()
     {
+        Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
         pauseMenuUI.SetActive(true);
         audioSettingsUI.SetActive(false);
         Time.timeScale = 0f;
@@ -48,6 +56,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void Resume()
     {
+        Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
         pauseMenuUI.SetActive(false);
         audioSettingsUI.SetActive(false);
         Time.timeScale = 1f;
@@ -84,5 +93,10 @@ public class PauseMenuManager : MonoBehaviour
         Time.timeScale = 1f;
         Resume();
         playerController.Die();
+    }
+
+    void OnDisable()
+    {
+        Cursor.SetCursor(null, Vector2.zero, cursorMode);
     }
 }
