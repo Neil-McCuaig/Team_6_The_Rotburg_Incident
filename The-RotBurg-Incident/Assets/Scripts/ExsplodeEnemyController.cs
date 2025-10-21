@@ -93,7 +93,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
 
             case State.EnemyIgnite:
                 {
-                    moveSpeed = moveSpeed = 35f;
+                    moveSpeed = 35f;
                     Vector2 targetDirection = ((Vector2)(player.position - transform.position)).normalized;
                     currentDirection.x = targetDirection.x;
                     Physics2D.IgnoreCollision(enemyCollider, playerCollider, true);
@@ -102,7 +102,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
 
             case State.DeathState:
                 {
-                    moveSpeed = moveSpeed = 0f;
+                    moveSpeed = 0f;
                     currentDirection.x = Vector2.zero.x;
                     GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
 
@@ -117,7 +117,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
         {
             if (!isStunned && !isDead)
             {
-                rb.velocity = currentDirection * moveSpeed;
+                rb.velocity = new Vector2(currentDirection.x * moveSpeed, rb.velocity.y);
 
                 Vector3 scale = transform.localScale;
                 if (currentDirection.x > 0)

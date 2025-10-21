@@ -22390,7 +22390,7 @@ GameObject:
   - component: {fileID: 1441290738}
   - component: {fileID: 1441290739}
   m_Layer: 0
-  m_Name: Sprite
+  m_Name: Arm_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
