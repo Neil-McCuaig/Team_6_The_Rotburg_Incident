@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
 
     void OnDisable()
     {
-        Inventory.OnItemAdded -= CheckForItem; 
+        Inventory.OnItemAdded -= CheckForItem;
     }
 
     private void CheckForItem(string itemName)

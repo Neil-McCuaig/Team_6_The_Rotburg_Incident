@@ -135,7 +135,6 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
                         isDead = true;
                         Physics2D.IgnoreCollision(enemyCollider, playerCollider, true);
                         rb.velocity = Vector2.down * moveSpeed;
-                        rb.gravityScale = 10.0f;
                         break;
                     }
             }
@@ -145,7 +144,7 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
     {
         if (currentState != State.Attack && isBounce == false && !isStunned && !isDead)
         {
-            rb.velocity = currentDirection * moveSpeed;
+            rb.velocity = new Vector2((currentDirection.x * moveSpeed), rb.velocity.y);
         }
     }
 

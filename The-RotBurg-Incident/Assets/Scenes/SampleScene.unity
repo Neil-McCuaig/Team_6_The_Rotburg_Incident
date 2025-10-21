@@ -15215,6 +15215,10 @@ MonoBehaviour:
   pauseMenuUI: {fileID: 1098414256}
   audioSettingsUI: {fileID: 1196979103}
   isPaused: 0
+  cursorCamTexture: {fileID: 2800000, guid: 0a028bec62adea24c84b1aec0c262e3e, type: 3}
+  cursorFingerTexture: {fileID: 2800000, guid: fa2dc4460714bba4cbc63b1d8e98859a, type: 3}
+  hotspot: {x: 0, y: 0}
+  cursorMode: 0
 --- !u!1 &1033387627
 GameObject:
   m_ObjectHideFlags: 0
@@ -22390,7 +22394,7 @@ GameObject:
   - component: {fileID: 1441290738}
   - component: {fileID: 1441290739}
   m_Layer: 0
-  m_Name: Sprite
+  m_Name: Arm_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

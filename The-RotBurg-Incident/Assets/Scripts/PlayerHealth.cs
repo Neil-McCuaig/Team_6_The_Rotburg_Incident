@@ -12,6 +12,8 @@ public class PlayerHealth : MonoBehaviour
     private bool isInvincible = false;
 
     private SpriteRenderer spriteRenderer;
+    private GameObject playerArm;
+    private SpriteRenderer armRender;
     HealthBarSlider healthBar;
     PlayerController playerController;
     EnemySpawnerManager enemySpawnerManager;
@@ -19,6 +21,8 @@ public class PlayerHealth : MonoBehaviour
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        playerArm = GameObject.Find("Arm_Sprite");
+        armRender = playerArm.GetComponent<SpriteRenderer>();
         healthBar = FindAnyObjectByType<HealthBarSlider>();
         playerController = FindAnyObjectByType<PlayerController>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
@@ -57,6 +61,7 @@ public class PlayerHealth : MonoBehaviour
         {
             float newAlpha = spriteRenderer.color.a == 1f ? 0f : 1f;
             spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, newAlpha);
+            armRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, newAlpha);
 
             yield return new WaitForSeconds(0.1f);
             elapsed += 0.1f;
