@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SafeStations : MonoBehaviour
 {
@@ -17,7 +17,6 @@ public class SafeStations : MonoBehaviour
     private GameManager gameManager;
     private PlayerHealth health;
 
-    private TextMeshProUGUI rechargeText;
     [SerializeField] private AudioClip rechargeSound;
 
     private void Awake()
@@ -35,8 +34,6 @@ public class SafeStations : MonoBehaviour
         playerController.SetRespawnPoint(playerController.transform.position);
         gameManager = FindAnyObjectByType<GameManager>();
         health = FindAnyObjectByType<PlayerHealth>();
-        GameObject textObject = GameObject.Find("PercentageText");
-        rechargeText = textObject.GetComponent<TextMeshProUGUI>();
     }
 
     private void Update()
@@ -46,7 +43,6 @@ public class SafeStations : MonoBehaviour
             SoundManager.instance.PlaySound(rechargeSound);
             StartCharging();
             health.ResetHealthFull();
-            Debug.Log("ResetHealth");
         }
 
         if (isCharging)
@@ -86,7 +82,6 @@ public class SafeStations : MonoBehaviour
     {
         isCharging = true;
         hoverEffect.SetActive(false);
-        rechargeText.color = Color.yellow;
         if (playerController != null)
         {
             playerController.isSitting = true;
@@ -102,12 +97,10 @@ public class SafeStations : MonoBehaviour
     {
         isCharging = false;
         hoverEffect.SetActive(true);
-        rechargeText.color = Color.white;
         if (playerController != null)
         {
             playerController.isSitting = false;
         }
-        Debug.Log("Player left the save station.");
     }
 
     private void ChargeBattery()
