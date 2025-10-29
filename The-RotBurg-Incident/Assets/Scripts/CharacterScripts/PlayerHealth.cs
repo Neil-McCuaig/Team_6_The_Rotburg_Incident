@@ -14,18 +14,14 @@ public class PlayerHealth : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private GameObject playerArm;
     private SpriteRenderer armRender;
-    HealthBarSlider healthBar;
     PlayerController playerController;
-    EnemySpawnerManager enemySpawnerManager;
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         playerArm = GameObject.Find("Arm_Sprite");
         armRender = playerArm.GetComponent<SpriteRenderer>();
-        healthBar = FindAnyObjectByType<HealthBarSlider>();
         playerController = FindAnyObjectByType<PlayerController>();
-        enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
 
         ResetHealthFull();
     }
@@ -37,8 +33,8 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
+        CameraShake.Instance.Shake();
         currentHealth -= damage;
-        healthBar.SetHealth(currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -75,6 +71,5 @@ public class PlayerHealth : MonoBehaviour
     public void ResetHealthFull()
     {
         currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
     }
 }
