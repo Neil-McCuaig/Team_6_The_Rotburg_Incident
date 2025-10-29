@@ -8483,8 +8483,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 437.91, y: -522.8202}
-  m_SizeDelta: {x: -875.83, y: 952.44}
+  m_AnchoredPosition: {x: 488.0923, y: -522.8202}
+  m_SizeDelta: {x: -1127.402, y: 952.44}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &599099987
 MonoBehaviour:
@@ -8499,15 +8499,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.38984394, g: 0, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 4a7f44133e4c59e489e5e7fb1d7f1f1c, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -10681,8 +10681,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.281006, y: -345.013}
-  m_SizeDelta: {x: 806.451, y: 952.239}
+  m_AnchoredPosition: {x: -0, y: -252.21701}
+  m_SizeDelta: {x: 590.314, y: 767.289}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &743293680
 MonoBehaviour:
@@ -10713,8 +10713,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -10731,8 +10731,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 25
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -10743,7 +10743,7 @@ MonoBehaviour:
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: 30
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -14109,6 +14109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeOfDay: 0
   batteryText: {fileID: 1386010636}
+  formattedTime: 
 --- !u!1 &950940906
 GameObject:
   m_ObjectHideFlags: 0
@@ -15572,11 +15573,13 @@ MonoBehaviour:
   chatText: {fileID: 743293680}
   maxMessages: 23
   toggleKey: 99
-  messageInterval: 0.2
+  messageInterval: 4
   startingMessages:
   - 'System: Welcome to the stream!'
   - 'User1: First!'
-  - "User2: Let\u2019s go!"
+  - 'User2: This is a super long message created to test the limits of the character
+    limit for any comment at one time. Say for instace if there is a new line to
+    this chat there should be room for it or even colored text.'
   - 'User3: Hype in the chat!'
   - 'DaGuy: It''s dark use flashlight more pls'
   - 'YungCheddar: Yo this fr scary irl'
@@ -26023,8 +26026,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0022812, y: -0.0099759}
-  m_SizeDelta: {x: 864.17, y: 1001.4}
+  m_AnchoredPosition: {x: -0.00053406, y: 35.936016}
+  m_SizeDelta: {x: 612.6, y: 796.396}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1638755898
 MonoBehaviour:
@@ -26069,7 +26072,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

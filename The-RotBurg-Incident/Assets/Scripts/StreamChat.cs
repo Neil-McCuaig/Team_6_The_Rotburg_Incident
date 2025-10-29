@@ -11,7 +11,8 @@ public class StreamChat : MonoBehaviour
     [Header("Chat UI References")]
     public GameObject chatPanel;               
     public ScrollRect scrollRect;              
-    public TextMeshProUGUI chatText;          
+    public TextMeshProUGUI chatText; 
+    RealTimeClock time;
 
     [Header("Settings")]
     public int maxMessages = 50;               
@@ -29,6 +30,7 @@ public class StreamChat : MonoBehaviour
 
     void Start()
     {
+        time = FindAnyObjectByType<RealTimeClock>();
         chatPanel.SetActive(chatVisible);
         chatText.text = "";
 
@@ -62,7 +64,7 @@ public class StreamChat : MonoBehaviour
             messages.RemoveAt(0);
         }
 
-        chatText.text = string.Join("\n", messages);
+        chatText.text = string.Join("\n" + time.formattedTime + ": ", messages);
         ScrollToBottom();
     }
     private void ScrollToBottom()
