@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,12 +11,13 @@ public class GameManager : MonoBehaviour
     public string powerUp1 = "DoubleJump";
 
     PlayerController player;
+    public GameObject batterySliderFill;
+    private Image sliderFill;
 
     [Header("Battery Settings")]
     [Range(0f, 100f)]
     public float batteryPercentage = 100f;
     public float drainRatePerSecond = 5f; 
-    public TextMeshProUGUI batteryText; 
     public BatterySlider batterySlider;
     public Light2D playerLight;
 
@@ -25,6 +26,8 @@ public class GameManager : MonoBehaviour
         player = FindAnyObjectByType<PlayerController>();
         batterySlider = FindAnyObjectByType<BatterySlider>();
         batterySlider.SetMaxBattery(batteryPercentage);
+
+        sliderFill = batterySliderFill.GetComponent<Image>();
     }
 
     public void Update()
@@ -35,18 +38,30 @@ public class GameManager : MonoBehaviour
             batteryPercentage -= drainRatePerSecond * Time.deltaTime;
             batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
             batterySlider.SetBattery(batteryPercentage);
+
+            batterySliderFill.SetActive(true);
         }
         else
         {
             playerLight.enabled = false;
+
+            batterySliderFill.SetActive(false);
         }
 
-        if (batteryText != null)
+        if (batteryPercentage > 50f)
         {
-            batteryText.text = "Battery: " + Mathf.RoundToInt(batteryPercentage) + "%";
+            sliderFill.color = Color.white;
+        }
+        else if (batteryPercentage > 20f)
+        {
+            sliderFill.color = Color.yellow;
+        }
+        else if (batteryPercentage < 20f)
+        {
+            sliderFill.color = Color.red;
         }
 
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(1);
         }
