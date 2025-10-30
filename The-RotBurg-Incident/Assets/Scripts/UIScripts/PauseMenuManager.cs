@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,6 +13,7 @@ public class PauseMenuManager : MonoBehaviour
     public bool isPaused = false;
     private bool inAudioSettings = false;
     PlayerController playerController;
+    HoverLogic hoverLogic;
 
     [Header("Cursor Settings")]
     public Texture2D cursorCamTexture;
@@ -19,10 +21,15 @@ public class PauseMenuManager : MonoBehaviour
     public Vector2 hotspot = Vector2.zero;
     public CursorMode cursorMode = CursorMode.Auto;
 
+    [Header("Powerups")]
+    public GameObject doubleJumpUI;
+    public GameObject doubleJumpUIText;
+
     private void Start()
     {
         Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
         playerController = FindAnyObjectByType<PlayerController>();
+        hoverLogic = FindAnyObjectByType<HoverLogic>();
     }
 
     void Update()
@@ -48,10 +55,22 @@ public class PauseMenuManager : MonoBehaviour
     {
         Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
         pauseMenuUI.SetActive(true);
+        doubleJumpUI.SetActive(false);
         audioSettingsUI.SetActive(false);
         Time.timeScale = 0f;
         isPaused = true;
         inAudioSettings = false;
+
+        if (playerController.hasDoubleJump == true)
+        {
+            doubleJumpUI.SetActive(true);
+            doubleJumpUIText.SetActive(false);
+
+            if (hoverLogic.currentlyHovering == true)
+            {
+                doubleJumpUI.SetActive(true);
+            }
+        }
     }
 
     public void Resume()
@@ -99,4 +118,6 @@ public class PauseMenuManager : MonoBehaviour
     {
         Cursor.SetCursor(null, Vector2.zero, cursorMode);
     }
+
+
 }
