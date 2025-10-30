@@ -12593,7 +12593,7 @@ Transform:
   m_GameObject: {fileID: 871734297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -551, y: 26, z: -0.84647}
+  m_LocalPosition: {x: -89, y: 42, z: -0.84647}
   m_LocalScale: {x: 0.89983, y: 0.89983, z: 0.89983}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15542,7 +15542,7 @@ MonoBehaviour:
   chatText: {fileID: 743293680}
   maxMessages: 9
   toggleKey: 99
-  messageInterval: 0.5
+  messageInterval: 1.5
   startingMessages:
   - 'System: Welcome to the stream!'
   - 'User1: First!'
@@ -15554,7 +15554,8 @@ MonoBehaviour:
   - 'YungCheddar: Yo this fr scary irl'
   - 'itchinPowder: You need to get out of there!'
   - 'C0rruptMonk: Like a car crash I can''t look away'
-  - 'MonsterWuv: Hit them while they''re stunned!!!'
+  - 'MonsterWuv: omg bro hit em while they stunned!!!'
+  - 'GoblinTroll: FAKE!'
   - '[User]: "Message"'
   - '[User]: "Message"'
   - '[User]: "Message"'
@@ -15564,18 +15565,38 @@ MonoBehaviour:
   - '[User]: "Message"'
   - '[User]: "Message"'
   - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
-  - '[User]: "Message"'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
+  - 'Your Best Friend: The accident wasn''t your fault'
 --- !u!1 &1033387627
 GameObject:
   m_ObjectHideFlags: 0
