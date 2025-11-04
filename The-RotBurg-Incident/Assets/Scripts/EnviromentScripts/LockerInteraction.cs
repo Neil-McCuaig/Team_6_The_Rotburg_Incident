@@ -37,7 +37,7 @@ public class LockerInteraction : MonoBehaviour
             }
         }
 
-        if (health.currentHealth <= 0)
+        if (health.currentHealth <= 0 && playerInside)
         {
             playerNearby = false;
             ExitLocker();
