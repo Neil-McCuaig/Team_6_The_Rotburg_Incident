@@ -48,7 +48,11 @@ public class GameManager : MonoBehaviour
             batterySliderFill.SetActive(false);
         }
 
-        if (batteryPercentage > 50f)
+        if (player.isSitting == true)
+        {
+            sliderFill.color = Color.green;
+        }
+        else if (batteryPercentage > 50f)
         {
             sliderFill.color = Color.white;
         }
