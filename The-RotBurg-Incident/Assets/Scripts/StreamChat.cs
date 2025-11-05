@@ -6,74 +6,146 @@ using UnityEngine.UI;
 
 public class StreamChat : MonoBehaviour
 {
-    public static StreamChat Instance;
+    [System.Serializable]
+    public class ChatEntry
+    {
+        [TextArea(1, 3)] public string messageText;
+        public Sprite emoji;               // Optional image for emoji
+        public bool animateEmoji;          // If true, emoji will pulse or bounce
+    }
 
-    [Header("Chat UI References")]
-    public GameObject chatPanel;               
-    public ScrollRect scrollRect;              
-    public TextMeshProUGUI chatText; 
-    RealTimeClock time;
+    [Header("Chat Settings")]
+    public RectTransform contentParent;   // Where messages appear (e.g. ScrollView Content)
+    public ScrollRect scrollRect;
+    public GameObject messagePrefab;      // Prefab with TextMeshProUGUI + optional Image
+    public List<ChatEntry> startingMessages = new List<ChatEntry>();
+    public float messageLifetime = 5f;    // How long messages stay before fading
+    public float fadeDuration = 1f;
+    public float spawnDelay = 2f;         // Time between each starting message
+    public bool autoStart = true;
+    public bool chatVisible = true;
 
-    [Header("Settings")]
-    public int maxMessages = 50;               
-    public KeyCode toggleKey = KeyCode.C;      
-    public float messageInterval = 3f;         
-
-    [Header("Starting Messages")]
-    [TextArea(2, 10)]
-    public List<string> startingMessages = new List<string>();
-
-    private List<string> messages = new List<string>();
-    private bool chatVisible = true;
-    private float messageTimer = 0f;
-    private int nextMessageIndex = 0;
+    private float timer;
+    private int nextIndex;
 
     void Start()
     {
-        time = FindAnyObjectByType<RealTimeClock>();
-        chatPanel.SetActive(chatVisible);
-        chatText.text = "";
-
-        if (startingMessages.Count > 0)
-        {
-            AddMessage(startingMessages[0]);
-            nextMessageIndex = 1;
-        }
+        if (autoStart)
+            StartCoroutine(PlayStartingMessages());
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(toggleKey))
+        // Toggle chat visibility with a key (optional)
+        if (Input.GetKeyDown(KeyCode.C))
         {
             chatVisible = !chatVisible;
-            chatPanel.SetActive(chatVisible);
-        }
-        messageTimer += Time.deltaTime;
-        if (messageTimer >= messageInterval && nextMessageIndex < startingMessages.Count)
-        {
-            AddMessage(startingMessages[nextMessageIndex]);
-            nextMessageIndex++;
-            messageTimer = 0f;
+            contentParent.gameObject.SetActive(chatVisible);
         }
     }
-    public void AddMessage(string message)
+
+    IEnumerator PlayStartingMessages()
     {
-        messages.Add(message);
-        if (messages.Count > maxMessages)
+        while (nextIndex < startingMessages.Count)
         {
-            messages.RemoveAt(0);
+            CreateMessage(startingMessages[nextIndex]);
+            nextIndex++;
+            yield return new WaitForSeconds(spawnDelay);
+        }
+    }
+
+    public void AddMessage(string text, Sprite emoji = null, bool animate = false)
+    {
+        ChatEntry entry = new ChatEntry { messageText = text, emoji = emoji, animateEmoji = animate };
+        CreateMessage(entry);
+    }
+
+    private void CreateMessage(ChatEntry entry)
+    {
+        if (!messagePrefab || !contentParent)
+        {
+            Debug.LogError("Missing messagePrefab or contentParent!");
+            return;
         }
 
-        chatText.text = string.Join("\n" + time.formattedTime + ": ", messages);
-        ScrollToBottom();
-    }
-    private void ScrollToBottom()
-    {
+        GameObject newMsg = Instantiate(messagePrefab, contentParent);
+        newMsg.transform.SetAsLastSibling();
+
+        // --- Setup visuals ---
+        TextMeshProUGUI text = newMsg.GetComponentInChildren<TextMeshProUGUI>();
+        Image img = newMsg.GetComponentInChildren<Image>();
+
+        if (text) text.text = entry.messageText;
+        if (img)
+        {
+            if (entry.emoji)
+            {
+                img.sprite = entry.emoji;
+                img.enabled = true;
+                if (entry.animateEmoji)
+                    StartCoroutine(AnimateEmoji(img.rectTransform));
+            }
+            else
+            {
+                img.enabled = false;
+            }
+        }
+
+        //  OPTION B — dynamic spacing tweak based on message length
+        HorizontalLayoutGroup layout = newMsg.GetComponent<HorizontalLayoutGroup>();
+        if (layout != null && text != null)
+        {
+            // Shorter messages get tighter spacing between emoji and text
+            if (text.text.Length < 10)
+                layout.spacing = 2f;
+            else if (text.text.Length < 30)
+                layout.spacing = 4f;
+            else
+                layout.spacing = 6f;
+        }
+
+        // Force layout rebuild so spacing applies immediately
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent as RectTransform);
         Canvas.ForceUpdateCanvases();
+
+        // Fade & scroll like before
+        StartCoroutine(FadeAndDestroy(newMsg));
+        if (scrollRect != null)
+            StartCoroutine(ScrollToBottom());
+    }
+
+    IEnumerator ScrollToBottom()
+    {
+        // Wait 1 frame so the layout system updates first
+        yield return null;
         scrollRect.verticalNormalizedPosition = 0f;
     }
-    public void PostMessage(string message)
+
+    IEnumerator FadeAndDestroy(GameObject obj)
     {
-        AddMessage(message);
+        CanvasGroup cg = obj.AddComponent<CanvasGroup>();
+        yield return new WaitForSeconds(messageLifetime);
+
+        float t = 0f;
+        while (t < fadeDuration)
+        {
+            t += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);
+            yield return null;
+        }
+
+        Destroy(obj);
+    }
+
+    IEnumerator AnimateEmoji(RectTransform emoji)
+    {
+        float t = 0f;
+        while (emoji != null)
+        {
+            t += Time.deltaTime * 2f;
+            float scale = 1f + Mathf.Sin(t * 3f) * 0.1f;  // gentle bounce
+            emoji.localScale = new Vector3(scale, scale, 1f);
+            yield return null;
+        }
     }
 }

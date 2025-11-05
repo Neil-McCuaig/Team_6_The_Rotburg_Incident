@@ -35,7 +35,6 @@ public class PlayerHealth : MonoBehaviour
 
         CameraShake.Instance.Shake();
         currentHealth -= damage;
-
         if (currentHealth <= 0)
         {
             playerController.Die();
