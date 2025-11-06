@@ -12370,7 +12370,7 @@ Transform:
   m_GameObject: {fileID: 871734297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -89, y: 42, z: -0.84647}
+  m_LocalPosition: {x: -552.1, y: 51.2, z: -0.84647}
   m_LocalScale: {x: 0.89983, y: 0.89983, z: 0.89983}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12399,6 +12399,7 @@ MonoBehaviour:
   maxHealth: 50
   currentHealth: 0
   invincibilityDuration: 2
+  hurtEmote: {fileID: 0}
 --- !u!70 &871734305
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -15382,8 +15383,10 @@ MonoBehaviour:
   messageLifetime: 5
   fadeDuration: 1
   spawnDelay: 1
+  maxMessages: 0
   autoStart: 1
   chatVisible: 1
+  repeatMessages: 0
 --- !u!1 &1033387627
 GameObject:
   m_ObjectHideFlags: 0
