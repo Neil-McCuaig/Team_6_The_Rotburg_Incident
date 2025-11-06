@@ -10,33 +10,38 @@ public class StreamChat : MonoBehaviour
     public class ChatEntry
     {
         [TextArea(1, 3)] public string messageText;
-        public Sprite emoji;               // Optional image for emoji
-        public bool animateEmoji;          // If true, emoji will pulse or bounce
+        public Sprite emoji;               
+        public bool animateEmoji;         
     }
 
-    [Header("Chat Settings")]
-    public RectTransform contentParent;   // Where messages appear (e.g. ScrollView Content)
+    [Header("References")]
+    public RectTransform contentParent;  
     public ScrollRect scrollRect;
-    public GameObject messagePrefab;      // Prefab with TextMeshProUGUI + optional Image
+    public GameObject messagePrefab;      
     public List<ChatEntry> startingMessages = new List<ChatEntry>();
-    public float messageLifetime = 5f;    // How long messages stay before fading
+    
+    [Header("Chat Settings")]
+    public float messageLifetime = 5f;    
     public float fadeDuration = 1f;
-    public float spawnDelay = 2f;         // Time between each starting message
+    public float spawnDelay = 2f;
+    private int nextIndex;
+    public int maxMessages;
+
+    [Header("Bool Checks")]
     public bool autoStart = true;
     public bool chatVisible = true;
-
-    private float timer;
-    private int nextIndex;
+    public bool repeatMessages;
 
     void Start()
     {
         if (autoStart)
+        {
             StartCoroutine(PlayStartingMessages());
+        }
     }
 
     void Update()
     {
-        // Toggle chat visibility with a key (optional)
         if (Input.GetKeyDown(KeyCode.C))
         {
             chatVisible = !chatVisible;
@@ -48,8 +53,13 @@ public class StreamChat : MonoBehaviour
     {
         while (nextIndex < startingMessages.Count)
         {
+            if (nextIndex == (maxMessages - 1) && repeatMessages)
+            {
+                nextIndex = 0;
+            }
             CreateMessage(startingMessages[nextIndex]);
             nextIndex++;
+
             yield return new WaitForSeconds(spawnDelay);
         }
     }
@@ -64,18 +74,18 @@ public class StreamChat : MonoBehaviour
     {
         if (!messagePrefab || !contentParent)
         {
-            Debug.LogError("Missing messagePrefab or contentParent!");
             return;
         }
 
         GameObject newMsg = Instantiate(messagePrefab, contentParent);
         newMsg.transform.SetAsLastSibling();
-
-        // --- Setup visuals ---
         TextMeshProUGUI text = newMsg.GetComponentInChildren<TextMeshProUGUI>();
         Image img = newMsg.GetComponentInChildren<Image>();
 
-        if (text) text.text = entry.messageText;
+        if (text)
+        {
+            text.text = entry.messageText;
+        }
         if (img)
         {
             if (entry.emoji)
@@ -90,33 +100,18 @@ public class StreamChat : MonoBehaviour
                 img.enabled = false;
             }
         }
-
-        //  OPTION B — dynamic spacing tweak based on message length
-        HorizontalLayoutGroup layout = newMsg.GetComponent<HorizontalLayoutGroup>();
-        if (layout != null && text != null)
-        {
-            // Shorter messages get tighter spacing between emoji and text
-            if (text.text.Length < 10)
-                layout.spacing = 2f;
-            else if (text.text.Length < 30)
-                layout.spacing = 4f;
-            else
-                layout.spacing = 6f;
-        }
-
-        // Force layout rebuild so spacing applies immediately
         LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent as RectTransform);
         Canvas.ForceUpdateCanvases();
-
-        // Fade & scroll like before
         StartCoroutine(FadeAndDestroy(newMsg));
+
         if (scrollRect != null)
+        {
             StartCoroutine(ScrollToBottom());
+        }
     }
 
     IEnumerator ScrollToBottom()
     {
-        // Wait 1 frame so the layout system updates first
         yield return null;
         scrollRect.verticalNormalizedPosition = 0f;
     }
@@ -143,7 +138,7 @@ public class StreamChat : MonoBehaviour
         while (emoji != null)
         {
             t += Time.deltaTime * 2f;
-            float scale = 1f + Mathf.Sin(t * 3f) * 0.1f;  // gentle bounce
+            float scale = 1f + Mathf.Sin(t * 3f) * 0.1f;  
             emoji.localScale = new Vector3(scale, scale, 1f);
             yield return null;
         }
