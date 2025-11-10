@@ -9,7 +9,7 @@ public class SafeStations : MonoBehaviour
     public float chargeRate; 
 
     private bool playerInRange = false;
-    private bool isCharging = false;
+    public bool isCharging = false;
     public Transform spawnPoint;
 
     private EnemySpawnerManager enemySpawnerManager;
@@ -44,7 +44,6 @@ public class SafeStations : MonoBehaviour
             StartCharging();
             health.ResetHealthFull();
         }
-
         if (isCharging)
         {
             ChargeBattery();

@@ -36,6 +36,12 @@ public class LockerInteraction : MonoBehaviour
                 ExitLocker();
             }
         }
+
+        if (health.currentHealth <= 0 && playerInside)
+        {
+            playerNearby = false;
+            ExitLocker();
+        }
     }
 
     private void EnterLocker()
@@ -62,11 +68,6 @@ public class LockerInteraction : MonoBehaviour
         playerRb.simulated = false;
         playerSprite.enabled = false;
         player.transform.position = transform.position;
-
-        if (health.currentHealth <= 0)
-        {
-            ExitLocker();
-        }
     }
 
     private void ExitLocker()
@@ -80,9 +81,18 @@ public class LockerInteraction : MonoBehaviour
         playerInside = false;
         playerController.inLocker = false;
         arm.SetActive(true);
+
+        if (playerRb == null)
+        {
+            playerRb = player.GetComponent<Rigidbody2D>();
+        }
+        if (playerSprite == null)
+        {
+            playerSprite = player.GetComponent<SpriteRenderer>();
+        }
+
         playerRb.simulated = true;
         playerSprite.enabled = true;
-
         player.transform.position = transform.position + Vector3.up * 1f;
     }
 

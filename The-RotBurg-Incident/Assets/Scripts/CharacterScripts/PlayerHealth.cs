@@ -15,6 +15,9 @@ public class PlayerHealth : MonoBehaviour
     private GameObject playerArm;
     private SpriteRenderer armRender;
     PlayerController playerController;
+    
+    StreamChat chat;
+    public Sprite hurtEmote;
 
     private void Start()
     {
@@ -22,6 +25,7 @@ public class PlayerHealth : MonoBehaviour
         playerArm = GameObject.Find("Arm_Sprite");
         armRender = playerArm.GetComponent<SpriteRenderer>();
         playerController = FindAnyObjectByType<PlayerController>();
+        chat = FindAnyObjectByType<StreamChat>();
 
         ResetHealthFull();
     }
@@ -35,9 +39,9 @@ public class PlayerHealth : MonoBehaviour
 
         CameraShake.Instance.Shake();
         currentHealth -= damage;
-
         if (currentHealth <= 0)
         {
+            chat.AddMessage("[CareTaker] OMG f's in the chat to pay repects he got wrecked", hurtEmote, true);
             playerController.Die();
         }
         else if(spriteRenderer != null) 

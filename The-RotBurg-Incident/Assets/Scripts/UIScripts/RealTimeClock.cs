@@ -8,11 +8,12 @@ public class RealTimeClock : MonoBehaviour
 {
     public float timeOfDay;
     public TextMeshProUGUI batteryText;
+    public string formattedTime;
 
     void Update()
     {
         DateTime now = DateTime.Now;
-        string formattedTime = now.ToString("h:mm");
+        formattedTime = now.ToString("h:mm");
         batteryText.text = formattedTime;
     }
 }

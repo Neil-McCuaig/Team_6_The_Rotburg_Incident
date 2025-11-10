@@ -6,72 +6,141 @@ using UnityEngine.UI;
 
 public class StreamChat : MonoBehaviour
 {
-    public static StreamChat Instance;
+    [System.Serializable]
+    public class ChatEntry
+    {
+        [TextArea(1, 3)] public string messageText;
+        public Sprite emoji;               
+        public bool animateEmoji;         
+    }
 
-    [Header("Chat UI References")]
-    public GameObject chatPanel;               
-    public ScrollRect scrollRect;              
-    public TextMeshProUGUI chatText;          
+    [Header("References")]
+    public RectTransform contentParent;  
+    public ScrollRect scrollRect;
+    public GameObject messagePrefab;      
+    public List<ChatEntry> startingMessages = new List<ChatEntry>();
+    
+    [Header("Chat Settings")]
+    public float messageLifetime = 5f;    
+    public float fadeDuration = 1f;
+    public float spawnDelay = 2f;
+    private int nextIndex;
+    public int maxMessages;
 
-    [Header("Settings")]
-    public int maxMessages = 50;               
-    public KeyCode toggleKey = KeyCode.C;      
-    public float messageInterval = 3f;         
-
-    [Header("Starting Messages")]
-    [TextArea(2, 10)]
-    public List<string> startingMessages = new List<string>();
-
-    private List<string> messages = new List<string>();
-    private bool chatVisible = true;
-    private float messageTimer = 0f;
-    private int nextMessageIndex = 0;
+    [Header("Bool Checks")]
+    public bool autoStart = true;
+    public bool chatVisible = true;
+    public bool repeatMessages;
 
     void Start()
     {
-        chatPanel.SetActive(chatVisible);
-        chatText.text = "";
-
-        if (startingMessages.Count > 0)
+        if (autoStart)
         {
-            AddMessage(startingMessages[0]);
-            nextMessageIndex = 1;
+            StartCoroutine(PlayStartingMessages());
         }
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(toggleKey))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             chatVisible = !chatVisible;
-            chatPanel.SetActive(chatVisible);
-        }
-        messageTimer += Time.deltaTime;
-        if (messageTimer >= messageInterval && nextMessageIndex < startingMessages.Count)
-        {
-            AddMessage(startingMessages[nextMessageIndex]);
-            nextMessageIndex++;
-            messageTimer = 0f;
+            contentParent.gameObject.SetActive(chatVisible);
         }
     }
-    public void AddMessage(string message)
+
+    IEnumerator PlayStartingMessages()
     {
-        messages.Add(message);
-        if (messages.Count > maxMessages)
+        while (nextIndex < startingMessages.Count)
         {
-            messages.RemoveAt(0);
+            if (nextIndex == (maxMessages - 1) && repeatMessages)
+            {
+                nextIndex = 0;
+            }
+            CreateMessage(startingMessages[nextIndex]);
+            nextIndex++;
+
+            yield return new WaitForSeconds(spawnDelay);
+        }
+    }
+
+    public void AddMessage(string text, Sprite emoji = null, bool animate = false)
+    {
+        ChatEntry entry = new ChatEntry { messageText = text, emoji = emoji, animateEmoji = animate };
+        CreateMessage(entry);
+    }
+
+    private void CreateMessage(ChatEntry entry)
+    {
+        if (!messagePrefab || !contentParent)
+        {
+            return;
         }
 
-        chatText.text = string.Join("\n", messages);
-        ScrollToBottom();
-    }
-    private void ScrollToBottom()
-    {
+        GameObject newMsg = Instantiate(messagePrefab, contentParent);
+        newMsg.transform.SetAsLastSibling();
+        TextMeshProUGUI text = newMsg.GetComponentInChildren<TextMeshProUGUI>();
+        Image img = newMsg.GetComponentInChildren<Image>();
+
+        if (text)
+        {
+            text.text = entry.messageText;
+        }
+        if (img)
+        {
+            if (entry.emoji)
+            {
+                img.sprite = entry.emoji;
+                img.enabled = true;
+                if (entry.animateEmoji)
+                    StartCoroutine(AnimateEmoji(img.rectTransform));
+            }
+            else
+            {
+                img.enabled = false;
+            }
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent as RectTransform);
         Canvas.ForceUpdateCanvases();
+        StartCoroutine(FadeAndDestroy(newMsg));
+
+        if (scrollRect != null)
+        {
+            StartCoroutine(ScrollToBottom());
+        }
+    }
+
+    IEnumerator ScrollToBottom()
+    {
+        yield return null;
         scrollRect.verticalNormalizedPosition = 0f;
     }
-    public void PostMessage(string message)
+
+    IEnumerator FadeAndDestroy(GameObject obj)
     {
-        AddMessage(message);
+        CanvasGroup cg = obj.AddComponent<CanvasGroup>();
+        yield return new WaitForSeconds(messageLifetime);
+
+        float t = 0f;
+        while (t < fadeDuration)
+        {
+            t += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);
+            yield return null;
+        }
+
+        Destroy(obj);
+    }
+
+    IEnumerator AnimateEmoji(RectTransform emoji)
+    {
+        float t = 0f;
+        while (emoji != null)
+        {
+            t += Time.deltaTime * 2f;
+            float scale = 1f + Mathf.Sin(t * 3f) * 0.1f;  
+            emoji.localScale = new Vector3(scale, scale, 1f);
+            yield return null;
+        }
     }
 }
