@@ -14226,6 +14226,15 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
+  interactAction:
+    m_Name: Interact
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: c284e2d5-931b-481f-ab4a-7c5247eee000
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
   hasDoubleJump: 0
 --- !u!212 &871734301
 SpriteRenderer:

@@ -25,7 +25,7 @@ public class LockerInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (playerNearby && playerController.attackAction.WasPressedThisFrame())
+        if (playerNearby && playerController.interactAction.WasPressedThisFrame())
         {
             if (!playerInside)
             {

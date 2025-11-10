@@ -89,6 +89,7 @@ public class PlayerController : MonoBehaviour
     public InputAction moveAction;
     public InputAction jumpAction;
     public InputAction attackAction;
+    public InputAction interactAction;
     private InputAction aimAction;
     private InputAction flashAction;
 
@@ -102,6 +103,7 @@ public class PlayerController : MonoBehaviour
         moveAction = playerActions.FindAction("MoveX");
         jumpAction = playerActions.FindAction("Jump");
         attackAction = playerActions.FindAction("Attack");
+        interactAction = playerActions.FindAction("Interact");
         aimAction = playerActions.FindAction("AimDirection");
         flashAction = playerActions.FindAction("ActionFlash");
 
@@ -120,6 +122,7 @@ public class PlayerController : MonoBehaviour
         moveAction.Enable();
         jumpAction.Enable();
         attackAction.Enable();
+        interactAction.Enable();
         aimAction.Enable();
         flashAction.Enable();
     }
@@ -129,6 +132,7 @@ public class PlayerController : MonoBehaviour
         moveAction.Disable();
         jumpAction.Disable();
         attackAction.Disable();
+        interactAction.Disable();
         aimAction.Disable();
         flashAction.Disable();
     }
