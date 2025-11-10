@@ -21,9 +21,9 @@ public class PauseMenuManager : MonoBehaviour
     public Vector2 hotspot = Vector2.zero;
     public CursorMode cursorMode = CursorMode.Auto;
 
-    [Header("Powerups")]
-    public GameObject doubleJumpUI;
-    public GameObject doubleJumpUIText;
+    //[Header("Powerups")]
+    //public GameObject doubleJumpUI;
+    //public GameObject doubleJumpUIText;
 
     private void Start()
     {
@@ -53,15 +53,18 @@ public class PauseMenuManager : MonoBehaviour
 
     public void PauseGame()
     {
+        isPaused = true;
         Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
         pauseMenuUI.SetActive(true);
-        doubleJumpUI.SetActive(false);
+        //if (doubleJumpUI != null)
+       // { 
+           // doubleJumpUI.SetActive(false);
+        //}
         audioSettingsUI.SetActive(false);
         Time.timeScale = 0f;
-        isPaused = true;
         inAudioSettings = false;
 
-        if (playerController.hasDoubleJump == true)
+        /*if (playerController.hasDoubleJump == true)
         {
             doubleJumpUI.SetActive(true);
             doubleJumpUIText.SetActive(false);
@@ -70,7 +73,7 @@ public class PauseMenuManager : MonoBehaviour
             {
                 doubleJumpUI.SetActive(true);
             }
-        }
+        }*/
     }
 
     public void Resume()
