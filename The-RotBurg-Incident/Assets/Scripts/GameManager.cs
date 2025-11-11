@@ -21,19 +21,6 @@ public class GameManager : MonoBehaviour
     public BatterySlider batterySlider;
     public Light2D playerLight;
 
-    public static GameManager instance;
-
-    void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-
     private void Start()
     {
         player = FindAnyObjectByType<PlayerController>();
@@ -47,28 +34,18 @@ public class GameManager : MonoBehaviour
     {
         if (batteryPercentage > 0f)
         {
-            if (playerLight != null)
-            {
-                playerLight.enabled = true;
-            }
+            playerLight.enabled = true;
             batteryPercentage -= drainRatePerSecond * Time.deltaTime;
             batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
             batterySlider.SetBattery(batteryPercentage);
 
-            Color c = sliderFill.color;
-            c.a = 0f;
-            sliderFill.color = c;
+            batterySliderFill.SetActive(true);
         }
         else
         {
-            if (playerLight != null)
-            {
-                playerLight.enabled = false;
-            }
+            playerLight.enabled = false;
 
-            Color c = sliderFill.color;
-            c.a = 1f;
-            sliderFill.color = c;
+            batterySliderFill.SetActive(false);
         }
 
         if (player.isSitting == true)
@@ -90,8 +67,7 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            Scene currentScene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(currentScene.name);
+            SceneManager.LoadScene(1);
         }
     }
 

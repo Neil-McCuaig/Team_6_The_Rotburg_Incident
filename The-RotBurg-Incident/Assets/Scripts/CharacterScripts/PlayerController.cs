@@ -106,10 +106,7 @@ public class PlayerController : MonoBehaviour
         interactAction = playerActions.FindAction("Interact");
         aimAction = playerActions.FindAction("AimDirection");
         flashAction = playerActions.FindAction("ActionFlash");
-    }
 
-    private void Start()
-    {
         health = FindAnyObjectByType<PlayerHealth>();
         manager = FindAnyObjectByType<GameManager>();
         pauseManager = FindAnyObjectByType<PauseMenuManager>();

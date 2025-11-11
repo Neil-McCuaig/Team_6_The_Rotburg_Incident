@@ -8,18 +8,6 @@ public class VolumeSettings : MonoBehaviour
     [SerializeField] private AudioMixer mixer;
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider SFXSlider;
-    
-    public static VolumeSettings instance;
-    void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
 
     private void Start()
     {
