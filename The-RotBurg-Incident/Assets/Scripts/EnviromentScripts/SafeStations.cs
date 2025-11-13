@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SafeStations : MonoBehaviour
 {
     public GameObject hoverEffect; 
+    public GameObject hoverEffect2;
     public float chargeRate; 
 
     private bool playerInRange = false;
@@ -30,6 +31,7 @@ public class SafeStations : MonoBehaviour
     private void Start()
     {
         hoverEffect.SetActive(false);
+        hoverEffect2.SetActive(false);
         playerController = FindAnyObjectByType<PlayerController>();
         playerController.SetRespawnPoint(playerController.transform.position);
         gameManager = FindAnyObjectByType<GameManager>();
@@ -61,6 +63,7 @@ public class SafeStations : MonoBehaviour
         {
             playerInRange = true;
             hoverEffect.SetActive(true);
+            hoverEffect2.SetActive(true);
         }
     }
 
@@ -70,6 +73,7 @@ public class SafeStations : MonoBehaviour
         {
             playerInRange = false;
             hoverEffect.SetActive(false);
+            hoverEffect2.SetActive(false);
             if (isCharging)
             {
                 StopCharging();
@@ -81,6 +85,7 @@ public class SafeStations : MonoBehaviour
     {
         isCharging = true;
         hoverEffect.SetActive(false);
+        hoverEffect2.SetActive(false);
         if (playerController != null)
         {
             playerController.isSitting = true;
@@ -96,6 +101,7 @@ public class SafeStations : MonoBehaviour
     {
         isCharging = false;
         hoverEffect.SetActive(true);
+        hoverEffect2.SetActive(false);
         if (playerController != null)
         {
             playerController.isSitting = false;

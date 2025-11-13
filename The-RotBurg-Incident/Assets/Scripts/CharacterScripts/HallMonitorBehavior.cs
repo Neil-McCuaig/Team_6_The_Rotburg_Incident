@@ -49,6 +49,8 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     private enum State { GreenLight, YellowLight, RedLight }
     private State currentState = State.GreenLight;
 
+    public GameObject hidePoint;
+
     private void Start()
     {
         player = GameObject.Find("Player").transform;
@@ -70,6 +72,7 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
         {
             currentState = State.GreenLight;
             lt.color = Sleeping;
+            transform.position = hidePoint.transform.position;
             return;
         }
         switch (currentState)
