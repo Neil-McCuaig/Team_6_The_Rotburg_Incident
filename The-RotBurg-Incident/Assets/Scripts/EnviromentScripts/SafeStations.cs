@@ -101,7 +101,7 @@ public class SafeStations : MonoBehaviour
     {
         isCharging = false;
         hoverEffect.SetActive(true);
-        hoverEffect2.SetActive(false);
+        hoverEffect2.SetActive(true);
         if (playerController != null)
         {
             playerController.isSitting = false;
