@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviour
 
         if (!hasDoubleJump)
         {
-            if (jumpAction.WasPressedThisFrame() && isGrounded && coyoteTimeCounter > 0f)
+            if (jumpAction.WasPressedThisFrame() && (isGrounded || coyoteTimeCounter > 0f))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce;
