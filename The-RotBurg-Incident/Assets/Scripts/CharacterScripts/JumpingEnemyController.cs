@@ -224,11 +224,14 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            FindAnyObjectByType<PlayerHealth>().TakeDamage(attackDamage);
-            isBounce = true;
-            Vector2 awayFromPlayer = (transform.position - collision.transform.position).normalized;
-            rb.velocity = awayFromPlayer * bounceForce;
-            StartCoroutine(BounceCooldown());
+            if (currentState != State.Stunned)
+            {
+                FindAnyObjectByType<PlayerHealth>().TakeDamage(attackDamage);
+                isBounce = true;
+                Vector2 awayFromPlayer = (transform.position - collision.transform.position).normalized;
+                rb.velocity = awayFromPlayer * bounceForce;
+                StartCoroutine(BounceCooldown());
+            }
         }
         if (collision.contacts[0].normal.y > 0.5f && collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {

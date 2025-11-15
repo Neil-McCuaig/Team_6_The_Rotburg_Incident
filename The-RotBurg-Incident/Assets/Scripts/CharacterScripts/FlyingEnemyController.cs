@@ -221,16 +221,19 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+            if (currentState != State.StunState)
+            {
+                FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
 
-            wallBounce = true;
-            Vector2 bounceDirection = Vector2.Reflect(currentDirection, player.position).normalized;
-            Vector2 toPlayer = ((Vector2)(player.position - transform.position)).normalized;
-            float blendTowardPlayer = 0.3f;
-            Vector2 offsetDirection = Vector2.Lerp(bounceDirection, toPlayer, blendTowardPlayer).normalized;
-            currentDirection = offsetDirection;
-            rb.velocity = currentDirection * bounceForce;
-            StartCoroutine(BounceCooldown());
+                wallBounce = true;
+                Vector2 bounceDirection = Vector2.Reflect(currentDirection, player.position).normalized;
+                Vector2 toPlayer = ((Vector2)(player.position - transform.position)).normalized;
+                float blendTowardPlayer = 0.3f;
+                Vector2 offsetDirection = Vector2.Lerp(bounceDirection, toPlayer, blendTowardPlayer).normalized;
+                currentDirection = offsetDirection;
+                rb.velocity = currentDirection * bounceForce;
+                StartCoroutine(BounceCooldown());
+            }
         }
     }
 }

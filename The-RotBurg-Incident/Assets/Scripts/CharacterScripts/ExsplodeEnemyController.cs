@@ -186,8 +186,11 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            currentState = State.EnemyIgnite;
-            anim.SetBool("IsDead", true);
+            if (currentState != State.StunState)
+            {
+                currentState = State.EnemyIgnite;
+                anim.SetBool("IsDead", true);
+            }
         }
     }
 

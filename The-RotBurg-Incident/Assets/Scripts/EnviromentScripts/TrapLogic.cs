@@ -40,7 +40,10 @@ public class TrapLogic : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("Enemy"))
         {
-            other.GetComponent<EnemyHealth>().health -= 100f;
+            if (other.GetComponent<EnemyHealth>() != null)
+            {
+                other.GetComponent<EnemyHealth>().health -= 100f;
+            }
         }
     }
 
