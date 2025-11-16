@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
     private float lastAttackTime = 0f;
+    public float knockBackAmount;
     public float damageAmount;
     public GameObject attackPointA;
     public GameObject attackPointB;
@@ -246,6 +247,11 @@ public class PlayerController : MonoBehaviour
         foreach (Collider2D enemyGameObject in enemy)
         {
             enemyGameObject.GetComponent<EnemyHealth>().health -= damageAmount;
+            EnemyKnockbackable applyKnockback = enemyGameObject.GetComponent<EnemyKnockbackable>();
+            if (applyKnockback != null)
+            {
+                applyKnockback.ApplyKnockback(this.transform, knockBackAmount);
+            }
         }
     }
     public void EndAttack()
@@ -391,7 +397,6 @@ public class PlayerController : MonoBehaviour
         collision.enabled = false;
         armRender.enabled = false;
         anim.SetBool("IsDead", true);
-        Debug.Log("Triggered");
         StartCoroutine(HandleDeathFadeOut());
     }
 

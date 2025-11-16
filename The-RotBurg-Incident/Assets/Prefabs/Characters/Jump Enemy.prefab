@@ -213,6 +213,8 @@ MonoBehaviour:
   isDead: 0
   bounceForce: 30
   bounceCooldownTime: 0
+  knockbackTime: 0.15
+  hitRecoverTime: 0.2
   isStunned: 0
   stunTimer: 2
   player: {fileID: 0}

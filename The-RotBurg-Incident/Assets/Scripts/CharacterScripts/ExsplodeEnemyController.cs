@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
+public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbackable
 {
     public float moveSpeed = 3f;
     public LayerMask groundLayer;
@@ -10,6 +10,10 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
     public bool isDead = false;
 
     private Vector2 currentDirection;
+
+    public float knockbackTime = 0.15f;
+    public float hitRecoverTime = 0.5f;
+    private bool isKnockedBack = false;
 
     [Range(0, 360)]
     public float viewDistance = 10f;
@@ -70,6 +74,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
 
             case State.ChasePlayer:
                 {
+                    anim.SetBool("isStunned", false);
                     Vector2 targetDirection = ((Vector2)(player.position - transform.position)).normalized;
                     currentDirection.x = targetDirection.x;
 
@@ -79,7 +84,17 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
             case State.StunState:
                 {
                     anim.SetBool("isStunned", true);
-                    rb.velocity = Vector2.zero;
+                    if (!isKnockedBack)
+                    {
+                        rb.velocity = Vector2.zero;
+                    }
+                    else
+                    {
+                        stunCountdown = stunTimer;
+                        isStunned = false;
+                        anim.SetBool("isStunned", false);
+                        currentState = State.ChasePlayer;
+                    }
                     stunCountdown -= Time.deltaTime;
                     if (stunCountdown <= 0f)
                     {
@@ -115,7 +130,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
     {
         if (health.currentHealth > 0)
         {
-            if (!isStunned && !isDead)
+            if (!isStunned && !isDead && !isKnockedBack)
             {
                 rb.velocity = new Vector2(currentDirection.x * moveSpeed, rb.velocity.y);
 
@@ -215,5 +230,23 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable
 
         isDead = true;
         currentState = State.DeathState;
+    }
+
+    public void ApplyKnockback(Transform player, float knockbackAmount)
+    {
+        if (isDead) return;
+
+        StartCoroutine(HitRecoverTimer());
+        Vector2 direction = (gameObject.transform.position - player.position).normalized;
+        rb.velocity = direction * knockbackAmount;
+        isKnockedBack = true;
+    }
+    IEnumerator HitRecoverTimer()
+    {
+        yield return new WaitForSeconds(knockbackTime);
+        rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(hitRecoverTime);
+        isKnockedBack = false;
+        currentState = State.ChasePlayer;
     }
 }

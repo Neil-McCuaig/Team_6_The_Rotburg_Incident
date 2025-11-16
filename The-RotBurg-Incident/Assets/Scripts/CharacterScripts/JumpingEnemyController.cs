@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class JumpingEnemyController : MonoBehaviour, EnemyStunable
+public class JumpingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbackable
 {
     [Header("Movement Settings")]
     public float moveSpeed = 3f;
@@ -29,6 +29,8 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
     private bool isBounce = false;
     public float bounceForce = 5f;
     public float bounceCooldownTime = 0.5f;
+    public float knockbackTime = 0.15f;
+    public float hitRecoverTime = 0.5f;
 
     [Header("Stunned Settings")]
     public bool isStunned = false;
@@ -43,7 +45,7 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
     private Collider2D playerCollider;
     EnemyHealth health;
 
-    enum State { Idle, Attack, Stunned, Death }
+    enum State { Idle, Attack, Stunned, Knockback, Death }
     State currentState = State.Idle;
 
     private void Start()
@@ -95,6 +97,7 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
                     }
                 case State.Attack:
                     {
+                        enemyAnim.SetBool("isStunned", false);
                         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
                         float direction = Mathf.Sign(player.position.x - transform.position.x);
 
@@ -122,12 +125,15 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
                         stunCountdown -= Time.deltaTime;
                         if (stunCountdown <= 0f)
                         {
-                            enemyAnim.SetBool("isStunned", false);
                             isStunned = false;
                             stunCountdown = stunTimer;
                             rb.mass = 40;
                             currentState = State.Attack;
                         }
+                        break;
+                    }
+                case State.Knockback:
+                    {
                         break;
                     }
                 case State.Death:
@@ -142,7 +148,7 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
 
     private void FixedUpdate()
     {
-        if (currentState != State.Attack && isBounce == false && !isStunned && !isDead)
+        if (currentState != State.Attack && currentState != State.Knockback && isBounce == false && !isStunned && !isDead)
         {
             rb.velocity = new Vector2((currentDirection.x * moveSpeed), rb.velocity.y);
         }
@@ -183,7 +189,6 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
             return false;
         }
     }
-
     private void HandleJumpCycle()
     {
         jumpTimer -= Time.deltaTime;
@@ -192,7 +197,6 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
             JumpTowardsPlayer();
         }
     }
-
     private void JumpTowardsPlayer()
     {
         isJumping = true;
@@ -205,7 +209,6 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
         jumpVelY = Mathf.Clamp(jumpVelY, 0f, maxJumpY);
         rb.velocity = new Vector2(jumpVelX, jumpVelY);
     }
-
     private void FlipTowardsPlayer()
     {
         Vector3 scale = transform.localScale;
@@ -219,7 +222,6 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
         }
         transform.localScale = scale;
     }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -243,11 +245,32 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable
         yield return new WaitForSeconds(bounceCooldownTime);
         isBounce = false;
     }
-
     public void Stun()
     {
         isStunned = true;
         rb.mass = 100;
         currentState = State.Stunned;
+    }
+    public void ApplyKnockback(Transform player, float knockbackAmount)
+    {
+        currentState = State.Knockback;
+        StartCoroutine(HitRecoverTimer());
+
+        Vector2 direction = (gameObject.transform.position - player.position).normalized;
+        if(isJumping)
+        {
+            rb.velocity = direction * 5f;
+        }
+        else
+        {
+            rb.velocity = direction * knockbackAmount;
+        }
+    }
+    IEnumerator HitRecoverTimer()
+    {
+        yield return new WaitForSeconds(knockbackTime);
+        rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(hitRecoverTime);
+        currentState = State.Attack;
     }
 }

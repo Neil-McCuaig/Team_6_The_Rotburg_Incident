@@ -4,7 +4,7 @@ using System.Data;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
 
-public class FlyingEnemyController : MonoBehaviour, EnemyStunable
+public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbackable
 {
     public float moveSpeed = 3f;
     public float bounceForce = 2f;
@@ -13,6 +13,10 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
     private float detectionDistance = 3f;
 
     private Vector2 currentDirection;
+
+    public float knockbackTime = 0.15f;
+    public float hitRecoverTime = 0.5f;
+    private bool isKnockedBack = false;
 
     public float idleFloatSpeed = 0.5f;
     public float idleFloatHeight = 0.5f;
@@ -87,7 +91,16 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
             case State.StunState:
             {
                 anim.SetBool("isStunned", true);
-                rb.velocity = Vector2.zero;
+                if (!isKnockedBack)
+                {
+                    rb.velocity = Vector2.zero;
+                }
+                else
+                {
+                    stunCountdown = stunTimer;
+                    isStunned = false;
+                    anim.SetBool("isStunned", false);
+                }
                 stunCountdown -= Time.deltaTime;
                 if (stunCountdown <= 0f)
                 {
@@ -130,7 +143,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
 
     private void FixedUpdate()
     {
-        if (!wallBounce && !isStunned && !isDead)
+        if (!wallBounce && !isStunned && !isDead && !isKnockedBack)
         {
             rb.velocity = currentDirection * moveSpeed;
         }
@@ -235,5 +248,30 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable
                 StartCoroutine(BounceCooldown());
             }
         }
+    }
+
+    public void ApplyKnockback(Transform player, float knockbackAmount)
+    {
+        if (isDead) return;
+
+        StartCoroutine(HitRecoverTimer());
+        Vector2 direction = (transform.position - player.position).normalized;
+        if(isStunned)
+        {
+            rb.velocity = direction * (knockbackAmount + 50f);
+        }
+        else
+        {
+            rb.velocity = direction * knockbackAmount;
+        }
+        isKnockedBack = true;
+    }
+    IEnumerator HitRecoverTimer()
+    {
+        yield return new WaitForSeconds(knockbackTime);
+        rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(hitRecoverTime);
+        isKnockedBack = false;
+        currentState = State.ChasePlayer;
     }
 }
