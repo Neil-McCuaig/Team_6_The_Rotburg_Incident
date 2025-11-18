@@ -97,7 +97,7 @@ public class EnemyController : MonoBehaviour, EnemyStunable
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") && !isStunned)
         {
             FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
         }

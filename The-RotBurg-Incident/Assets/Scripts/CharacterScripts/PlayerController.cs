@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine.Rendering.Universal;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Runtime.CompilerServices;
 
 public class PlayerController : MonoBehaviour
 {
@@ -23,10 +24,12 @@ public class PlayerController : MonoBehaviour
     public float deathFadeDelay = 1f;
     public bool isSitting = false;
     public bool inLocker = false;
+    public bool canMove = true;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
     private float lastAttackTime = 0f;
+    public float knockBackAmount;
     public float damageAmount;
     public GameObject attackPointA;
     public GameObject attackPointB;
@@ -53,6 +56,8 @@ public class PlayerController : MonoBehaviour
     public float groundCheckRadius = 1f;
     public LayerMask groundLayer;
     private bool isGrounded;
+    [HideInInspector]
+    public Vector3 lastGroundedPosition;
 
     [Header("Ceiling Check")]
     public Transform ceilingCheck;
@@ -141,8 +146,8 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
-        if (!isSitting && !isDead && !inLocker && !pauseManager.isPaused) 
-        { 
+        if (canMove && !isSitting && !isDead && !inLocker && !pauseManager.isPaused) 
+        {
             CheckInput();
             AimingDirection();
         }
@@ -150,7 +155,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDead && !inLocker)
+        if (canMove && !isDead && !inLocker)
         {
             HandleMovement();
         }
@@ -168,6 +173,7 @@ public class PlayerController : MonoBehaviour
         if (isGrounded)
         {
             coyoteTimeCounter = coyoteTime;
+            lastGroundedPosition = transform.position;
         }
         else
         {
@@ -176,7 +182,7 @@ public class PlayerController : MonoBehaviour
 
         if (!hasDoubleJump)
         {
-            if (jumpAction.WasPressedThisFrame() && isGrounded && coyoteTimeCounter > 0f)
+            if (jumpAction.WasPressedThisFrame() && (isGrounded || coyoteTimeCounter > 0f))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce;
@@ -241,6 +247,11 @@ public class PlayerController : MonoBehaviour
         foreach (Collider2D enemyGameObject in enemy)
         {
             enemyGameObject.GetComponent<EnemyHealth>().health -= damageAmount;
+            EnemyKnockbackable applyKnockback = enemyGameObject.GetComponent<EnemyKnockbackable>();
+            if (applyKnockback != null)
+            {
+                applyKnockback.ApplyKnockback(this.transform, knockBackAmount);
+            }
         }
     }
     public void EndAttack()
@@ -386,7 +397,6 @@ public class PlayerController : MonoBehaviour
         collision.enabled = false;
         armRender.enabled = false;
         anim.SetBool("IsDead", true);
-
         StartCoroutine(HandleDeathFadeOut());
     }
 

@@ -129,6 +129,8 @@ MonoBehaviour:
     m_Bits: 64
   explosionRadius: 14
   isDead: 0
+  knockbackTime: 0.15
+  hitRecoverTime: 0.2
   viewDistance: 41
   viewAngle: 45
   playerMask:
