@@ -38,7 +38,7 @@ public class SafeStations : MonoBehaviour
 
     private void Update()
     {
-        if (playerInRange && !isCharging && playerController.attackAction.WasPressedThisFrame())
+        if (playerInRange && !isCharging && playerController.interactAction.WasPressedThisFrame())
         {
             SoundManager.instance.PlaySound(rechargeSound);
             StartCharging();
