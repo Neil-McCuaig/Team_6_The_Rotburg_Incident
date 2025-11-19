@@ -101,7 +101,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverEffect: {fileID: 7342652341857338799}
-  chargeRate: 20
+  chargeRate: 40
+  isCharging: 0
   spawnPoint: {fileID: 9063730387145267670}
   rechargeSound: {fileID: 8300000, guid: 733b082f641afe345bc306b2778624f3, type: 3}
 --- !u!61 &3160891498417991897
