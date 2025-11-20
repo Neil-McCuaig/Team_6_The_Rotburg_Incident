@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
             sliderFill.color = Color.red;
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             SceneManager.LoadScene(1);
         }
