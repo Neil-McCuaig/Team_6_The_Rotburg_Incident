@@ -213,6 +213,8 @@ MonoBehaviour:
   isDead: 0
   bounceForce: 30
   bounceCooldownTime: 0
+  knockbackTime: 0.15
+  hitRecoverTime: 0.2
   isStunned: 0
   stunTimer: 2
   player: {fileID: 0}
@@ -228,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9f169024af12274dafa4cb2c7a96a58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
+  health: 8
   currentHealth: 0
 --- !u!1 &4000355593900388977
 GameObject:

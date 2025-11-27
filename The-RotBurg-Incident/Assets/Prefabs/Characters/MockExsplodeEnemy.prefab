@@ -129,6 +129,8 @@ MonoBehaviour:
     m_Bits: 64
   explosionRadius: 14
   isDead: 0
+  knockbackTime: 0.15
+  hitRecoverTime: 0.2
   viewDistance: 41
   viewAngle: 45
   playerMask:
@@ -222,7 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9f169024af12274dafa4cb2c7a96a58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 6
+  health: 4
   currentHealth: 0
 --- !u!1 &8970581294203189899
 GameObject:
