@@ -6,7 +6,8 @@ public class BreakableDoor : MonoBehaviour
 {
     private EnemyHealth health;
     private Animator anim;
-    private Collider2D col2D;  
+    private Collider2D col2D;
+    private bool isBroken = false;
 
     void Start()
     {
@@ -16,7 +17,7 @@ public class BreakableDoor : MonoBehaviour
     }
     void Update()
     {
-        if (health.health < health.currentHealth)
+        if (health.health < health.currentHealth && !isBroken)
         {
             anim.SetTrigger("Attacked");
         }
@@ -24,5 +25,6 @@ public class BreakableDoor : MonoBehaviour
     public void DisableCollider()
     {
         col2D.enabled = false;
+        isBroken = true;
     }
 }

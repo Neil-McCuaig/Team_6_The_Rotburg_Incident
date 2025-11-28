@@ -168,7 +168,6 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
                 }
                 break;
             }
-
             case State.EnemyDeath:
             {
                 isDead = true;
