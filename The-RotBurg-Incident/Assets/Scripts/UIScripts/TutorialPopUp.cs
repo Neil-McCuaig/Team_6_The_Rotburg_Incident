@@ -34,6 +34,7 @@ public class TutorialPopUp : MonoBehaviour
         }
         hasActivated = true;
         playerController.canMove = false;
+        Time.timeScale = 0f;
         StartCoroutine(ShowTutorial());
     }
 
@@ -47,6 +48,7 @@ public class TutorialPopUp : MonoBehaviour
 
         yield return FadeGraphic(1f, 0f);
 
+        Time.timeScale = 1f;
         playerController.canMove = true;
         Destroy(gameObject);
     }

@@ -177,7 +177,7 @@ MonoBehaviour:
   isCharging: 0
   detected: 0
   viewDistance: 90
-  viewAngle: 90
+  viewAngle: 180
   playerMask:
     serializedVersion: 2
     m_Bits: 128
