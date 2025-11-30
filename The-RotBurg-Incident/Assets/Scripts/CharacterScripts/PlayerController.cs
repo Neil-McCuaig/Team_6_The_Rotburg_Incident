@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
-    [SerializeField] private Camera mainCamera;
+    CameraFollowDirection cameraFollow;
 
     [Header("Player Checks")]
     private Vector2 respawnPoint;
@@ -117,6 +117,7 @@ public class PlayerController : MonoBehaviour
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
+        cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
 
         lastMousePosition = Input.mousePosition;
 
@@ -231,12 +232,16 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
             attackPosition.transform.position = attackPointA.transform.position;
+
+            cameraFollow.CallTurn(false);
         }
         else if (moveInput.x < 0)
         {
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
             attackPosition.transform.position = attackPointB.transform.position;
+
+            cameraFollow.CallTurn(true);
         }
 
         if (attackAction.WasPressedThisFrame())
