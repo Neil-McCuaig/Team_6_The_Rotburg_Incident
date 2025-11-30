@@ -16,7 +16,10 @@ public class PlayerController : MonoBehaviour
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
+
+    [Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
+    private float fallSpeedYDampingChangeThreshold;
 
     [Header("Player Checks")]
     private Vector2 respawnPoint;
@@ -70,6 +73,8 @@ public class PlayerController : MonoBehaviour
     public Transform aimRight;
     private Vector2 aimInput;
     private Vector3 lastMousePosition;
+    public float armFlipAnglePos = 90f;
+    public float armFlipAngleNeg = -90f;
     private float idleTimer;
     Vector2 lastAimDirection = Vector2.right;
     float lastAngle = 0f;
@@ -117,7 +122,9 @@ public class PlayerController : MonoBehaviour
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
+
         cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
+        fallSpeedYDampingChangeThreshold = CameraManager.instance.fallSpeedYDampingChangeThreshold;
 
         lastMousePosition = Input.mousePosition;
 
@@ -160,6 +167,16 @@ public class PlayerController : MonoBehaviour
         {
             CheckInput();
             AimingDirection();
+        }
+
+        if (rb.velocity.y < fallSpeedYDampingChangeThreshold && !CameraManager.instance.IsLerpingYDamping && !CameraManager.instance.LerpedFromPlayerFalling)
+        {
+            CameraManager.instance.LerpYDamping(true);
+        }
+        if (rb.velocity.y >= 0f && !CameraManager.instance.IsLerpingYDamping && CameraManager.instance.LerpedFromPlayerFalling)
+        {
+            CameraManager.instance.LerpedFromPlayerFalling = false;
+            CameraManager.instance.LerpYDamping(false);
         }
     }
 
@@ -345,7 +362,7 @@ public class PlayerController : MonoBehaviour
 
         if (flipArmLeft)
         {
-            if (lastAngle > 90 || lastAngle < -90)
+            if (lastAngle > armFlipAnglePos || lastAngle < armFlipAngleNeg)
             {
                 armRender.flipY = true;
                 pictureLight.transform.position = lightLeft.position;
