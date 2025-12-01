@@ -124,7 +124,7 @@ public class PlayerController : MonoBehaviour
         collision = GetComponent<Collider2D>();
 
         cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
-        fallSpeedYDampingChangeThreshold = CameraManager.instance.fallSpeedYDampingChangeThreshold;
+        fallSpeedYDampingChangeThreshold = -15f;
 
         lastMousePosition = Input.mousePosition;
 
