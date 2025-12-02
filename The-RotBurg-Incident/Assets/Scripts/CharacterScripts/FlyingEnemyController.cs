@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using Unity.Burst.Intrinsics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbackable
@@ -49,6 +50,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
 
     private enum State { HoveringIdle, ChasePlayer, StunState, EnemyDeath }
     private State currentState = State.HoveringIdle;
+    private State previousState;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -78,6 +80,13 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
 
     void Update()
     {
+        // Detect state change
+        if (previousState != currentState)
+        {
+            OnStateEnter(currentState);
+            previousState = currentState;
+        }
+
         switch (currentState)
         {
             case State.HoveringIdle:
@@ -93,6 +102,10 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
 
             case State.ChasePlayer:
             {
+                if (!CanSeePlayer())
+                {
+                    currentState = State.HoveringIdle;
+                }
                 if (isStunned)
                 {
                     isCharging = false;
@@ -110,12 +123,12 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
 
                 RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, Vector2.left, dashDetectionDistance, playerMask);
                 RaycastHit2D hitRight = Physics2D.Raycast(transform.position, Vector2.right, dashDetectionDistance, playerMask);
-                if (hitLeft.collider != null && hitLeft.collider.CompareTag("Player"))
+                if (hitLeft.collider != null && hitLeft.collider.CompareTag("Player") && !isDashing)
                 {
                     detected = true;
                     dashDir = -1;
                 }
-                else if (hitRight.collider != null && hitRight.collider.CompareTag("Player"))
+                else if (hitRight.collider != null && hitRight.collider.CompareTag("Player") && !isDashing)
                 {
                     detected = true;
                     dashDir = 1;
@@ -131,7 +144,6 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
 
                 break;
             }
-
 
             case State.StunState:
             {
@@ -156,7 +168,6 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
                 }
                 break;
             }
-
             case State.EnemyDeath:
             {
                 isDead = true;
@@ -169,7 +180,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
         if (health.currentHealth > 0)
         {
             Vector3 scale = transform.localScale;
-            if (currentDirection.x > 0)
+            if (currentDirection.x > 0 )
             {
                 scale.x = Mathf.Abs(scale.x);
             }
@@ -177,12 +188,23 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
             {
                 scale.x = -Mathf.Abs(scale.x);
             }
-            transform.localScale = scale;
+            if (isDashing == false)
+            {
+                transform.localScale = scale;
+            }
             DetectWallsAndGround();
         }
         else
         {
             currentState = State.EnemyDeath;
+        }
+    }
+    void OnStateEnter(State newState)
+    {
+        if (newState == State.HoveringIdle)
+        {
+            idleStartPos = transform.position; 
+            floatTimer = 0f;                   
         }
     }
     private IEnumerator DashRoutine()
