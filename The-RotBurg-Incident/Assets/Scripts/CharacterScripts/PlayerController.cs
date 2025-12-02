@@ -238,10 +238,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (jumpAction.WasReleasedThisFrame() && rb.velocity.y > 0f)
+        if (jumpAction.WasReleasedThisFrame() && rb.velocity.y > 0f && !isGrounded)
         {
             cutJump = true;
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * jumpCutMultiplier);
         }
 
         if (moveInput.x > 0)
@@ -310,7 +309,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 velocity.y += Physics2D.gravity.y * gravityScale * Time.fixedDeltaTime;
-                if (cutJump && velocity.y > 0)
+                if (cutJump)
                 {
                     velocity.y *= jumpCutMultiplier;
                     cutJump = false;
