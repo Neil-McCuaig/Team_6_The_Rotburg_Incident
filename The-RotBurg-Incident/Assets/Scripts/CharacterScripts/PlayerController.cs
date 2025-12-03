@@ -128,6 +128,7 @@ public class PlayerController : MonoBehaviour
         cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
         fallSpeedYDampingChangeThreshold = -15f;
 
+        enemySpawnerManager.SpawnEnemies();
         lastMousePosition = Input.mousePosition;
 
         if (pictureLight != null)
