@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
+    SafeStations safeStations;
 
     [Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
@@ -25,7 +26,6 @@ public class PlayerController : MonoBehaviour
     private Vector2 respawnPoint;
     public bool isDead;
     public float deathFadeDelay = 1f;
-    public bool isSitting = false;
     public bool inLocker = false;
     public bool canMove = true;
 
@@ -122,6 +122,7 @@ public class PlayerController : MonoBehaviour
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
+        safeStations = FindAnyObjectByType<SafeStations>();
 
         cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
         fallSpeedYDampingChangeThreshold = -15f;
@@ -163,7 +164,7 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
-        if (canMove && !isSitting && !isDead && !inLocker && !pauseManager.isPaused) 
+        if (canMove && !isDead && !inLocker && !pauseManager.isPaused) 
         {
             CheckInput();
             AimingDirection();
@@ -287,6 +288,11 @@ public class PlayerController : MonoBehaviour
     public void EndAttack()
     {
         anim.SetBool("IsAttacking", false);
+    }
+    public void EndCharging()
+    {
+        safeStations.StopCharging();
+        EnableArmRender();
     }
     private void OnDrawGizmos()
     {
@@ -425,7 +431,7 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         transform.position = respawnPoint;
-        armRender.enabled = true;
+        EnableArmRender();
         health.ResetHealthFull();
     }
 
@@ -433,7 +439,7 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
         collision.enabled = false;
-        armRender.enabled = false;
+        DisableArmRender();
         anim.SetBool("IsDead", true);
         StartCoroutine(HandleDeathFadeOut());
     }
@@ -455,5 +461,13 @@ public class PlayerController : MonoBehaviour
         Respawn();
         anim.SetBool("IsDead", false);
         fader.FadeIn();
+    }
+    public void DisableArmRender()
+    {
+        armRender.enabled = false;
+    }
+    public void EnableArmRender()
+    {
+        armRender.enabled = true;
     }
 }

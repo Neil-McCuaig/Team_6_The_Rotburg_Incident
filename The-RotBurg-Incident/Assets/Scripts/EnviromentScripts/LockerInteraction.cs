@@ -54,7 +54,7 @@ public class LockerInteraction : MonoBehaviour
         anim.SetBool("IsOpen", false);
         playerInside = true;
         playerController.inLocker = true;
-        arm.SetActive(false);
+        playerController.DisableArmRender();
 
         if (playerSprite == null)
         {
@@ -80,7 +80,7 @@ public class LockerInteraction : MonoBehaviour
         anim.SetBool("IsOpen", true);
         playerInside = false;
         playerController.inLocker = false;
-        arm.SetActive(true);
+        playerController.EnableArmRender();
 
         if (playerRb == null)
         {

@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public string powerUp1 = "DoubleJump";
 
     PlayerController player;
+    SafeStations safeStations;
     public GameObject batterySliderFill;
     private Image sliderFill;
 
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         player = FindAnyObjectByType<PlayerController>();
+        safeStations = FindAnyObjectByType<SafeStations>();
         batterySlider = FindAnyObjectByType<BatterySlider>();
         batterySlider.SetMaxBattery(batteryPercentage);
 
@@ -48,7 +50,7 @@ public class GameManager : MonoBehaviour
             batterySliderFill.SetActive(false);
         }
 
-        if (player.isSitting == true)
+        if (batteryPercentage > 99f)
         {
             sliderFill.color = Color.green;
         }
