@@ -84,7 +84,8 @@ public class PlayerController : MonoBehaviour
     [Header("Stun-Ability Settings")]
     public float drainAmount;
     public float flashIntensity = 1f;
-    private float originalIntensity;
+    private float oriFlashIntensity;
+    private float oriPictureIntensity;
     public float decayTime = 1f;
     public Transform lightLeft;
     public Transform lightRight;
@@ -131,12 +132,13 @@ public class PlayerController : MonoBehaviour
 
         if (pictureLight != null)
         {
-            originalIntensity = pictureLight.intensity;
-        }
-        if (pictureLight != null)
-        {
+            oriPictureIntensity = pictureLight.intensity;
             pictureLight.intensity = 0f;
             pictureLight.gameObject.SetActive(false);
+        }
+        if (flashLight != null)
+        {
+            oriFlashIntensity = flashLight.intensity;
         }
     }
 
@@ -465,9 +467,11 @@ public class PlayerController : MonoBehaviour
     public void DisableArmRender()
     {
         armRender.enabled = false;
+        flashLight.intensity = 0f;
     }
     public void EnableArmRender()
     {
         armRender.enabled = true;
+        flashLight.intensity = oriFlashIntensity;
     }
 }

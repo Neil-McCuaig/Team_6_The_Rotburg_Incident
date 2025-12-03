@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class LockerInteraction : MonoBehaviour
 {
+    public static List<LockerInteraction> allLockers = new List<LockerInteraction>();
+
     private bool playerNearby = false;
     private bool playerInside = false;
+    public bool sealLocker = false;
     PlayerController playerController;
     private GameObject player;
     PlayerHealth health;
@@ -13,6 +16,15 @@ public class LockerInteraction : MonoBehaviour
     private SpriteRenderer playerSprite;
     private Rigidbody2D playerRb;
     private Animator anim;
+
+    void Awake()
+    {
+        allLockers.Add(this);
+    }
+    void OnDestroy()
+    {
+        allLockers.Remove(this);
+    }
 
     private void Start()
     {
@@ -25,7 +37,7 @@ public class LockerInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (playerNearby && playerController.interactAction.WasPressedThisFrame())
+        if (!sealLocker && playerNearby && playerController.interactAction.WasPressedThisFrame())
         {
             if (!playerInside)
             {
@@ -115,5 +127,16 @@ public class LockerInteraction : MonoBehaviour
                 player = null;
             }
         }
+    }
+
+    public void SealAllLockers()
+    {
+        sealLocker = true;
+        anim.SetBool("IsSealed", true);
+    }
+    public void UnSealLockers()
+    {
+        sealLocker = false;
+        anim.SetBool("IsSealed", false);
     }
 }
