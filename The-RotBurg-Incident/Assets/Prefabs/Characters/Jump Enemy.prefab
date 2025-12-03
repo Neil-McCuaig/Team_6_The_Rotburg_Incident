@@ -209,6 +209,7 @@ MonoBehaviour:
   playerMask:
     serializedVersion: 2
     m_Bits: 128
+  bloodSplatter: {fileID: 7426752348131821499, guid: ab41fe615044e2845b4c446ce8c093b8, type: 3}
   attackDamage: 10
   isDead: 0
   bounceForce: 30

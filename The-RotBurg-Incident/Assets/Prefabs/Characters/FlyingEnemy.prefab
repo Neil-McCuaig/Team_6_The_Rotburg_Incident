@@ -188,6 +188,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  bloodSplatter: {fileID: 7426752348131821499, guid: ab41fe615044e2845b4c446ce8c093b8, type: 3}
   knockbackTime: 0.15
   hitRecoverTime: 0.2
 --- !u!95 &6424794739967463515

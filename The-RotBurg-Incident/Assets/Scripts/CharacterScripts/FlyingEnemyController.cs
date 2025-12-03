@@ -44,6 +44,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
     private float detectionDistance = 3f;
 
     [Header("Knockback Settings")]
+    public GameObject bloodSplatter;
     public float knockbackTime = 0.15f;
     public float hitRecoverTime = 0.5f;
     private bool isKnockedBack = false;
@@ -394,6 +395,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
 
     public void ApplyKnockback(Transform player, float knockbackAmount)
     {
+        Instantiate(bloodSplatter, transform.position, Quaternion.identity);
         if (isDead) return;
 
         StartCoroutine(HitRecoverTimer());

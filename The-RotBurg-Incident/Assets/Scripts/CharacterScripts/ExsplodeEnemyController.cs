@@ -11,6 +11,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockb
 
     private Vector2 currentDirection;
 
+    public GameObject bloodSplatter;
     public float knockbackTime = 0.15f;
     public float hitRecoverTime = 0.5f;
     private bool isKnockedBack = false;
@@ -236,6 +237,7 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockb
     {
         if (isDead) return;
 
+        Instantiate(bloodSplatter, transform.position, Quaternion.identity);
         StartCoroutine(HitRecoverTimer());
         Vector2 direction = (gameObject.transform.position - player.position).normalized;
         rb.velocity = direction * knockbackAmount;
