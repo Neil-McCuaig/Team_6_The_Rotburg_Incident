@@ -171,7 +171,6 @@ public class PlayerController : MonoBehaviour
             CheckInput();
             AimingDirection();
         }
-
         if (rb.velocity.y < fallSpeedYDampingChangeThreshold && !CameraManager.instance.IsLerpingYDamping && !CameraManager.instance.LerpedFromPlayerFalling)
         {
             CameraManager.instance.LerpYDamping(true);
@@ -425,15 +424,15 @@ public class PlayerController : MonoBehaviour
         canFlash = true;
     }
 
-    public void SetRespawnPoint(Vector2 point)
+    public void SetRespawnPoint()
     {
-        respawnPoint = point;
+        Vector3 currentPos = transform.position;
+        respawnPoint = new Vector2(currentPos.x, currentPos.y);
     }
 
     public void Respawn()
     {
         transform.position = respawnPoint;
-        EnableArmRender();
         health.ResetHealthFull();
     }
 
@@ -457,6 +456,7 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(deathFadeDelay);
 
+        safeStations.TriggerCharge();
         isDead = false;
         collision.enabled = true;
         enemySpawnerManager.SpawnEnemies();

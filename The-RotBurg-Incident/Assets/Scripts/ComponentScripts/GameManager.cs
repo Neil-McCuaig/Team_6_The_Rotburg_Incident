@@ -83,7 +83,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void OnEnable()
     {
         Inventory.OnItemAdded += CheckForItem; 
