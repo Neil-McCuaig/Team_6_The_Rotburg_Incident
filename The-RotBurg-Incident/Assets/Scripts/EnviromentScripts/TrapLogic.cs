@@ -12,6 +12,7 @@ public class TrapLogic : MonoBehaviour
 
     FadeToBlack fade;
     PlayerController player;
+    Animator anim;
 
     void Start()
     {
@@ -22,6 +23,8 @@ public class TrapLogic : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            anim = other.GetComponent<Animator>();
+            anim.SetBool("IsJumping", false);
             player = other.GetComponent<PlayerController>();
             PlayerHealth health = other.GetComponent<PlayerHealth>();
             if (player != null)

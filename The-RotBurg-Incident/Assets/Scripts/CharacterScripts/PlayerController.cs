@@ -170,7 +170,6 @@ public class PlayerController : MonoBehaviour
 
         if (canMove && !isDead && !inLocker && !pauseManager.isPaused) 
         {
-            
             CheckInput();
             AimingDirection();
         }
