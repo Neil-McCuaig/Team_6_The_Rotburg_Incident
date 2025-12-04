@@ -170,6 +170,7 @@ public class PlayerController : MonoBehaviour
 
         if (canMove && !isDead && !inLocker && !pauseManager.isPaused) 
         {
+            
             CheckInput();
             AimingDirection();
         }
@@ -189,6 +190,7 @@ public class PlayerController : MonoBehaviour
         if (canMove && !isDead && !inLocker)
         {
             HandleMovement();
+            anim.SetFloat("VelocityY", Mathf.Abs(rb.velocity.y));
         }
         else
         {
@@ -205,10 +207,12 @@ public class PlayerController : MonoBehaviour
         {
             coyoteTimeCounter = coyoteTime;
             lastGroundedPosition = transform.position;
+            anim.SetBool("IsJumping", false);
         }
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
+            anim.SetBool("IsJumping", true);
         }
 
         if (!hasDoubleJump)
@@ -249,6 +253,7 @@ public class PlayerController : MonoBehaviour
 
         if (moveInput.x > 0)
         {
+            anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
             attackPosition.transform.position = attackPointA.transform.position;
@@ -257,11 +262,16 @@ public class PlayerController : MonoBehaviour
         }
         else if (moveInput.x < 0)
         {
+            anim.SetInteger("WalkX", -1);
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
             attackPosition.transform.position = attackPointB.transform.position;
 
             cameraFollow.CallTurn(true);
+        }
+        else if (moveInput.x == 0)
+        {
+            anim.SetInteger("WalkX", 0);
         }
 
         if (attackAction.WasPressedThisFrame() && hasMetalPipe)
