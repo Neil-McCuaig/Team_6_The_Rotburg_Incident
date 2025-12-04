@@ -184,10 +184,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11234fd176b7a1f41aef0677588c7056, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverEffect: {fileID: 4527164812708731559}
+  hoverEffect: {fileID: 7501636407905041313, guid: 8bf5a2ffb62b2594d8b5003461312a4f, type: 3}
   chargeRate: 40
   isCharging: 0
-  spawnPoint: {fileID: 4680264090160172562}
   rechargeSound: {fileID: 8300000, guid: 733b082f641afe345bc306b2778624f3, type: 3}
 --- !u!61 &283416404016519504
 BoxCollider2D:

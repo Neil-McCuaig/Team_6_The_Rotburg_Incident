@@ -23,6 +23,9 @@ public class CameraManager : MonoBehaviour
     private CinemachineVirtualCamera currentCamera;
     private CinemachineFramingTransposer framingTransposer;
 
+    private CinemachineBasicMultiChannelPerlin perlinNoise;
+    private Coroutine shakeCoroutine;
+
     private float normYPanAmount;
 
     private Vector2 startingTrackedObjectOffset;
@@ -40,6 +43,7 @@ public class CameraManager : MonoBehaviour
             {
                 currentCamera = allVirtualCameras[i];
                 framingTransposer = currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+                perlinNoise = currentCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
             }
         }
         normYPanAmount = framingTransposer.m_YDamping;
@@ -132,5 +136,36 @@ public class CameraManager : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    public void ScreenShake(float intensity, float duration)
+    {
+        if (perlinNoise == null)
+        {
+            Debug.LogWarning("No CinemachineBasicMultiChannelPerlin found on active camera.");
+            return;
+        }
+
+        if (shakeCoroutine != null)
+            StopCoroutine(shakeCoroutine);
+
+        shakeCoroutine = StartCoroutine(ShakeRoutine(intensity, duration));
+    }
+
+    private IEnumerator ShakeRoutine(float intensity, float duration)
+    {
+        perlinNoise.m_AmplitudeGain = intensity;
+        perlinNoise.m_FrequencyGain = 2f;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float fade = 1 - (elapsed / duration);
+            perlinNoise.m_AmplitudeGain = intensity * fade;
+            yield return null;
+        }
+
+        perlinNoise.m_AmplitudeGain = 0f;
     }
 }

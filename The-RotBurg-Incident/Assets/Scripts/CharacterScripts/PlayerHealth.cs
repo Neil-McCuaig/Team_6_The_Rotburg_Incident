@@ -37,7 +37,7 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
-        CameraShake.Instance.Shake();
+        CameraManager.instance.ScreenShake(20f, 1f);
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
