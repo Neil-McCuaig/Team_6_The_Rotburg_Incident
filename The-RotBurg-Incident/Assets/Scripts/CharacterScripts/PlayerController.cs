@@ -105,6 +105,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
+    public bool hasMetalPipe = false;
     private int numOfJumps = 2;
 
     private void Awake()
@@ -263,7 +264,7 @@ public class PlayerController : MonoBehaviour
             cameraFollow.CallTurn(true);
         }
 
-        if (attackAction.WasPressedThisFrame())
+        if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {
             if (Time.time >= lastAttackTime + attackCooldown)
             {

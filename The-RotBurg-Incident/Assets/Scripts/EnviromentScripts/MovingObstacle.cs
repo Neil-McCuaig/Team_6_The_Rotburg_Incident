@@ -39,5 +39,12 @@ public class MovingObstacle : MonoBehaviour
         {
             FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
         }
+        if(other.CompareTag("Enemy"))
+        {
+            if (other.GetComponent<EnemyHealth>() != null)
+            {
+                other.GetComponent<EnemyHealth>().health -= 100f;
+            }
+        }
     }
 }
