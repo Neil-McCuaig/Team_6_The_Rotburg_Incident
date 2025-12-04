@@ -102,7 +102,7 @@ MonoBehaviour:
   shakeDelay: 0.1
   fallDelay: 2
   respawn: 1
-  respawnTime: 3
+  respawnTime: 2
 --- !u!95 &2829928565724860783
 Animator:
   serializedVersion: 5
