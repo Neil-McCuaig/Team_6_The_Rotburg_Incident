@@ -43,12 +43,13 @@ public class TutorialPopUp : MonoBehaviour
 
         yield return FadeGraphic(0f, 1f);
 
-        yield return new WaitUntil(() => playerController.attackAction.WasPressedThisFrame());
+        yield return new WaitUntil(() => playerController.interactAction.WasPressedThisFrame());
 
         yield return FadeGraphic(1f, 0f);
 
         playerController.canMove = true;
         Destroy(gameObject);
+        Destroy(popupRoot);
     }
 
     private IEnumerator FadeGraphic(float start, float end)

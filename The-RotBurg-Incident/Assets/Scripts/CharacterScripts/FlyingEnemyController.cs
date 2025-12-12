@@ -2,39 +2,56 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using Unity.Burst.Intrinsics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbackable
 {
+    [Header("Enemy Movement Settings")]
     public float moveSpeed = 3f;
-    public float bounceForce = 2f;
-    private bool wallBounce;
-    public LayerMask groundLayer;
-    private float detectionDistance = 3f;
-
-    private Vector2 currentDirection;
-
-    public float knockbackTime = 0.15f;
-    public float hitRecoverTime = 0.5f;
-    private bool isKnockedBack = false;
-
     public float idleFloatSpeed = 0.5f;
     public float idleFloatHeight = 0.5f;
     private Vector2 idleStartPos;
     private float floatTimer = 0f;
+    private Vector2 currentDirection;
 
+    [Header("Dash Settings")]
+    public float dashSpeed = 3f;
+    public float dashDetectionDistance;
+    public float windupTime;
+    public float maxDashTime;
+    public int dashDir;
+    public bool isDashing;
+    public bool isCharging;
+    public bool detected;
+
+    [Header("Player Detection")]
     [Range(0, 360)]
     public float viewDistance = 10f;
     public float viewAngle = 45f;
     public LayerMask playerMask;
 
+    [Header("Stun Settings")]
     public bool isStunned;
     public float stunTimer;
     private float stunCountdown;
     public bool isDead = false;
 
+    [Header("WallBounce Settings")]
+    public float bounceForce = 2f;
+    private bool wallBounce;
+    public LayerMask groundLayer;
+    private float detectionDistance = 3f;
+
+    [Header("Knockback Settings")]
+    public GameObject bloodSplatter;
+    public float knockbackTime = 0.15f;
+    public float hitRecoverTime = 0.5f;
+    private bool isKnockedBack = false;
+
     private enum State { HoveringIdle, ChasePlayer, StunState, EnemyDeath }
     private State currentState = State.HoveringIdle;
+    private State previousState;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -64,6 +81,13 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
 
     void Update()
     {
+        // Detect state change
+        if (previousState != currentState)
+        {
+            OnStateEnter(currentState);
+            previousState = currentState;
+        }
+
         switch (currentState)
         {
             case State.HoveringIdle:
@@ -78,13 +102,47 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
             }
 
             case State.ChasePlayer:
-            { 
-                Vector2 targetDirection = ((Vector2)(player.position - transform.position)).normalized;
-                currentDirection = targetDirection;
+            {
                 if (!CanSeePlayer())
                 {
                     currentState = State.HoveringIdle;
                 }
+                if (isStunned)
+                {
+                    isCharging = false;
+                    isDashing = false;
+                    rb.velocity = Vector2.zero;
+                    StopAllCoroutines();
+                    currentState = State.StunState;
+                    return;
+                }
+                if (!isDashing || !isCharging)
+                {
+                    Vector2 targetDirection = ((Vector2)(player.position - transform.position)).normalized;
+                    currentDirection = targetDirection;
+                }
+
+                RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, Vector2.left, dashDetectionDistance, playerMask);
+                RaycastHit2D hitRight = Physics2D.Raycast(transform.position, Vector2.right, dashDetectionDistance, playerMask);
+                if (hitLeft.collider != null && hitLeft.collider.CompareTag("Player") && !isDashing)
+                {
+                    detected = true;
+                    dashDir = -1;
+                }
+                else if (hitRight.collider != null && hitRight.collider.CompareTag("Player") && !isDashing)
+                {
+                    detected = true;
+                    dashDir = 1;
+                }
+                else
+                {
+                    detected = false;
+                }
+                if (detected && !isDashing && !isCharging)
+                {
+                    StartCoroutine(DashRoutine());
+                }
+
                 break;
             }
 
@@ -111,7 +169,6 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
                 }
                 break;
             }
-
             case State.EnemyDeath:
             {
                 isDead = true;
@@ -124,7 +181,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
         if (health.currentHealth > 0)
         {
             Vector3 scale = transform.localScale;
-            if (currentDirection.x > 0)
+            if (currentDirection.x > 0 )
             {
                 scale.x = Mathf.Abs(scale.x);
             }
@@ -132,7 +189,10 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
             {
                 scale.x = -Mathf.Abs(scale.x);
             }
-            transform.localScale = scale;
+            if (isDashing == false)
+            {
+                transform.localScale = scale;
+            }
             DetectWallsAndGround();
         }
         else
@@ -140,10 +200,71 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
             currentState = State.EnemyDeath;
         }
     }
+    void OnStateEnter(State newState)
+    {
+        if (newState == State.HoveringIdle)
+        {
+            idleStartPos = transform.position; 
+            floatTimer = 0f;                   
+        }
+    }
+    private IEnumerator DashRoutine()
+    {
+        isCharging = true;
+        rb.velocity = Vector2.zero;
+
+        yield return new WaitForSeconds(windupTime);
+
+        isDashing = true;
+        isCharging = false;
+
+        float dashTimer = 0f;
+
+        while (dashTimer < maxDashTime)
+        {
+            dashTimer += Time.deltaTime;
+
+            rb.velocity = new Vector2(dashDir * dashSpeed, 0);
+
+            RaycastHit2D wallHit = Physics2D.Raycast(transform.position, new Vector2(dashDir, 0), 3.5f, groundLayer);
+            if (wallHit.collider != null)
+            {
+                isDashing = false;
+                isCharging = false;
+                rb.velocity = Vector2.zero;
+                StopAllCoroutines();
+                BounceFromWall(hit: wallHit);
+                currentState = State.HoveringIdle;
+                yield break;
+            }
+            if (isStunned)
+            {
+                rb.velocity = Vector2.zero;
+                isDashing = false;
+                isCharging = false;
+                currentState = State.StunState;
+                yield break;
+            }
+            if (isDead)
+            {
+                rb.velocity = Vector2.zero;
+                isDashing = false;
+                isCharging = false;
+                currentState = State.EnemyDeath;
+                yield break;
+            }
+            yield return null;
+        }
+
+        rb.velocity = Vector2.zero;
+        isDashing = false;
+
+        currentState = State.HoveringIdle;
+    }
 
     private void FixedUpdate()
     {
-        if (!wallBounce && !isStunned && !isDead && !isKnockedBack)
+        if (!wallBounce && !isStunned && !isDead && !isKnockedBack && !isDashing && !isCharging)
         {
             rb.velocity = currentDirection * moveSpeed;
         }
@@ -217,6 +338,25 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
             }
         }
     }
+    void BounceFromPlayer()
+    {
+        wallBounce = true;
+        Vector2 bounceDirection = Vector2.Reflect(currentDirection, player.position).normalized;
+        Vector2 toPlayer = ((Vector2)(player.position - transform.position)).normalized;
+        float blendTowardPlayer = 0.3f;
+        Vector2 offsetDirection = Vector2.Lerp(bounceDirection, toPlayer, blendTowardPlayer).normalized;
+        currentDirection = offsetDirection;
+        rb.velocity = currentDirection * bounceForce;
+        StartCoroutine(BounceCooldown());
+    }
+
+    void BounceFromWall(RaycastHit2D hit)
+    {
+        Vector2 reflect = Vector2.Reflect(new Vector2(dashDir, 0), hit.normal).normalized;
+        rb.velocity = reflect * bounceForce;
+        wallBounce = true;
+        StartCoroutine(BounceCooldown());
+    }
 
     IEnumerator BounceCooldown()
     {
@@ -234,24 +374,28 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            if (isDashing)
+            {
+                isDashing = false;
+                isCharging = false;
+                StopAllCoroutines();
+                rb.velocity = Vector2.zero;
+                BounceFromPlayer();
+                FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+                currentState = State.HoveringIdle;
+                return;
+            }
             if (currentState != State.StunState)
             {
                 FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
-
-                wallBounce = true;
-                Vector2 bounceDirection = Vector2.Reflect(currentDirection, player.position).normalized;
-                Vector2 toPlayer = ((Vector2)(player.position - transform.position)).normalized;
-                float blendTowardPlayer = 0.3f;
-                Vector2 offsetDirection = Vector2.Lerp(bounceDirection, toPlayer, blendTowardPlayer).normalized;
-                currentDirection = offsetDirection;
-                rb.velocity = currentDirection * bounceForce;
-                StartCoroutine(BounceCooldown());
+                BounceFromPlayer();
             }
         }
     }
 
     public void ApplyKnockback(Transform player, float knockbackAmount)
     {
+        Instantiate(bloodSplatter, transform.position, Quaternion.identity);
         if (isDead) return;
 
         StartCoroutine(HitRecoverTimer());

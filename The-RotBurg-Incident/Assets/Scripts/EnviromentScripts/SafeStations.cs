@@ -5,14 +5,13 @@ using UnityEngine.UI;
 
 public class SafeStations : MonoBehaviour
 {
-    public GameObject hoverEffect; 
-    public GameObject hoverEffect2;
-    public float chargeRate; 
+    public GameObject hoverEffect;
+    public float chargeRate;
 
     private bool playerInRange = false;
     public bool isCharging = false;
-    public Transform spawnPoint;
 
+    private Animator anim;
     private EnemySpawnerManager enemySpawnerManager;
     private PlayerController playerController;
     private GameManager gameManager;
@@ -23,36 +22,33 @@ public class SafeStations : MonoBehaviour
     private void Awake()
     {
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
-        if (enemySpawnerManager != null)
-        {
-            enemySpawnerManager.SpawnEnemies();
-        }
     }
+
     private void Start()
     {
         hoverEffect.SetActive(false);
-        hoverEffect2.SetActive(false);
+
         playerController = FindAnyObjectByType<PlayerController>();
-        playerController.SetRespawnPoint(playerController.transform.position);
         gameManager = FindAnyObjectByType<GameManager>();
         health = FindAnyObjectByType<PlayerHealth>();
+        anim = playerController.GetComponent<Animator>();
     }
 
     private void Update()
     {
         if (playerInRange && !isCharging && playerController.interactAction.WasPressedThisFrame())
         {
-            SoundManager.instance.PlaySound(rechargeSound);
-            StartCharging();
-            health.ResetHealthFull();
+            TriggerCharge();
+            playerController.SetRespawnPoint();
         }
+
         if (isCharging)
         {
             ChargeBattery();
 
             if (playerController.moveInput.x != 0)
             {
-                StopCharging();
+                anim.SetBool("IsCharging", false);
             }
         }
     }
@@ -63,7 +59,6 @@ public class SafeStations : MonoBehaviour
         {
             playerInRange = true;
             hoverEffect.SetActive(true);
-            hoverEffect2.SetActive(true);
         }
     }
 
@@ -73,39 +68,37 @@ public class SafeStations : MonoBehaviour
         {
             playerInRange = false;
             hoverEffect.SetActive(false);
-            hoverEffect2.SetActive(false);
+
             if (isCharging)
-            {
                 StopCharging();
-            }
         }
     }
 
     private void StartCharging()
     {
+        anim.SetBool("IsCharging", true);
+        anim.SetTrigger("StartCharging");
+
+        playerController.DisableArmRender();
+        playerController.flashLight.gameObject.SetActive(false);
+
         isCharging = true;
         hoverEffect.SetActive(false);
-        hoverEffect2.SetActive(false);
-        if (playerController != null)
-        {
-            playerController.isSitting = true;
-            playerController.SetRespawnPoint(spawnPoint.position);
-        }
+
         if (enemySpawnerManager != null)
-        {
             enemySpawnerManager.SpawnEnemies();
-        }
+
+        playerController.canMove = false;
     }
 
-    private void StopCharging()
+    public void StopCharging()
     {
+        playerController.EnableArmRender();
+        playerController.flashLight.gameObject.SetActive(true);
+
         isCharging = false;
         hoverEffect.SetActive(true);
-        hoverEffect2.SetActive(true);
-        if (playerController != null)
-        {
-            playerController.isSitting = false;
-        }
+        playerController.canMove = true;
     }
 
     private void ChargeBattery()
@@ -115,5 +108,12 @@ public class SafeStations : MonoBehaviour
             gameManager.batteryPercentage += chargeRate * Time.deltaTime;
             gameManager.batteryPercentage = Mathf.Clamp(gameManager.batteryPercentage, 0f, 100f);
         }
+    }
+
+    public void TriggerCharge()
+    {
+        SoundManager.instance.PlaySound(rechargeSound);
+        StartCharging();
+        health.ResetHealthFull();
     }
 }

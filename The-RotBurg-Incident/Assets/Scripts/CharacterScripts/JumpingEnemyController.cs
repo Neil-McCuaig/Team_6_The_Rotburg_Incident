@@ -24,6 +24,7 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockba
     public LayerMask playerMask;
 
     [Header("Damage/Recoil Settings")]
+    public GameObject bloodSplatter;
     public float attackDamage;
     public bool isDead;
     private bool isBounce = false;
@@ -253,6 +254,8 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockba
     }
     public void ApplyKnockback(Transform player, float knockbackAmount)
     {
+        Instantiate(bloodSplatter, transform.position, Quaternion.identity);
+
         currentState = State.Knockback;
         StartCoroutine(HitRecoverTimer());
 

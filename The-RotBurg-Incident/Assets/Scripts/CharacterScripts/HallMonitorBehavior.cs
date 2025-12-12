@@ -79,7 +79,12 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
         {
             case State.GreenLight:
             {
+                foreach (var locker in LockerInteraction.allLockers)
+                {
+                    locker.UnSealLockers();
+                }
                 anim.SetBool("IsClosed", true);
+
                 lt.color = Go;
                 if (!greenLightBegun)
                 {
@@ -113,7 +118,12 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
             }
             case State.RedLight:
             {
+                foreach (var locker in LockerInteraction.allLockers)
+                {
+                    locker.SealAllLockers();
+                }
                 lt.color = Attack;
+
                 if (isOrbiting)
                 {
                     anim.SetBool("IsClosed", true);

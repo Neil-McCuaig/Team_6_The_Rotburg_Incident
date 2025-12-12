@@ -16,13 +16,16 @@ public class PlayerController : MonoBehaviour
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
-    [SerializeField] private Camera mainCamera;
+    SafeStations safeStations;
+
+    [Header("Camera Settings")]
+    CameraFollowDirection cameraFollow;
+    private float fallSpeedYDampingChangeThreshold;
 
     [Header("Player Checks")]
     private Vector2 respawnPoint;
     public bool isDead;
     public float deathFadeDelay = 1f;
-    public bool isSitting = false;
     public bool inLocker = false;
     public bool canMove = true;
 
@@ -70,6 +73,8 @@ public class PlayerController : MonoBehaviour
     public Transform aimRight;
     private Vector2 aimInput;
     private Vector3 lastMousePosition;
+    public float armFlipAnglePos = 90f;
+    public float armFlipAngleNeg = -90f;
     private float idleTimer;
     Vector2 lastAimDirection = Vector2.right;
     float lastAngle = 0f;
@@ -78,16 +83,16 @@ public class PlayerController : MonoBehaviour
 
     [Header("Stun-Ability Settings")]
     public float drainAmount;
-    public GameObject stunEffect;
-    public Transform cameraFlash;
-    public Transform flashLeft;
-    public Transform flashRight;
+    public float flashIntensity = 1f;
+    private float oriFlashIntensity;
+    private float oriPictureIntensity;
+    public float decayTime = 1f;
     public Transform lightLeft;
     public Transform lightRight;
     public Light2D flashLight;
+    public Light2D pictureLight;
     public bool canFlash = true;
     public bool batteryDead;
-    public SpriteRenderer effectRender;
 
     [Header("Input Actions")]
     public InputActionAsset inputActions;
@@ -100,6 +105,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
+    public bool hasMetalPipe = false;
     private int numOfJumps = 2;
 
     private void Awake()
@@ -118,8 +124,24 @@ public class PlayerController : MonoBehaviour
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
+        safeStations = FindAnyObjectByType<SafeStations>();
 
+        cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
+        fallSpeedYDampingChangeThreshold = -15f;
+
+        enemySpawnerManager.SpawnEnemies();
         lastMousePosition = Input.mousePosition;
+
+        if (pictureLight != null)
+        {
+            oriPictureIntensity = pictureLight.intensity;
+            pictureLight.intensity = 0f;
+            pictureLight.gameObject.SetActive(false);
+        }
+        if (flashLight != null)
+        {
+            oriFlashIntensity = flashLight.intensity;
+        }
     }
 
     void OnEnable()
@@ -146,10 +168,19 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
-        if (canMove && !isSitting && !isDead && !inLocker && !pauseManager.isPaused) 
+        if (canMove && !isDead && !inLocker && !pauseManager.isPaused) 
         {
             CheckInput();
             AimingDirection();
+        }
+        if (rb.velocity.y < fallSpeedYDampingChangeThreshold && !CameraManager.instance.IsLerpingYDamping && !CameraManager.instance.LerpedFromPlayerFalling)
+        {
+            CameraManager.instance.LerpYDamping(true);
+        }
+        if (rb.velocity.y >= 0f && !CameraManager.instance.IsLerpingYDamping && CameraManager.instance.LerpedFromPlayerFalling)
+        {
+            CameraManager.instance.LerpedFromPlayerFalling = false;
+            CameraManager.instance.LerpYDamping(false);
         }
     }
 
@@ -158,6 +189,7 @@ public class PlayerController : MonoBehaviour
         if (canMove && !isDead && !inLocker)
         {
             HandleMovement();
+            anim.SetFloat("VelocityY", Mathf.Abs(rb.velocity.y));
         }
         else
         {
@@ -174,10 +206,12 @@ public class PlayerController : MonoBehaviour
         {
             coyoteTimeCounter = coyoteTime;
             lastGroundedPosition = transform.position;
+            anim.SetBool("IsJumping", false);
         }
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
+            anim.SetBool("IsJumping", true);
         }
 
         if (!hasDoubleJump)
@@ -211,26 +245,35 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (jumpAction.WasReleasedThisFrame() && rb.velocity.y > 0f)
+        if (jumpAction.WasReleasedThisFrame() && rb.velocity.y > 0f && !isGrounded)
         {
             cutJump = true;
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * jumpCutMultiplier);
         }
 
         if (moveInput.x > 0)
         {
+            anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
             attackPosition.transform.position = attackPointA.transform.position;
+
+            cameraFollow.CallTurn(false);
         }
         else if (moveInput.x < 0)
         {
+            anim.SetInteger("WalkX", -1);
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
             attackPosition.transform.position = attackPointB.transform.position;
+
+            cameraFollow.CallTurn(true);
+        }
+        else if (moveInput.x == 0)
+        {
+            anim.SetInteger("WalkX", 0);
         }
 
-        if (attackAction.WasPressedThisFrame())
+        if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {
             if (Time.time >= lastAttackTime + attackCooldown)
             {
@@ -258,9 +301,17 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetBool("IsAttacking", false);
     }
+    public void EndCharging()
+    {
+        safeStations.StopCharging();
+        EnableArmRender();
+    }
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(attackPosition.transform.position, attackRadius);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 
     void HandleMovement()
@@ -276,13 +327,11 @@ public class PlayerController : MonoBehaviour
             else
             {
                 velocity.y += Physics2D.gravity.y * gravityScale * Time.fixedDeltaTime;
-
-                if (cutJump && velocity.y > 0)
+                if (cutJump)
                 {
                     velocity.y *= jumpCutMultiplier;
                     cutJump = false;
                 }
-
                 velocity.y = Mathf.Max(velocity.y, terminalVelocity);
             }
         }
@@ -330,16 +379,16 @@ public class PlayerController : MonoBehaviour
 
         if (flipArmLeft)
         {
-            if (lastAngle > 90 || lastAngle < -90)
+            if (lastAngle > armFlipAnglePos || lastAngle < armFlipAngleNeg)
             {
                 armRender.flipY = true;
-                cameraFlash.position = flashLeft.position;
+                pictureLight.transform.position = lightLeft.position;
                 flashLight.transform.position = lightLeft.position;
             }
             else
             {
                 armRender.flipY = false;
-                cameraFlash.position = flashRight.position;
+                pictureLight.transform.position = lightRight.position;
                 flashLight.transform.position = lightRight.position;
             }
         }
@@ -355,39 +404,46 @@ public class PlayerController : MonoBehaviour
         SoundManager.instance.PlaySound(SoundManager.instance.playerFlash);
         manager.ReduceBattery(drainAmount);
         canFlash = false;
-        stunEffect.SetActive(true);
-        Color originalColor = effectRender.color;
-        effectRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
+
         StartCoroutine(DecayFlash());
     }
 
     IEnumerator DecayFlash()
     {
         float elapsed = 0f;
-        Color originalColor = effectRender.color;
-
-        while (elapsed < 1f)
+        if (pictureLight != null)
         {
-            float alpha = Mathf.Lerp(1f, 0f, elapsed / 1f);
-            effectRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            pictureLight.gameObject.SetActive(true);
+            pictureLight.intensity = flashIntensity;
+        }
+        while (elapsed < decayTime)
+        {
+            float t = elapsed / decayTime;
+
+            if (pictureLight != null)
+            {
+                pictureLight.intensity = Mathf.Lerp(flashIntensity, 0f, t);
+            }
             elapsed += Time.deltaTime;
             yield return null;
         }
-
-        effectRender.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
-        stunEffect.SetActive(false);
+        if (pictureLight != null)
+        {
+            pictureLight.intensity = 0f;
+            pictureLight.gameObject.SetActive(false);
+        }
         canFlash = true;
     }
 
-    public void SetRespawnPoint(Vector2 point)
+    public void SetRespawnPoint()
     {
-        respawnPoint = point;
+        Vector3 currentPos = transform.position;
+        respawnPoint = new Vector2(currentPos.x, currentPos.y);
     }
 
     public void Respawn()
     {
         transform.position = respawnPoint;
-        armRender.enabled = true;
         health.ResetHealthFull();
     }
 
@@ -395,7 +451,7 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
         collision.enabled = false;
-        armRender.enabled = false;
+        DisableArmRender();
         anim.SetBool("IsDead", true);
         StartCoroutine(HandleDeathFadeOut());
     }
@@ -411,11 +467,22 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(deathFadeDelay);
 
+        safeStations.TriggerCharge();
         isDead = false;
         collision.enabled = true;
         enemySpawnerManager.SpawnEnemies();
         Respawn();
         anim.SetBool("IsDead", false);
         fader.FadeIn();
+    }
+    public void DisableArmRender()
+    {
+        armRender.enabled = false;
+        flashLight.intensity = 0f;
+    }
+    public void EnableArmRender()
+    {
+        armRender.enabled = true;
+        flashLight.intensity = oriFlashIntensity;
     }
 }
