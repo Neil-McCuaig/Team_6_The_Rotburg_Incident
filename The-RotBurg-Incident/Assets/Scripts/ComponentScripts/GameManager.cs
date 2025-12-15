@@ -9,8 +9,10 @@ public class GameManager : MonoBehaviour
 {
     [Header("PowerUp String Names")]
     public string powerUp1 = "DoubleJump";
+    public string powerUp2 = "MetalPipe";
 
     PlayerController player;
+    SafeStations safeStations;
     public GameObject batterySliderFill;
     private Image sliderFill;
 
@@ -24,6 +26,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         player = FindAnyObjectByType<PlayerController>();
+        safeStations = FindAnyObjectByType<SafeStations>();
         batterySlider = FindAnyObjectByType<BatterySlider>();
         batterySlider.SetMaxBattery(batteryPercentage);
 
@@ -48,7 +51,7 @@ public class GameManager : MonoBehaviour
             batterySliderFill.SetActive(false);
         }
 
-        if (player.isSitting == true)
+        if (batteryPercentage > 99f)
         {
             sliderFill.color = Color.green;
         }
@@ -81,7 +84,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void OnEnable()
     {
         Inventory.OnItemAdded += CheckForItem; 
@@ -97,6 +99,10 @@ public class GameManager : MonoBehaviour
         if (itemName == powerUp1)
         {
             player.hasDoubleJump = true;
+        }
+        else if (itemName == powerUp2)
+        {
+            player.hasMetalPipe = true;
         }
     }
 }

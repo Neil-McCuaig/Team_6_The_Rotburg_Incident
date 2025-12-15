@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     FadeToBlack fader;
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
+    SafeStations safeStations;
 
     [Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
@@ -25,7 +26,6 @@ public class PlayerController : MonoBehaviour
     private Vector2 respawnPoint;
     public bool isDead;
     public float deathFadeDelay = 1f;
-    public bool isSitting = false;
     public bool inLocker = false;
     public bool canMove = true;
 
@@ -84,7 +84,8 @@ public class PlayerController : MonoBehaviour
     [Header("Stun-Ability Settings")]
     public float drainAmount;
     public float flashIntensity = 1f;
-    private float originalIntensity;
+    private float oriFlashIntensity;
+    private float oriPictureIntensity;
     public float decayTime = 1f;
     public Transform lightLeft;
     public Transform lightRight;
@@ -104,6 +105,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
+    public bool hasMetalPipe = false;
     private int numOfJumps = 2;
 
     private void Awake()
@@ -122,20 +124,23 @@ public class PlayerController : MonoBehaviour
         fader = FindAnyObjectByType<FadeToBlack>();
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
+        safeStations = FindAnyObjectByType<SafeStations>();
 
         cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
         fallSpeedYDampingChangeThreshold = -15f;
 
+        enemySpawnerManager.SpawnEnemies();
         lastMousePosition = Input.mousePosition;
 
         if (pictureLight != null)
         {
-            originalIntensity = pictureLight.intensity;
-        }
-        if (pictureLight != null)
-        {
+            oriPictureIntensity = pictureLight.intensity;
             pictureLight.intensity = 0f;
             pictureLight.gameObject.SetActive(false);
+        }
+        if (flashLight != null)
+        {
+            oriFlashIntensity = flashLight.intensity;
         }
     }
 
@@ -163,12 +168,11 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = moveAction.ReadValue<Vector2>();
 
-        if (canMove && !isSitting && !isDead && !inLocker && !pauseManager.isPaused) 
+        if (canMove && !isDead && !inLocker && !pauseManager.isPaused) 
         {
             CheckInput();
             AimingDirection();
         }
-
         if (rb.velocity.y < fallSpeedYDampingChangeThreshold && !CameraManager.instance.IsLerpingYDamping && !CameraManager.instance.LerpedFromPlayerFalling)
         {
             CameraManager.instance.LerpYDamping(true);
@@ -185,6 +189,7 @@ public class PlayerController : MonoBehaviour
         if (canMove && !isDead && !inLocker)
         {
             HandleMovement();
+            anim.SetFloat("VelocityY", Mathf.Abs(rb.velocity.y));
         }
         else
         {
@@ -201,10 +206,12 @@ public class PlayerController : MonoBehaviour
         {
             coyoteTimeCounter = coyoteTime;
             lastGroundedPosition = transform.position;
+            anim.SetBool("IsJumping", false);
         }
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
+            anim.SetBool("IsJumping", true);
         }
 
         if (!hasDoubleJump)
@@ -245,6 +252,7 @@ public class PlayerController : MonoBehaviour
 
         if (moveInput.x > 0)
         {
+            anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
             attackPosition.transform.position = attackPointA.transform.position;
@@ -253,14 +261,19 @@ public class PlayerController : MonoBehaviour
         }
         else if (moveInput.x < 0)
         {
+            anim.SetInteger("WalkX", -1);
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
             attackPosition.transform.position = attackPointB.transform.position;
 
             cameraFollow.CallTurn(true);
         }
+        else if (moveInput.x == 0)
+        {
+            anim.SetInteger("WalkX", 0);
+        }
 
-        if (attackAction.WasPressedThisFrame())
+        if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {
             if (Time.time >= lastAttackTime + attackCooldown)
             {
@@ -287,6 +300,11 @@ public class PlayerController : MonoBehaviour
     public void EndAttack()
     {
         anim.SetBool("IsAttacking", false);
+    }
+    public void EndCharging()
+    {
+        safeStations.StopCharging();
+        EnableArmRender();
     }
     private void OnDrawGizmos()
     {
@@ -417,15 +435,15 @@ public class PlayerController : MonoBehaviour
         canFlash = true;
     }
 
-    public void SetRespawnPoint(Vector2 point)
+    public void SetRespawnPoint()
     {
-        respawnPoint = point;
+        Vector3 currentPos = transform.position;
+        respawnPoint = new Vector2(currentPos.x, currentPos.y);
     }
 
     public void Respawn()
     {
         transform.position = respawnPoint;
-        armRender.enabled = true;
         health.ResetHealthFull();
     }
 
@@ -433,7 +451,7 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
         collision.enabled = false;
-        armRender.enabled = false;
+        DisableArmRender();
         anim.SetBool("IsDead", true);
         StartCoroutine(HandleDeathFadeOut());
     }
@@ -449,11 +467,22 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(deathFadeDelay);
 
+        safeStations.TriggerCharge();
         isDead = false;
         collision.enabled = true;
         enemySpawnerManager.SpawnEnemies();
         Respawn();
         anim.SetBool("IsDead", false);
         fader.FadeIn();
+    }
+    public void DisableArmRender()
+    {
+        armRender.enabled = false;
+        flashLight.intensity = 0f;
+    }
+    public void EnableArmRender()
+    {
+        armRender.enabled = true;
+        flashLight.intensity = oriFlashIntensity;
     }
 }
