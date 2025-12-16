@@ -49,6 +49,8 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     private enum State { GreenLight, YellowLight, RedLight }
     private State currentState = State.GreenLight;
 
+    public Transform returnPoint;
+
     private void Start()
     {
         player = GameObject.Find("Player").transform;
@@ -68,6 +70,10 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     {
         if (DomainZone.playerInDomain == false)
         {
+            //Causes the Hall Monitor to return to it's returnPoint. This happens instantly. I want it to fly there. Also, needs to have
+            //An offset where it will stop trying to get to the return point so it does not lag the game.
+            Vector3 direction = returnPoint.position - transform.position;
+            transform.position += direction * dashSpeed * Time.deltaTime;
             currentState = State.GreenLight;
             lt.color = Sleeping;
             return;
@@ -267,4 +273,5 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
             playerCaught = true;
         }
     }
+
 }
