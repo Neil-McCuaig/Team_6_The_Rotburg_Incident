@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [Header("PowerUp String Names")]
     public string powerUp1 = "DoubleJump";
     public string powerUp2 = "MetalPipe";
+    public string powerUp3 = "GroundPhone";
 
     PlayerController player;
     SafeStations safeStations;
@@ -103,6 +104,11 @@ public class GameManager : MonoBehaviour
         else if (itemName == powerUp2)
         {
             player.hasMetalPipe = true;
+        }
+        else if (itemName == powerUp3)
+        {
+            player.hasPhone = true;
+            player.pickUpPhone();
         }
     }
 }

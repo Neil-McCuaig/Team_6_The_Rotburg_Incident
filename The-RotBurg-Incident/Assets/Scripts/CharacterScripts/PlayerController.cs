@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public float deathFadeDelay = 1f;
     public bool inLocker = false;
     public bool canMove = true;
+    public bool hasFlashlight = true;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
@@ -91,6 +92,7 @@ public class PlayerController : MonoBehaviour
     public Transform lightRight;
     public Light2D flashLight;
     public Light2D pictureLight;
+    public Light2D lighterLight;
     public bool canFlash = true;
     public bool batteryDead;
 
@@ -106,7 +108,11 @@ public class PlayerController : MonoBehaviour
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
     public bool hasMetalPipe = false;
+    public bool hasPhone = true;
     private int numOfJumps = 2;
+    public int numOfLives = 3;
+    public GameObject phonePrefab;
+    public GameObject phoneDropPoint;
 
     private void Awake()
     {
@@ -453,7 +459,22 @@ public class PlayerController : MonoBehaviour
         collision.enabled = false;
         DisableArmRender();
         anim.SetBool("IsDead", true);
+        numOfLives = numOfLives - 1;
         StartCoroutine(HandleDeathFadeOut());
+        LighterMode();
+    }
+
+    public void LighterMode() 
+    {
+        flashLight.intensity = 0;
+        lighterLight.intensity = 1;
+    }
+
+    public void pickUpPhone()
+    {
+        flashLight.intensity = 1;
+        lighterLight.intensity = 0;
+        numOfLives = 3;
     }
 
     private IEnumerator HandleDeathFadeOut()
