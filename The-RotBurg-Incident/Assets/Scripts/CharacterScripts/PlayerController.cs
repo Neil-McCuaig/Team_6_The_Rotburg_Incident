@@ -126,6 +126,8 @@ public class PlayerController : MonoBehaviour
         collision = GetComponent<Collider2D>();
         safeStations = FindAnyObjectByType<SafeStations>();
 
+        SetRespawnPoint();
+
         cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
         fallSpeedYDampingChangeThreshold = -15f;
 

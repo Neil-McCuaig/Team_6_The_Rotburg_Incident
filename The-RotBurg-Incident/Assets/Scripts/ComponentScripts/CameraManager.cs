@@ -107,10 +107,10 @@ public class CameraManager : MonoBehaviour
                     endPos = Vector2.down;
                     break;
                 case PanDirection.Left:
-                    endPos = Vector2.right;
+                    endPos = Vector2.left;
                     break;
                 case PanDirection.Right:
-                    endPos = Vector2.left;
+                    endPos = Vector2.right;
                     break;
                 default:
                     break;
