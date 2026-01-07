@@ -18467,8 +18467,8 @@ MonoBehaviour:
   hasMetalPipe: 0
   hasPhone: 1
   numOfLives: 3
-  phonePrefab: {fileID: 0}
-  phoneDropPoint: {fileID: 0}
+  phonePrefab: {fileID: 8316118372823833087}
+  phoneDropPoint: {fileID: 1765657975}
 --- !u!212 &871734301
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -47610,6 +47610,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0ca62e038ad899747b29645dc8ed6125, type: 3}
+--- !u!1 &8316118372823833087 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4602923421748875451, guid: 0ca62e038ad899747b29645dc8ed6125, type: 3}
+  m_PrefabInstance: {fileID: 8316118372823833086}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8693331601006826056
 Transform:
   m_ObjectHideFlags: 0
