@@ -61,6 +61,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     private bool isGrounded;
     [HideInInspector]
+    //This tells the player where to teleport to when they land on a spike
     public Vector3 lastGroundedPosition;
 
     [Header("Ceiling Check")]
@@ -113,6 +114,7 @@ public class PlayerController : MonoBehaviour
     public int numOfLives = 3;
     public GameObject phonePrefab;
     public GameObject phoneDropPoint;
+    GameObject renameSpawnedPhone;
 
     private void Awake()
     {
@@ -461,7 +463,10 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("IsDead", true);
         //Instantiate(phonePrefab, phoneDropPoint.transform);
         //(GameObject)Instantiate(phonePrefab, phoneDropPoint, Quaternion.identity);
-        Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
+        //The name part is needed for the current inventory system. Otherwise it spawns as GroundPhone(Clone) and
+        //picking it up does not register into the inventory system, even if you tell it to look for GroundPhone(Clone)
+        renameSpawnedPhone = Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
+        renameSpawnedPhone.name = phonePrefab.name;
         numOfLives = numOfLives - 1;
         StartCoroutine(HandleDeathFadeOut());
         LighterMode();

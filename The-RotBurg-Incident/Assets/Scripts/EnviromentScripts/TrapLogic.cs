@@ -35,6 +35,7 @@ public class TrapLogic : MonoBehaviour
                 }
                 playerPos = other.transform;
                 other.GetComponent<PlayerHealth>().TakeDamage(damageAmount);
+                other.GetComponent<PlayerHealth>().trapDamaged = true;
                 if (player.rb != null)
                 {
                     player.rb.velocity = Vector3.zero;
@@ -69,6 +70,7 @@ public class TrapLogic : MonoBehaviour
             player.rb.velocity = Vector3.zero;
         }
         fade.FadeIn();
+
         playerPos.position = player.lastGroundedPosition;
 
         yield return new WaitForSeconds(fadeInDelay);

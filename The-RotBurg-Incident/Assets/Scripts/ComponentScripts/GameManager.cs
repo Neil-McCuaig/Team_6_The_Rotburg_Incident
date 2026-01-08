@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public string powerUp1 = "DoubleJump";
     public string powerUp2 = "MetalPipe";
     public string powerUp3 = "GroundPhone";
+    //public string powerUp3 = "GroundPhone(Clone)";
 
     PlayerController player;
     SafeStations safeStations;
@@ -97,6 +98,8 @@ public class GameManager : MonoBehaviour
 
     private void CheckForItem(string itemName)
     {
+        Debug.Log("Checking for Items!");
+        //It is reaching here
         if (itemName == powerUp1)
         {
             player.hasDoubleJump = true;
@@ -109,6 +112,8 @@ public class GameManager : MonoBehaviour
         {
             player.hasPhone = true;
             player.pickUpPhone();
+            Debug.Log("You've picked up your phone!");
+            //It's not reaching here
         }
     }
 }
