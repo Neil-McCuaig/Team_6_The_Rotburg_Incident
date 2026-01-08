@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     EnemySpawnerManager enemySpawnerManager;
     SafeStations safeStations;
 
-    [Header("Camera Settings")]
+[Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
     private float fallSpeedYDampingChangeThreshold;
 
@@ -399,7 +399,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (flashAction.WasPressedThisFrame() && canFlash && manager.batteryPercentage > 0)
+        if (flashAction.WasPressedThisFrame() && canFlash && manager.batteryPercentage > 0 && hasPhone == true)
         {
             ActivateFlash();
         }
@@ -459,6 +459,9 @@ public class PlayerController : MonoBehaviour
         collision.enabled = false;
         DisableArmRender();
         anim.SetBool("IsDead", true);
+        //Instantiate(phonePrefab, phoneDropPoint.transform);
+        //(GameObject)Instantiate(phonePrefab, phoneDropPoint, Quaternion.identity);
+        Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
         numOfLives = numOfLives - 1;
         StartCoroutine(HandleDeathFadeOut());
         LighterMode();
@@ -466,15 +469,19 @@ public class PlayerController : MonoBehaviour
 
     public void LighterMode() 
     {
-        flashLight.intensity = 0;
+        //flashLight.intensity = 0;
+        flashLight.gameObject.SetActive(false);
         lighterLight.intensity = 1;
+        hasPhone = false;
     }
 
     public void pickUpPhone()
     {
-        flashLight.intensity = 1;
+        //flashLight.intensity = 1;
+        flashLight.gameObject.SetActive(true);
         lighterLight.intensity = 0;
         numOfLives = 3;
+        hasPhone = true;
     }
 
     private IEnumerator HandleDeathFadeOut()
