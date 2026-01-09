@@ -298,8 +298,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeInDelay: 1
-  fadeOutDelay: 2
+  fadeInDelay: 0.5
+  fadeOutDelay: 0.5
   damageAmount: 10
 --- !u!61 &8685290
 BoxCollider2D:
@@ -431,6 +431,7 @@ Transform:
   - {fileID: 756902208}
   - {fileID: 906295903}
   - {fileID: 909803003}
+  - {fileID: 1292064966}
   m_Father: {fileID: 871734302}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &24401034
@@ -1008,8 +1009,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeInDelay: 1
-  fadeOutDelay: 2
+  fadeInDelay: 0.5
+  fadeOutDelay: 0.5
   damageAmount: 10
 --- !u!61 &59225916
 BoxCollider2D:
@@ -6981,8 +6982,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeInDelay: 1
-  fadeOutDelay: 2
+  fadeInDelay: 0.5
+  fadeOutDelay: 0.5
   damageAmount: 10
 --- !u!61 &353361706
 BoxCollider2D:
@@ -10167,7 +10168,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 408.6931, y: 457.8125, z: -950.7505}
+  m_LocalPosition: {x: -516.4069, y: 417.8125, z: -950.7505}
   m_LocalScale: {x: 0.89983, y: 0.89983, z: 0.89983}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17134,8 +17135,9 @@ MonoBehaviour:
   deathFadeDelay: 2
   inLocker: 0
   canMove: 1
+  hasFlashlight: 1
   attackCooldown: 0.4
-  knockBackAmount: 20
+  knockBackAmount: 0
   damageAmount: 2
   attackPointA: {fileID: 1740981765}
   attackPointB: {fileID: 2096945172}
@@ -17167,12 +17169,13 @@ MonoBehaviour:
   flipArmLeft: 1
   armRender: {fileID: 1441290739}
   drainAmount: 5
-  flashIntensity: 3
+  flashIntensity: 1
   decayTime: 1
   lightLeft: {fileID: 909803003}
   lightRight: {fileID: 906295903}
   flashLight: {fileID: 756902209}
   pictureLight: {fileID: 1279047579}
+  lighterLight: {fileID: 756902209}
   canFlash: 1
   batteryDead: 0
   inputActions: {fileID: -944628639613478452, guid: 3a25a101b3580f843a5333425ba0133b, type: 3}
@@ -17214,6 +17217,10 @@ MonoBehaviour:
     m_Flags: 0
   hasDoubleJump: 0
   hasMetalPipe: 0
+  hasPhone: 1
+  numOfLives: 3
+  phonePrefab: {fileID: 1792216378517476599, guid: 52cbe2e1071e128479a2d10c83cd4bee, type: 3}
+  phoneDropPoint: {fileID: 0}
 --- !u!212 &871734301
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -17275,7 +17282,7 @@ Transform:
   m_GameObject: {fileID: 871734297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 412.2, y: 645, z: -0.84647}
+  m_LocalPosition: {x: -512.9, y: 605, z: -0.84647}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -21520,6 +21527,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUp1: DoubleJump
   powerUp2: MetalPipe
+  powerUp3: GroundPhone
   batterySliderFill: {fileID: 950940906}
   batteryPercentage: 100
   drainRatePerSecond: 0.5
@@ -24571,8 +24579,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeInDelay: 1
-  fadeOutDelay: 2
+  fadeInDelay: 0.5
+  fadeOutDelay: 0.5
   damageAmount: 10
 --- !u!61 &1154277104
 BoxCollider2D:
@@ -27451,6 +27459,88 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dfc7738c0fca7aa45965d3f68a09735c, type: 3}
+--- !u!1 &1292064965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1292064966}
+  - component: {fileID: 1292064967}
+  m_Layer: 7
+  m_Name: LighterGlow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1292064966
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292064965}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0.027191138, w: 0.9996303}
+  m_LocalPosition: {x: 1.84, y: -1.53, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 13031102}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1292064967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292064965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ComponentVersion: 1
+  m_LightType: 3
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0.8
+  m_Color: {r: 0.9245283, g: 0.5816616, b: 0.08431224, a: 1}
+  m_Intensity: 0
+  m_LightVolumeIntensity: 1
+  m_LightVolumeIntensityEnabled: 0
+  m_ApplyToSortingLayers: 00000000
+  m_LightCookieSprite: {fileID: 0}
+  m_DeprecatedPointLightCookieSprite: {fileID: 0}
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_OverlapOperation: 0
+  m_NormalMapDistance: 3
+  m_NormalMapQuality: 2
+  m_UseNormalMap: 0
+  m_ShadowIntensityEnabled: 0
+  m_ShadowIntensity: 0.75
+  m_ShadowVolumeIntensityEnabled: 0
+  m_ShadowVolumeIntensity: 0.75
+  m_LocalBounds:
+    m_Center: {x: 0, y: -0.00000011920929, z: 0}
+    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 0
+  m_PointLightOuterRadius: 40
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 0.5
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: -0.5, y: 0.5, z: 0}
 --- !u!1 &1294065305
 GameObject:
   m_ObjectHideFlags: 0
@@ -30472,7 +30562,7 @@ Transform:
   m_GameObject: {fileID: 1414718275}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 408.6931, y: 457.8125, z: -950.7505}
+  m_LocalPosition: {x: -516.4069, y: 417.8125, z: -950.7505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -33375,8 +33465,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeInDelay: 1
-  fadeOutDelay: 2
+  fadeInDelay: 0.5
+  fadeOutDelay: 0.5
   damageAmount: 10
 --- !u!61 &1581764375
 BoxCollider2D:
@@ -41371,7 +41461,7 @@ Transform:
   m_GameObject: {fileID: 1945702672}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 400.6931, y: 641.8125, z: -940.7505}
+  m_LocalPosition: {x: -524.4069, y: 601.8125, z: -940.7505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -43734,8 +43824,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a66f5f0a4ebaeb40b733ea0a6e15f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeInDelay: 1
-  fadeOutDelay: 2
+  fadeInDelay: 0.5
+  fadeOutDelay: 0.5
   damageAmount: 10
 --- !u!61 &2112985372
 BoxCollider2D:
