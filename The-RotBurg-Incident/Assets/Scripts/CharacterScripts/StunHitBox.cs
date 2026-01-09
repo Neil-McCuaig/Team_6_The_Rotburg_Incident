@@ -6,7 +6,7 @@ public class StunHitBox : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy") || other.CompareTag("StunTrigger"))
         {
             EnemyStunable stunnable = other.GetComponent<EnemyStunable>();
             if (stunnable != null)
