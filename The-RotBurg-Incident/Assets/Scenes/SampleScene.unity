@@ -18530,7 +18530,7 @@ Transform:
   m_GameObject: {fileID: 871734297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -550.1, y: 26.5, z: -0.84647}
+  m_LocalPosition: {x: -185.7, y: -68.6, z: -0.84647}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18560,6 +18560,7 @@ MonoBehaviour:
   currentHealth: 0
   invincibilityDuration: 2
   hurtEmote: {fileID: 559585689, guid: 884590998383207458cf05a0f61abca9, type: 3}
+  trapDamaged: 0
 --- !u!70 &871734305
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

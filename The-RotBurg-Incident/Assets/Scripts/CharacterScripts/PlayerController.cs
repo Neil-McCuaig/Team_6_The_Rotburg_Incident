@@ -465,7 +465,23 @@ public class PlayerController : MonoBehaviour
         //(GameObject)Instantiate(phonePrefab, phoneDropPoint, Quaternion.identity);
         //The name part is needed for the current inventory system. Otherwise it spawns as GroundPhone(Clone) and
         //picking it up does not register into the inventory system, even if you tell it to look for GroundPhone(Clone)
-        renameSpawnedPhone = Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
+        //renameSpawnedPhone = Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
+        //renameSpawnedPhone.name = phonePrefab.name;
+
+        //if (health.trapDamaged == false && hasPhone == true)
+        //{
+        //renameSpawnedPhone = Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
+        //renameSpawnedPhone.name = phonePrefab.name;
+        //Debug.Log("Dropping phone at your feet...");
+        //}
+        //else if (health.trapDamaged == true && hasPhone == true) 
+        //{
+        //renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
+        //renameSpawnedPhone.name = phonePrefab.name;
+        //Debug.Log("Dropping phone where you last touched ground...");
+        //}
+
+        renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
         renameSpawnedPhone.name = phonePrefab.name;
         numOfLives = numOfLives - 1;
         StartCoroutine(HandleDeathFadeOut());
