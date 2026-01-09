@@ -10167,7 +10167,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -516.5069, y: 413.81247, z: -950.7505}
+  m_LocalPosition: {x: 408.6931, y: 457.8125, z: -950.7505}
   m_LocalScale: {x: 0.89983, y: 0.89983, z: 0.89983}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12472,7 +12472,7 @@ GameObject:
   - component: {fileID: 626445747}
   - component: {fileID: 626445749}
   - component: {fileID: 626445748}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Spikes (6)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -16036,7 +16036,7 @@ GameObject:
   - component: {fileID: 811167019}
   - component: {fileID: 811167021}
   - component: {fileID: 811167020}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Spikes (4)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -16896,6 +16896,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spikes
       objectReference: {fileID: 0}
+    - target: {fileID: 2778713848459704411, guid: aefef2cb9a94c7147824bd82b82c2527, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17271,7 +17275,7 @@ Transform:
   m_GameObject: {fileID: 871734297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -513, y: 601, z: -0.84647}
+  m_LocalPosition: {x: 412.2, y: 645, z: -0.84647}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -21305,7 +21309,7 @@ GameObject:
   - component: {fileID: 1022125145}
   - component: {fileID: 1022125147}
   - component: {fileID: 1022125146}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Spikes (3)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -26140,7 +26144,7 @@ GameObject:
   - component: {fileID: 1230397752}
   - component: {fileID: 1230397754}
   - component: {fileID: 1230397753}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Spikes (2)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -27828,7 +27832,7 @@ GameObject:
   - component: {fileID: 1307553863}
   - component: {fileID: 1307553865}
   - component: {fileID: 1307553864}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Spikes (5)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -30468,7 +30472,7 @@ Transform:
   m_GameObject: {fileID: 1414718275}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -516.5069, y: 413.81247, z: -950.7505}
+  m_LocalPosition: {x: 408.6931, y: 457.8125, z: -950.7505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -41367,7 +41371,7 @@ Transform:
   m_GameObject: {fileID: 1945702672}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -524.5069, y: 597.8125, z: -940.7505}
+  m_LocalPosition: {x: 400.6931, y: 641.8125, z: -940.7505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -43109,7 +43113,7 @@ GameObject:
   - component: {fileID: 2053708614}
   - component: {fileID: 2053708616}
   - component: {fileID: 2053708615}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Spikes (1)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -44699,6 +44703,14 @@ PrefabInstance:
     - target: {fileID: 2778713848459704411, guid: aefef2cb9a94c7147824bd82b82c2527, type: 3}
       propertyPath: m_Name
       value: Spikes
+      objectReference: {fileID: 0}
+    - target: {fileID: 2778713848459704411, guid: aefef2cb9a94c7147824bd82b82c2527, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9108392082644853998, guid: aefef2cb9a94c7147824bd82b82c2527, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
