@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     EnemySpawnerManager enemySpawnerManager;
     SafeStations safeStations;
 
-    [Header("Camera Settings")]
+[Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
     private float fallSpeedYDampingChangeThreshold;
 
@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public float deathFadeDelay = 1f;
     public bool inLocker = false;
     public bool canMove = true;
+    public bool hasFlashlight = true;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
@@ -60,6 +61,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     private bool isGrounded;
     [HideInInspector]
+    //This tells the player where to teleport to when they land on a spike
     public Vector3 lastGroundedPosition;
 
     [Header("Ceiling Check")]
@@ -91,6 +93,7 @@ public class PlayerController : MonoBehaviour
     public Transform lightRight;
     public Light2D flashLight;
     public Light2D pictureLight;
+    public Light2D lighterLight;
     public bool canFlash = true;
     public bool batteryDead;
 
@@ -106,7 +109,12 @@ public class PlayerController : MonoBehaviour
     [Header("Power-Ups")]
     public bool hasDoubleJump = false;
     public bool hasMetalPipe = false;
+    public bool hasPhone = true;
     private int numOfJumps = 2;
+    public int numOfLives = 3;
+    public GameObject phonePrefab;
+    public GameObject phoneDropPoint;
+    GameObject renameSpawnedPhone;
 
     private void Awake()
     {
@@ -395,7 +403,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (flashAction.WasPressedThisFrame() && canFlash && manager.batteryPercentage > 0)
+        if (flashAction.WasPressedThisFrame() && canFlash && manager.batteryPercentage > 0 && hasPhone == true)
         {
             ActivateFlash();
         }
@@ -455,7 +463,48 @@ public class PlayerController : MonoBehaviour
         collision.enabled = false;
         DisableArmRender();
         anim.SetBool("IsDead", true);
+        //Instantiate(phonePrefab, phoneDropPoint.transform);
+        //(GameObject)Instantiate(phonePrefab, phoneDropPoint, Quaternion.identity);
+        //The name part is needed for the current inventory system. Otherwise it spawns as GroundPhone(Clone) and
+        //picking it up does not register into the inventory system, even if you tell it to look for GroundPhone(Clone)
+        //renameSpawnedPhone = Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
+        //renameSpawnedPhone.name = phonePrefab.name;
+
+        //if (health.trapDamaged == false && hasPhone == true)
+        //{
+        //renameSpawnedPhone = Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
+        //renameSpawnedPhone.name = phonePrefab.name;
+        //Debug.Log("Dropping phone at your feet...");
+        //}
+        //else if (health.trapDamaged == true && hasPhone == true) 
+        //{
+        //renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
+        //renameSpawnedPhone.name = phonePrefab.name;
+        //Debug.Log("Dropping phone where you last touched ground...");
+        //}
+
+        renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
+        renameSpawnedPhone.name = phonePrefab.name;
+        numOfLives = numOfLives - 1;
         StartCoroutine(HandleDeathFadeOut());
+        LighterMode();
+    }
+
+    public void LighterMode() 
+    {
+        //flashLight.intensity = 0;
+        flashLight.gameObject.SetActive(false);
+        lighterLight.intensity = 1;
+        hasPhone = false;
+    }
+
+    public void pickUpPhone()
+    {
+        //flashLight.intensity = 1;
+        flashLight.gameObject.SetActive(true);
+        lighterLight.intensity = 0;
+        numOfLives = 3;
+        hasPhone = true;
     }
 
     private IEnumerator HandleDeathFadeOut()

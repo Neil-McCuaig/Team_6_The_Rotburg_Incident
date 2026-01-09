@@ -19,6 +19,8 @@ public class PlayerHealth : MonoBehaviour
     StreamChat chat;
     public Sprite hurtEmote;
 
+    //public bool trapDamaged = false;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
