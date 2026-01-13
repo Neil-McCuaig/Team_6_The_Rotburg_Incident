@@ -1,8 +1,9 @@
 using System.Collections;
-using UnityEngine.Rendering.Universal;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Runtime.CompilerServices;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -110,6 +111,7 @@ public class PlayerController : MonoBehaviour
     public bool hasDoubleJump = false;
     public bool hasMetalPipe = false;
     public bool hasPhone = true;
+    public bool phoneDropped = false;
     private int numOfJumps = 2;
     public int numOfLives = 3;
     public GameObject phonePrefab;
@@ -463,12 +465,23 @@ public class PlayerController : MonoBehaviour
         collision.enabled = false;
         DisableArmRender();
         anim.SetBool("IsDead", true);
-        
-        renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
-        renameSpawnedPhone.name = phonePrefab.name;
+
+        if (phoneDropped == false) 
+        {
+            renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
+            renameSpawnedPhone.name = phonePrefab.name;
+            phoneDropped = true;
+        }
+
         numOfLives = numOfLives - 1;
 
         StartCoroutine(HandleDeathFadeOut());
+
+        if (numOfLives == 0)
+        {
+            SceneManager.LoadScene(1);
+        }
+
         LighterMode();
     }
 
@@ -487,6 +500,7 @@ public class PlayerController : MonoBehaviour
         lighterLight.intensity = 0;
         numOfLives = 3;
         hasPhone = true;
+        phoneDropped = false;
     }
 
     private IEnumerator HandleDeathFadeOut()
