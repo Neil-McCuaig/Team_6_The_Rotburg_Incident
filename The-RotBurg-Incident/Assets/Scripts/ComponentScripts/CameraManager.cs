@@ -7,52 +7,110 @@ public class CameraManager : MonoBehaviour
 {
     public static CameraManager instance;
 
-    [SerializeField] private CinemachineVirtualCamera[] allVirtualCameras;
+    [Header("Player Camera")]
+    [SerializeField] private CinemachineVirtualCamera playerCamera;
+
+    [Header("Cutscene Cameras")]
+    [SerializeField] private CinemachineVirtualCamera[] cutsceneCameras;
 
     [Header("Player jump/fall lerping")]
     [SerializeField] private float fallPanAmount = 0.25f;
     [SerializeField] private float fallPanTime = 0.35f;
     public float fallSpeedYDampingChangeThreshold = -15f;
 
-    public bool IsLerpingYDamping {  get; private set; }
+    public bool IsLerpingYDamping { get; private set; }
     public bool LerpedFromPlayerFalling { get; set; }
 
     private Coroutine lerpYPanCoroutine;
     private Coroutine panCameraCoroutine;
-
-    private CinemachineVirtualCamera currentCamera;
-    private CinemachineFramingTransposer framingTransposer;
-
-    private CinemachineBasicMultiChannelPerlin perlinNoise;
     private Coroutine shakeCoroutine;
 
-    private float normYPanAmount;
+    private CinemachineVirtualCamera activeCamera;
+    private CinemachineFramingTransposer framingTransposer;
+    private CinemachineBasicMultiChannelPerlin perlinNoise;
 
+    private float normYPanAmount;
     private Vector2 startingTrackedObjectOffset;
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
-
-        for (int i = 0; i < allVirtualCameras.Length; i++)
+        else
         {
-            if (allVirtualCameras[i].enabled)
+            Destroy(gameObject);
+            return;
+        }
+
+        activeCamera = playerCamera;
+        CacheCameraComponents(playerCamera);
+
+        normYPanAmount = framingTransposer.m_YDamping;
+        startingTrackedObjectOffset = framingTransposer.m_TrackedObjectOffset;
+
+        ResetAllCameraPriorities();
+        playerCamera.Priority = 20;
+    }
+
+    private void CacheCameraComponents(CinemachineVirtualCamera cam)
+    {
+        if (cam == null)
+        {
+            return;
+        }
+        activeCamera = cam;
+        framingTransposer = cam.GetCinemachineComponent<CinemachineFramingTransposer>();
+        perlinNoise = cam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+    }
+
+    private void ResetAllCameraPriorities()
+    {
+        playerCamera.Priority = 0;
+
+        foreach (var cam in cutsceneCameras)
+        {
+            if (cam != null)
             {
-                currentCamera = allVirtualCameras[i];
-                framingTransposer = currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
-                perlinNoise = currentCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+                cam.Priority = 0;
             }
         }
-        normYPanAmount = framingTransposer.m_YDamping;
+    }
 
-        startingTrackedObjectOffset = framingTransposer.m_TrackedObjectOffset;
+    public void SwitchToCutsceneCamera(int cutsceneIndex)
+    {
+        if (cutsceneIndex < 0 || cutsceneIndex >= cutsceneCameras.Length)
+        {
+            return;
+        }
+
+        ResetAllCameraPriorities();
+
+        CinemachineVirtualCamera cutsceneCam = cutsceneCameras[cutsceneIndex];
+        cutsceneCam.Priority = 20;
+
+        CacheCameraComponents(cutsceneCam);
+    }
+
+    public void ReturnToPlayerCamera()
+    {
+        ResetAllCameraPriorities();
+
+        playerCamera.Priority = 20;
+        CacheCameraComponents(playerCamera);
+
+        framingTransposer.m_YDamping = normYPanAmount;
+        framingTransposer.m_TrackedObjectOffset = startingTrackedObjectOffset;
     }
 
     public void LerpYDamping(bool isPlayerFalling)
     {
+        if (lerpYPanCoroutine != null)
+        {
+            StopCoroutine(lerpYPanCoroutine);
+        }
+
         lerpYPanCoroutine = StartCoroutine(LerpYAction(isPlayerFalling));
     }
 
@@ -61,64 +119,50 @@ public class CameraManager : MonoBehaviour
         IsLerpingYDamping = true;
 
         float startDampAmount = framingTransposer.m_YDamping;
-        float endDampAmount = 0f;
+        float endDampAmount = isPlayerFalling ? fallPanAmount : normYPanAmount;
 
-        if (isPlayerFalling)
+        LerpedFromPlayerFalling = isPlayerFalling;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < fallPanTime)
         {
-            endDampAmount = fallPanAmount;
-            LerpedFromPlayerFalling = true;
-        }
-        else
-        {
-            endDampAmount = normYPanAmount;
-        }
-
-        float elaspedTime = 0f;
-        while(elaspedTime < fallPanTime)
-        {
-            elaspedTime += Time.deltaTime;
-
-            float lerpedPanAmount = Mathf.Lerp(startDampAmount, endDampAmount, (elaspedTime /  fallPanTime));
-            framingTransposer.m_YDamping = lerpedPanAmount;
-
+            elapsedTime += Time.deltaTime;
+            framingTransposer.m_YDamping = Mathf.Lerp(startDampAmount, endDampAmount, elapsedTime / fallPanTime);
             yield return null;
         }
+
         IsLerpingYDamping = false;
     }
 
     public void PanCameraOnContact(float panDistance, float panTime, PanDirection panDirection, bool panToStartingPos)
     {
+        if (panCameraCoroutine != null)
+        {
+            StopCoroutine(panCameraCoroutine);
+        }
+
         panCameraCoroutine = StartCoroutine(PanCamera(panDistance, panTime, panDirection, panToStartingPos));
     }
 
     private IEnumerator PanCamera(float panDistance, float panTime, PanDirection panDirection, bool panToStartingPos)
     {
-        Vector2 endPos = Vector2.zero;
-        Vector2 startingPos = Vector2.zero;
+        Vector2 startingPos;
+        Vector2 endPos;
 
-        if(!panToStartingPos)
+        if (!panToStartingPos)
         {
-            switch (panDirection)
-            {
-                case PanDirection.Up:
-                    endPos = Vector2.up; 
-                    break;
-                case PanDirection.Down:
-                    endPos = Vector2.down;
-                    break;
-                case PanDirection.Left:
-                    endPos = Vector2.left;
-                    break;
-                case PanDirection.Right:
-                    endPos = Vector2.right;
-                    break;
-                default:
-                    break;
-            }
-
-            endPos *= panDistance;
             startingPos = startingTrackedObjectOffset;
-            endPos += startingPos;
+
+            endPos = panDirection switch
+            {
+                PanDirection.Up => Vector2.up,
+                PanDirection.Down => Vector2.down,
+                PanDirection.Left => Vector2.left,
+                PanDirection.Right => Vector2.right,
+                _ => Vector2.zero
+            };
+
+            endPos = startingPos + (endPos * panDistance);
         }
         else
         {
@@ -126,14 +170,11 @@ public class CameraManager : MonoBehaviour
             endPos = startingTrackedObjectOffset;
         }
 
-        float elaspedTime = 0f;
-        while(elaspedTime < panTime)
+        float elapsedTime = 0f;
+        while (elapsedTime < panTime)
         {
-            elaspedTime += Time.deltaTime;
-
-            Vector3 panLerp = Vector3.Lerp(startingPos, endPos, (elaspedTime / panTime));
-            framingTransposer.m_TrackedObjectOffset = panLerp;
-
+            elapsedTime += Time.deltaTime;
+            framingTransposer.m_TrackedObjectOffset = Vector2.Lerp(startingPos, endPos, elapsedTime / panTime);
             yield return null;
         }
     }
@@ -147,7 +188,9 @@ public class CameraManager : MonoBehaviour
         }
 
         if (shakeCoroutine != null)
+        {
             StopCoroutine(shakeCoroutine);
+        }
 
         shakeCoroutine = StartCoroutine(ShakeRoutine(intensity, duration));
     }
@@ -161,7 +204,7 @@ public class CameraManager : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float fade = 1 - (elapsed / duration);
+            float fade = 1f - (elapsed / duration);
             perlinNoise.m_AmplitudeGain = intensity * fade;
             yield return null;
         }

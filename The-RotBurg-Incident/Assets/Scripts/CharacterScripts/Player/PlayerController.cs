@@ -59,7 +59,9 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public float groundCheckRadius = 1f;
     public LayerMask groundLayer;
+    public LayerMask platformLayer;
     private bool isGrounded;
+    private bool onPlatform;
     [HideInInspector]
     //This tells the player where to teleport to when they land on a spike
     public Vector3 lastGroundedPosition;
@@ -211,11 +213,15 @@ public class PlayerController : MonoBehaviour
     {
         isTouchingCeiling = Physics2D.OverlapCircle(ceilingCheck.position, ceilingCheckRadius, groundLayer);
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        onPlatform = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, platformLayer);
 
-        if (isGrounded)
+        if (isGrounded || onPlatform)
         {
             coyoteTimeCounter = coyoteTime;
-            lastGroundedPosition = transform.position;
+            if (isGrounded)
+            {
+                lastGroundedPosition = transform.position;
+            }
             anim.SetBool("IsJumping", false);
         }
         else
@@ -226,7 +232,7 @@ public class PlayerController : MonoBehaviour
 
         if (!hasDoubleJump)
         {
-            if (jumpAction.WasPressedThisFrame() && (isGrounded || coyoteTimeCounter > 0f))
+            if (jumpAction.WasPressedThisFrame() && ((isGrounded || onPlatform) || coyoteTimeCounter > 0f))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce;
@@ -235,27 +241,27 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (jumpAction.WasPressedThisFrame() && (isGrounded || coyoteTimeCounter > 0f))
+            if (jumpAction.WasPressedThisFrame() && ((isGrounded || onPlatform) || coyoteTimeCounter > 0f))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce;
                 numOfJumps--;
                 coyoteTimeCounter = 0f;
             }
-            else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && !isGrounded)
+            else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && (!isGrounded || !onPlatform))
             {
-                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump); 
                 velocity.y = jumpForce / 1.2f;
                 numOfJumps = 0;
             }
 
-            if (isGrounded)
+            if (isGrounded || onPlatform)
             {
                 numOfJumps = 2;
             }
         }
 
-        if (jumpAction.WasReleasedThisFrame() && rb.velocity.y > 0f && !isGrounded)
+        if (jumpAction.WasReleasedThisFrame() && rb.velocity.y > 0f && (!isGrounded || !onPlatform))
         {
             cutJump = true;
         }
