@@ -25,6 +25,7 @@ public class TrapLogic : MonoBehaviour
         {
             anim = other.GetComponent<Animator>();
             anim.SetBool("IsJumping", false);
+            anim.SetInteger("WalkX", 0);
             player = other.GetComponent<PlayerController>();
             PlayerHealth health = other.GetComponent<PlayerHealth>();
             if (player != null)

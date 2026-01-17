@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 5f;
     public Vector2 moveInput;
-    private Vector2 velocity;
+    public Vector2 velocity;
 
     [Header("Jumping")]
     public float jumpForce = 10f;

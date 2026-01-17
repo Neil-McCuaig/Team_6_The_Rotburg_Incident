@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeepingAngelBehavior : MonoBehaviour
+public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
 {
     [Header("Movement")]
     public float moveSpeed = 2f;
-    public Transform player;
     public bool facingRight = true;
+    public bool isActive;
     private Vector2 sleepingTransform;
 
     [Header("Light Detection")]
@@ -16,7 +16,9 @@ public class WeepingAngelBehavior : MonoBehaviour
     private enum State { FollowState, HideState }
     private State currentState = State.FollowState;
 
+    public Transform player;
     public DomainZoneLogic DomainZone;
+    PlayerController playerController;
     Animator anim;
 
 
@@ -28,11 +30,12 @@ public class WeepingAngelBehavior : MonoBehaviour
     private void Start()
     {
         anim = GetComponent<Animator>();
+        playerController = FindAnyObjectByType<PlayerController>();
     }
 
     void Update()
     {
-        if (DomainZone == null || DomainZone.playerInDomain == false)
+        if (!isActive)
         {
             transform.position = sleepingTransform;
             return;
@@ -42,7 +45,7 @@ public class WeepingAngelBehavior : MonoBehaviour
         {
             currentState = State.HideState;
         }
-        else
+        else if (!playerController.inLocker)
         {
             currentState = State.FollowState;
         }
@@ -51,6 +54,10 @@ public class WeepingAngelBehavior : MonoBehaviour
         {
             case State.FollowState:
                 {
+                    if(playerController.inLocker)
+                    {
+                        currentState = State.HideState;
+                    }
                     MoveTowardTarget();
                     break;
                 }
@@ -101,5 +108,24 @@ public class WeepingAngelBehavior : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("FlashLight"))
+        {
+            isInLight = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("FlashLight"))
+        {
+            isInLight = false;
+        }
+    }
+
+    public void SetActiveState(bool value)
+    {
+        isActive = value;
     }
 }
