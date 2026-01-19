@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class DomainZoneLogic : MonoBehaviour
 {
-    public bool playerInDomain = false;
+    [Header("Objects To Activate")]
+    [SerializeField] private GameObject[] targets;
+
     PlayerController playerController;
 
     private void Start()
@@ -12,19 +14,19 @@ public class DomainZoneLogic : MonoBehaviour
         playerController = FindAnyObjectByType<PlayerController>();
     }
 
-    private void Update()
-    {
-        if(playerController.isDead)
-        {
-            playerInDomain = false;
-        }
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player"))
         {
-            playerInDomain = true;
+            return;
+        }
+        foreach (GameObject obj in targets)
+        {
+            MonnsterActivation activatable = obj.GetComponent<MonnsterActivation>();
+            if (activatable != null)
+            {
+                activatable.SetActiveState(true);
+            }
         }
     }
 
@@ -34,7 +36,14 @@ public class DomainZoneLogic : MonoBehaviour
         {
             if (playerController != null && playerController.inLocker == false)
             {
-                playerInDomain = false;
+                foreach (GameObject obj in targets)
+                {
+                    MonnsterActivation activatable = obj.GetComponent<MonnsterActivation>();
+                    if (activatable != null)
+                    {
+                        activatable.SetActiveState(false);
+                    }
+                }
             }
             else
             {

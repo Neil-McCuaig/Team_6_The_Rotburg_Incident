@@ -6,7 +6,6 @@ using UnityEngine.Playables;
 public class CutsceneTrigger : MonoBehaviour
 {
     [Header("Cutscene Camera")]
-    [Tooltip("Index from CameraManager cutsceneCameras array")]
     [SerializeField] private int cutsceneCamIndex;
 
     [Header("Timeline")]
@@ -59,6 +58,7 @@ public class CutsceneTrigger : MonoBehaviour
         if (playerController != null)
         {
             playerController.canMove = false;
+            playerController.velocity.y = -2f;
             playerController.anim.SetInteger("WalkX", 0);
         }
         CameraManager.instance.SwitchToCutsceneCamera(cutsceneCamIndex);
