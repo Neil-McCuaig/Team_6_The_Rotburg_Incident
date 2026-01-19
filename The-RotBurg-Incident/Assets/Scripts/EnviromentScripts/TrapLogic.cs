@@ -13,10 +13,13 @@ public class TrapLogic : MonoBehaviour
     FadeToBlack fade;
     PlayerController player;
     Animator anim;
+    //Used for falsifying the trapDamaged bool after fade in
+    PlayerHealth healthTrapCheck;
 
     void Start()
     {
         fade = FindAnyObjectByType<FadeToBlack>();
+        healthTrapCheck = FindAnyObjectByType<PlayerHealth>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -70,6 +73,8 @@ public class TrapLogic : MonoBehaviour
             player.rb.velocity = Vector3.zero;
         }
         fade.FadeIn();
+
+        healthTrapCheck.trapDamaged = false;
 
         playerPos.position = player.lastGroundedPosition;
 
