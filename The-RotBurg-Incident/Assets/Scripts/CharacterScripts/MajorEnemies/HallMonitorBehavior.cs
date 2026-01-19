@@ -38,6 +38,7 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     private bool isStunned = false;
 
     private Transform player;
+    private Vector2 sleepingTransform;
     Animator anim;
     public DomainZoneLogic DomainZone;
     public GameObject AttachedLight;
@@ -49,8 +50,11 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     private enum State { GreenLight, YellowLight, RedLight }
     private State currentState = State.GreenLight;
 
-    public Transform returnPoint;
-
+    void Awake()
+    {
+        Vector3 currentPos = transform.position;
+        sleepingTransform = new Vector2(currentPos.x, currentPos.y);
+    }
     private void Start()
     {
         player = GameObject.Find("Player").transform;
@@ -70,105 +74,102 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     {
         if (DomainZone.playerInDomain == false)
         {
-            //Causes the Hall Monitor to return to it's returnPoint. This happens instantly. I want it to fly there. Also, needs to have
-            //An offset where it will stop trying to get to the return point so it does not lag the game.
-            Vector3 direction = returnPoint.position - transform.position;
-            transform.position += direction * dashSpeed * Time.deltaTime;
             currentState = State.GreenLight;
             lt.color = Sleeping;
+            transform.position = sleepingTransform;
             return;
         }
-        switch (currentState)
-        {
-            case State.GreenLight:
+            switch (currentState)
             {
-                foreach (var locker in LockerInteraction.allLockers)
-                {
-                    locker.UnSealLockers();
-                }
-                anim.SetBool("IsClosed", true);
-
-                lt.color = Go;
-                if (!greenLightBegun)
-                {
-                    greenLightBegun = true;
-                    StartCoroutine(GreenLightDuration());
-                }
-                Vector3 direction = player.position - transform.position;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
-                Vector3 offset = new Vector3(0f, orbitRadius, 0f);
-                transform.position = player.transform.position + offset;
-
-                break;
-            }
-            case State.YellowLight:
-            {
-                anim.SetBool("IsClosed", true);
-                lt.color = Hide;
-                if (!yellowLightBegun)
-                {
-                    yellowLightBegun = true;
-                    StartCoroutine(YellowLightDuration());
-                }
-                Vector3 direction = player.position - transform.position;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
-                Vector3 offset = new Vector3(0f, orbitRadius, 0f);
-                transform.position = player.transform.position + offset;
-
-                break;
-            }
-            case State.RedLight:
-            {
-                foreach (var locker in LockerInteraction.allLockers)
-                {
-                    locker.SealAllLockers();
-                }
-                lt.color = Attack;
-
-                if (isOrbiting)
-                {
-                    anim.SetBool("IsClosed", true);
-                    OrbitAroundPlayer();
-                    orbitTimer -= Time.deltaTime;
-                    if(playerController.inLocker == false)
+                case State.GreenLight:
                     {
-                        playerCaught = true;
-                    }
-                    if (orbitTimer <= 0f)
-                    {
-                        if (playerCaught)
+                        foreach (var locker in LockerInteraction.allLockers)
                         {
-                            StartCoroutine(PrepareToDash());
-                            playerCaught = false;
+                            locker.UnSealLockers();
                         }
-                        else
-                        {
-                            playerCaught = false;
-                            ResetOrbit();
-                            currentState = State.GreenLight;
-                        }
-                    }
-                }
-                else if (isPreparingToDash)
-                {
-                    anim.SetBool("IsClosed", false);
-                    Vector3 offset = new Vector3(Mathf.Cos(currentAngle), Mathf.Sin(currentAngle), 0f) * orbitRadius;
-                    transform.position = player.position + offset;
-                }
-                else if (isDashing)
-                {
-                    DashTowardPlayerWhileLocked();
-                }
-                               
-                Vector3 direction = player.position - transform.position;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
+                        anim.SetBool("IsClosed", true);
 
-                break;
+                        lt.color = Go;
+                        if (!greenLightBegun)
+                        {
+                            greenLightBegun = true;
+                            StartCoroutine(GreenLightDuration());
+                        }
+                        Vector3 direction = player.position - transform.position;
+                        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                        transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
+                        Vector3 offset = new Vector3(0f, orbitRadius, 0f);
+                        transform.position = player.transform.position + offset;
+
+                        break;
+                    }
+                case State.YellowLight:
+                    {
+                        anim.SetBool("IsClosed", true);
+                        lt.color = Hide;
+                        if (!yellowLightBegun)
+                        {
+                            yellowLightBegun = true;
+                            StartCoroutine(YellowLightDuration());
+                        }
+                        Vector3 direction = player.position - transform.position;
+                        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                        transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
+                        Vector3 offset = new Vector3(0f, orbitRadius, 0f);
+                        transform.position = player.transform.position + offset;
+
+                        break;
+                    }
+                case State.RedLight:
+                    {
+                        foreach (var locker in LockerInteraction.allLockers)
+                        {
+                            locker.SealAllLockers();
+                        }
+                        lt.color = Attack;
+
+                        if (isOrbiting)
+                        {
+                            anim.SetBool("IsClosed", true);
+                            OrbitAroundPlayer();
+                            orbitTimer -= Time.deltaTime;
+                            if (playerController.inLocker == false)
+                            {
+                                playerCaught = true;
+                            }
+                            if (orbitTimer <= 0f)
+                            {
+                                if (playerCaught)
+                                {
+                                    StartCoroutine(PrepareToDash());
+                                    playerCaught = false;
+                                }
+                                else
+                                {
+                                    playerCaught = false;
+                                    ResetOrbit();
+                                    currentState = State.GreenLight;
+                                }
+                            }
+                        }
+                        else if (isPreparingToDash)
+                        {
+                            anim.SetBool("IsClosed", false);
+                            Vector3 offset = new Vector3(Mathf.Cos(currentAngle), Mathf.Sin(currentAngle), 0f) * orbitRadius;
+                            transform.position = player.position + offset;
+                        }
+                        else if (isDashing)
+                        {
+                            DashTowardPlayerWhileLocked();
+                        }
+
+                        Vector3 direction = player.position - transform.position;
+                        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                        transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
+
+                        break;
+                    }
             }
-        }
     }
 
     void OrbitAroundPlayer()
@@ -273,5 +274,4 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
             playerCaught = true;
         }
     }
-
 }
