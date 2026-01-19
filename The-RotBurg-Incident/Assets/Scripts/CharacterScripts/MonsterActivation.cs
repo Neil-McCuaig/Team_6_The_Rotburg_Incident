@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface EnemyStunable
+public interface MonnsterActivation
 {
-    void Stun();
+    void SetActiveState(bool value);
 }
-
