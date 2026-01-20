@@ -11771,7 +11771,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 543, y: 449, z: -950.7505}
+  m_LocalPosition: {x: 570, y: 444, z: -950.7505}
   m_LocalScale: {x: 0.89983, y: 0.89983, z: 0.89983}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17455,7 +17455,6 @@ GameObject:
   m_Component:
   - component: {fileID: 756902208}
   - component: {fileID: 756902209}
-  - component: {fileID: 756902211}
   - component: {fileID: 756902210}
   m_Layer: 0
   m_Name: Flash_Glow
@@ -17579,18 +17578,6 @@ PolygonCollider2D:
       - {x: 0.43446487, y: 0.49984384}
       - {x: 9.18726, y: 21.461466}
   m_UseDelaunayMesh: 0
---- !u!114 &756902211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 756902207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41e50ac1711f92b4c84883cd49a20561, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &765571591
 GameObject:
   m_ObjectHideFlags: 0
@@ -18719,22 +18706,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &817387459 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2928571984204971229, guid: fdc8b7f5208f7e84689cdb242a3ed2e9, type: 3}
-  m_PrefabInstance: {fileID: 533111963}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a50a75d509e146341b6a35f568ae4bd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &817387462 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2568920226760208011, guid: fdc8b7f5208f7e84689cdb242a3ed2e9, type: 3}
-  m_PrefabInstance: {fileID: 533111963}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &820908688
 GameObject:
   m_ObjectHideFlags: 0
@@ -19672,6 +19643,7 @@ MonoBehaviour:
     m_Bits: 256
   moveSpeed: 40
   moveInput: {x: 0, y: 0}
+  velocity: {x: 0, y: 0}
   jumpForce: 100
   gravityScale: 20
   terminalVelocity: -100
@@ -19702,7 +19674,7 @@ MonoBehaviour:
   lightRight: {fileID: 906295903}
   flashLight: {fileID: 756902209}
   pictureLight: {fileID: 1279047579}
-  lighterLight: {fileID: 0}
+  lighterLight: {fileID: 1292064967}
   canFlash: 1
   batteryDead: 0
   inputActions: {fileID: -944628639613478452, guid: 3a25a101b3580f843a5333425ba0133b, type: 3}
@@ -19743,10 +19715,10 @@ MonoBehaviour:
     m_SingletonActionBindings: []
     m_Flags: 0
   hasDoubleJump: 1
-  hasMetalPipe: 0
+  hasMetalPipe: 1
   hasPhone: 1
   numOfLives: 3
-  phonePrefab: {fileID: 0}
+  phonePrefab: {fileID: 4602923421748875451, guid: 0ca62e038ad899747b29645dc8ed6125, type: 3}
 --- !u!212 &871734301
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -19808,7 +19780,7 @@ Transform:
   m_GameObject: {fileID: 871734297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -407.5, y: -502, z: -0.84647}
+  m_LocalPosition: {x: 579.5, y: 639, z: -0.84647}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -27174,7 +27146,7 @@ Transform:
   - {fileID: 141250697}
   - {fileID: 274215450}
   - {fileID: 2141021412}
-  - {fileID: 817387462}
+  - {fileID: 1452685593}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1117861254
@@ -29311,9 +29283,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 20
-  player: {fileID: 871734302}
   facingRight: 1
+  isActive: 0
   isInLight: 0
+  player: {fileID: 871734302}
   DomainZone: {fileID: 2928571984169714779}
 --- !u!61 &1218980197
 BoxCollider2D:
@@ -34185,7 +34158,7 @@ Transform:
   m_GameObject: {fileID: 1414718275}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 543, y: 449, z: -950.7505}
+  m_LocalPosition: {x: 570, y: 444, z: -950.7505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -35621,6 +35594,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4875459652111057193, guid: 179907b5db1a4cd44b9efe559bb93b67, type: 3}
   m_PrefabInstance: {fileID: 1444728279}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1452685593 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6117747270181769955, guid: fdc8b7f5208f7e84689cdb242a3ed2e9, type: 3}
+  m_PrefabInstance: {fileID: 533111963}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1454956027
 GameObject:
@@ -46382,7 +46360,7 @@ Transform:
   m_GameObject: {fileID: 1945702672}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 535, y: 633, z: -940.7505}
+  m_LocalPosition: {x: 562, y: 628, z: -940.7505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -47779,7 +47757,7 @@ PrefabInstance:
     - target: {fileID: 87107073541091054, guid: 49935aa3897755d49a5093cda4ec4ad5, type: 3}
       propertyPath: DomainZone
       value: 
-      objectReference: {fileID: 817387459}
+      objectReference: {fileID: 0}
     - target: {fileID: 87107073541091054, guid: 49935aa3897755d49a5093cda4ec4ad5, type: 3}
       propertyPath: preDashDelay
       value: 0.8
@@ -50037,7 +50015,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a50a75d509e146341b6a35f568ae4bd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerInDomain: 0
+  targets: []
 --- !u!1001 &3081040131615721878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50479,8 +50457,8 @@ SceneRoots:
   - {fileID: 1307360709}
   - {fileID: 596029878}
   - {fileID: 1109656703}
+  - {fileID: 779246100}
   - {fileID: 532567077}
   - {fileID: 1878378424}
   - {fileID: 589818291}
   - {fileID: 7720130145585601939}
-  - {fileID: 779246100}

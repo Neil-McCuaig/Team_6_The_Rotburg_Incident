@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
 
     private void CheckForItem(string itemName)
     {
-        Debug.Log("Checking for Items!");
+        Debug.Log(itemName);
         //It is reaching here
         if (itemName == powerUp1)
         {
