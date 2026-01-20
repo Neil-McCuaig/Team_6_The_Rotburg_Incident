@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Rendering.Universal;
 using UnityEngine;
 
-public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
+public class HallMonitorBehavior : MonoBehaviour, EnemyStunable, MonnsterActivation
 {
     [Header("State Management")]
     Color Sleeping = Color.black;
@@ -15,12 +15,16 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     bool greenLightBegun;
     bool yellowLightBegun;
     bool playerCaught;
+    private Vector2 sleepingTransform;
+    public bool isActive;
 
     [Header("Orbit Settings")]
     public float orbitRadius;
     public float orbitSpeed;
     private float orbitTimer;
     private bool isOrbiting = true;
+    private float currentAngle;
+    private bool isLockedToPlayer = true;
 
     [Header("Timing")]
     public float minOrbitTime;
@@ -37,15 +41,14 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
     public float stunDuration;
     private bool isStunned = false;
 
+    [HideInInspector]
+    [Header("References")]
+    DomainZoneLogic DomainZone;
+    PlayerController playerController;
     private Transform player;
-    private Vector2 sleepingTransform;
-    Animator anim;
-    public DomainZoneLogic DomainZone;
+    private Animator anim;
     public GameObject AttachedLight;
     public Light2D lt;
-    PlayerController playerController;
-    private bool isLockedToPlayer = true;
-    private float currentAngle;
 
     private enum State { GreenLight, YellowLight, RedLight }
     private State currentState = State.GreenLight;
@@ -72,13 +75,14 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
 
     private void Update()
     {
-        if (DomainZone.playerInDomain == false)
+        if (!isActive)
         {
             currentState = State.GreenLight;
             lt.color = Sleeping;
             transform.position = sleepingTransform;
             return;
         }
+
             switch (currentState)
             {
                 case State.GreenLight:
@@ -273,5 +277,9 @@ public class HallMonitorBehavior : MonoBehaviour, EnemyStunable
         {
             playerCaught = true;
         }
+    }
+    public void SetActiveState(bool value)
+    {
+        isActive = value;
     }
 }
