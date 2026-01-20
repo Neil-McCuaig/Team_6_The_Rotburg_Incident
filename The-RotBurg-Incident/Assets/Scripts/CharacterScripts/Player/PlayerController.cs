@@ -470,16 +470,20 @@ public class PlayerController : MonoBehaviour
         //renameSpawnedPhone.name = phonePrefab.name;
         //numOfLives = numOfLives - 1;
         
-        if(health.trapDamaged == false)
-        {
-            renameSpawnedPhone = Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
-            renameSpawnedPhone.name = phonePrefab.name;
-        }
-        else if (health.trapDamaged == true)
-        {
-            renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
-            renameSpawnedPhone.name = phonePrefab.name;
-        }
+        //if(health.trapDamaged == false)
+        //{
+            //renameSpawnedPhone = Instantiate(phonePrefab, phoneDropPoint.transform.position, Quaternion.identity);
+            //renameSpawnedPhone.name = phonePrefab.name;
+        //}
+        //else if (health.trapDamaged == true)
+        //{
+            //renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
+            //renameSpawnedPhone.name = phonePrefab.name;
+        //}
+
+        renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
+        renameSpawnedPhone.name = phonePrefab.name;
+
         numOfLives = numOfLives - 1;
         StartCoroutine(HandleDeathFadeOut());
         LighterMode();
