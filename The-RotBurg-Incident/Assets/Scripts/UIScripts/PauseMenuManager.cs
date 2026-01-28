@@ -6,12 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
 {
+    public bool isPaused = false;
     [Header("UI Panels")]
     public GameObject pauseMenuUI;
-    public GameObject audioSettingsUI;
+    public GameObject settingsMenuUI;
+    [Header("Settings Sub-Menus")]
+    public GameObject audioSubMenu;
+    public GameObject controlsSubMenu;
 
-    public bool isPaused = false;
-    private bool inAudioSettings = false;
+    private bool inSettingsMenu = false;
     PlayerController playerController;
     HoverLogic hoverLogic;
 
@@ -30,7 +33,7 @@ public class PauseMenuManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && !inAudioSettings)
+        if (Input.GetKeyDown(KeyCode.Escape) && !inSettingsMenu)
         {
             if (isPaused)
             {
@@ -41,9 +44,9 @@ public class PauseMenuManager : MonoBehaviour
                 PauseGame();
             }
         }
-        if (inAudioSettings && Input.GetKeyDown(KeyCode.Escape))
+        if (inSettingsMenu && Input.GetKeyDown(KeyCode.Escape))
         {
-            CloseAudioSettings();
+            CloseSettings();
         }
     }
 
@@ -51,36 +54,51 @@ public class PauseMenuManager : MonoBehaviour
     {
         Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
         pauseMenuUI.SetActive(true);
-        audioSettingsUI.SetActive(false);
+        settingsMenuUI.SetActive(false);
         Time.timeScale = 0f;
         isPaused = true;
-        inAudioSettings = false;
+        inSettingsMenu = false;
     }
 
     public void Resume()
     {
         Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
         pauseMenuUI.SetActive(false);
-        audioSettingsUI.SetActive(false);
+        settingsMenuUI.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
-        inAudioSettings = false;
+        inSettingsMenu = false;
     }
 
-    public void OpenAudioSettings()
+    public void OpenSettings()
     {
         pauseMenuUI.SetActive(false);
-        audioSettingsUI.SetActive(true);
-        inAudioSettings = true;
+        settingsMenuUI.SetActive(true);
+        inSettingsMenu = true;
     }
 
-    public void CloseAudioSettings()
+    public void CloseSettings()
     {
-        audioSettingsUI.SetActive(false);
+        settingsMenuUI.SetActive(false);
         pauseMenuUI.SetActive(true);
-        inAudioSettings = false;
+        inSettingsMenu = false;
     }
 
+    public void AudioSubMenu()
+    {
+        DisableSubMenus();
+        audioSubMenu.SetActive(true);
+    }
+    public void ControlsSubMenu()
+    {
+        DisableSubMenus();
+        controlsSubMenu.SetActive(true);
+    }
+    private void DisableSubMenus()
+    {
+        audioSubMenu.SetActive(false);
+        controlsSubMenu.SetActive(false);
+    }
     public void QuitGame()
     {
         Application.Quit();
@@ -95,7 +113,10 @@ public class PauseMenuManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         Resume();
-        playerController.Die();
+        if (playerController != null && !playerController.isDead)
+        {
+            playerController.Die();
+        }
     }
 
     void OnDisable()
