@@ -1,22 +1,29 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
+using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour
 {
     public bool isPaused = false;
+    private bool inSettingsMenu = false;
+
     [Header("UI Panels")]
     public GameObject pauseMenuUI;
     public GameObject settingsMenuUI;
+    public GameObject quitCheck;
+    public GameObject menuCheck;
+
     [Header("Settings Sub-Menus")]
+    public GameObject videoSubMenu;
     public GameObject audioSubMenu;
     public GameObject controlsSubMenu;
 
-    private bool inSettingsMenu = false;
+    [HideInInspector][Header("References")]
     PlayerController playerController;
-    HoverLogic hoverLogic;
+    public TMP_Dropdown resolutionDropdown;
+    Resolution[] resolutions;
 
     [Header("Cursor Settings")]
     public Texture2D cursorCamTexture;
@@ -28,7 +35,30 @@ public class PauseMenuManager : MonoBehaviour
     {
         Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
         playerController = FindAnyObjectByType<PlayerController>();
-        hoverLogic = FindAnyObjectByType<HoverLogic>();
+
+        resolutions = Screen.resolutions;
+        resolutionDropdown.ClearOptions();
+        List<string> options = new List<string>();
+
+        int currentResolutionIndex = 0;
+        for (int i = 0; i < resolutions.Length; i++)
+        {
+            string option = resolutions[i].width + " x " + resolutions[i].height;
+            options.Add(option);
+
+            if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
+            {
+                currentResolutionIndex = i;
+            }
+        }
+        resolutionDropdown.AddOptions(options);
+        resolutionDropdown.value = currentResolutionIndex;
+        resolutionDropdown.RefreshShownValue();
+    }
+    public void SetResolution (int  resolutionIndex)
+    {
+        Resolution resolution = resolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
     void Update()
@@ -75,6 +105,7 @@ public class PauseMenuManager : MonoBehaviour
         pauseMenuUI.SetActive(false);
         settingsMenuUI.SetActive(true);
         inSettingsMenu = true;
+        DisableSubMenus();
     }
 
     public void CloseSettings()
@@ -82,12 +113,18 @@ public class PauseMenuManager : MonoBehaviour
         settingsMenuUI.SetActive(false);
         pauseMenuUI.SetActive(true);
         inSettingsMenu = false;
+        DisableSubMenus();
     }
 
     public void AudioSubMenu()
     {
         DisableSubMenus();
         audioSubMenu.SetActive(true);
+    }
+    public void VideoSubMenu()
+    {
+        DisableSubMenus();
+        videoSubMenu.SetActive(true);
     }
     public void ControlsSubMenu()
     {
@@ -96,8 +133,33 @@ public class PauseMenuManager : MonoBehaviour
     }
     private void DisableSubMenus()
     {
+        videoSubMenu.SetActive(false);
         audioSubMenu.SetActive(false);
         controlsSubMenu.SetActive(false);
+    }
+    public void SetFullScreen (bool isFullScreen)
+    {
+        Screen.fullScreen = isFullScreen;
+    }
+    public void SetQuality (int qualityIndex)
+    {
+        QualitySettings.SetQualityLevel(qualityIndex);
+    }
+    public void OpenQuitCheck()
+    {
+        quitCheck.SetActive(true);
+    }
+    public void CloseQuitCheck()
+    {
+        quitCheck.SetActive(false);
+    }
+    public void OpenMenuCheck()
+    {
+        menuCheck.SetActive(true);
+    }
+    public void CloseMenuCheck()
+    {
+        menuCheck.SetActive(false);
     }
     public void QuitGame()
     {
