@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
     public string powerUp1 = "DoubleJump";
     public string powerUp2 = "MetalPipe";
     public string powerUp3 = "GroundPhone";
-    //public string powerUp3 = "GroundPhone(Clone)";
 
     PlayerController player;
     SafeStations safeStations;
@@ -25,19 +24,32 @@ public class GameManager : MonoBehaviour
     public BatterySlider batterySlider;
     public Light2D playerLight;
 
+    [Header("UI Settings")]
+    public RectTransform rect;
+    private Vector2 originalPos;
+    private Vector2 hiddenPos = new Vector2(9999f, 9999f);
+
+    void Awake()
+    {
+        if (rect != null)
+        {
+            originalPos = rect.anchoredPosition;
+        }
+    }
     private void Start()
     {
         player = FindAnyObjectByType<PlayerController>();
         safeStations = FindAnyObjectByType<SafeStations>();
         batterySlider = FindAnyObjectByType<BatterySlider>();
-        batterySlider.SetMaxBattery(batteryPercentage);
-
+        if (batterySlider != null)
+        {
+            batterySlider.SetMaxBattery(batteryPercentage);
+        }
         sliderFill = batterySliderFill.GetComponent<Image>();
     }
-
     public void Update()
     {
-        if (batteryPercentage > 0f)
+        if (batteryPercentage > 0f && batterySlider != null)
         {
             playerLight.enabled = true;
             batteryPercentage -= drainRatePerSecond * Time.deltaTime;
@@ -52,50 +64,51 @@ public class GameManager : MonoBehaviour
 
             batterySliderFill.SetActive(false);
         }
+        if (sliderFill != null)
+        {
+            if (batteryPercentage > 99f)
+            {
+                sliderFill.color = Color.green;
+            }
+            else if (batteryPercentage > 50f)
+            {
+                sliderFill.color = Color.white;
+            }
+            else if (batteryPercentage > 20f)
+            {
+                sliderFill.color = Color.yellow;
+            }
+            else if (batteryPercentage < 20f)
+            {
+                sliderFill.color = Color.red;
+            }
 
-        if (batteryPercentage > 99f)
-        {
-            sliderFill.color = Color.green;
-        }
-        else if (batteryPercentage > 50f)
-        {
-            sliderFill.color = Color.white;
-        }
-        else if (batteryPercentage > 20f)
-        {
-            sliderFill.color = Color.yellow;
-        }
-        else if (batteryPercentage < 20f)
-        {
-            sliderFill.color = Color.red;
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            SceneManager.LoadScene(1);
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene(1);
+            }
         }
     }
-
     public void ReduceBattery(float amount)
     {
         if (batteryPercentage > 0f)
         {
             batteryPercentage -= amount;
             batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
-            batterySlider.SetBattery(batteryPercentage);
+            if (batterySlider != null)
+            {
+                batterySlider.SetBattery(batteryPercentage);
+            }
         }
     }
-
     void OnEnable()
     {
         Inventory.OnItemAdded += CheckForItem; 
     }
-
     void OnDisable()
     {
         Inventory.OnItemAdded -= CheckForItem;
     }
-
     private void CheckForItem(string itemName)
     {
         Debug.Log(itemName);
@@ -112,5 +125,14 @@ public class GameManager : MonoBehaviour
             player.hasPhone = true;
             player.pickUpPhone();
         }
+    }
+
+    public void HideUI()
+    {
+        rect.anchoredPosition = hiddenPos;
+    }
+    public void ShowUI()
+    {
+        rect.anchoredPosition = originalPos;
     }
 }

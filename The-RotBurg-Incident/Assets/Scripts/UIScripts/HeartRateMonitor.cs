@@ -24,41 +24,46 @@ public class HeartRateMonitor : MonoBehaviour
     {
         UpdateTargetValue();
         displayFloat = Mathf.MoveTowards(displayFloat, targetValue, incrementSpeed * Time.deltaTime);
-        BPMText.text = displayFloat.ToString("F0");
+        if (BPMText != null)
+        {
+            BPMText.text = displayFloat.ToString("F0");
+        }
     }
 
     void UpdateTargetValue()
     {
         float hpPercent = (health.currentHealth / health.maxHealth) * 100f;
-
-        if (hpPercent <= 0)
+        if (heartRate != null)
         {
-            displayFloat = 0f;
-            heartRate.color = Color.red;
-        }
-        else if (hpPercent <= 10)
-        {
-            targetValue = 220f;
-            heartRate.color = Color.red;
-        }
-        else if (hpPercent <= 30)
-        {
-            targetValue = 190f;
-            heartRate.color = Color.magenta;
-        }
-        else if (hpPercent <= 50)
-        {
-            targetValue = 160f;
-            heartRate.color = Color.yellow;
-        }
-        else if (hpPercent <= 70)
-        {
-            targetValue = 110f;
-        }
-        else
-        {
-            targetValue = 70f;
-            heartRate.color = Color.green;
+            if (hpPercent <= 0)
+            {
+                displayFloat = 0f;
+                heartRate.color = Color.red;
+            }
+            else if (hpPercent <= 10)
+            {
+                targetValue = 220f;
+                heartRate.color = Color.red;
+            }
+            else if (hpPercent <= 30)
+            {
+                targetValue = 190f;
+                heartRate.color = Color.magenta;
+            }
+            else if (hpPercent <= 50)
+            {
+                targetValue = 160f;
+                heartRate.color = Color.yellow;
+            }
+            else if (hpPercent <= 70)
+            {
+                targetValue = 110f;
+            }
+            else
+            {
+                targetValue = 70f;
+                heartRate.color = Color.green;
+            }
         }
     }
 }

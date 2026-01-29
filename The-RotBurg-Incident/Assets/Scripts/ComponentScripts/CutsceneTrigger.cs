@@ -13,9 +13,11 @@ public class CutsceneTrigger : MonoBehaviour
 
     [Header("Trigger Settings")]
     [SerializeField] private bool triggerOnlyOnce = true;
+    [SerializeField] private bool hideUIDuringCutscene = false;
 
     private bool hasTriggered;
     PlayerController playerController;
+    GameManager gameManager;
 
     private void OnEnable()
     {
@@ -36,6 +38,7 @@ public class CutsceneTrigger : MonoBehaviour
     private void Start()
     {
         playerController = FindAnyObjectByType<PlayerController>();
+        gameManager = FindAnyObjectByType<GameManager>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -61,8 +64,13 @@ public class CutsceneTrigger : MonoBehaviour
             playerController.velocity.y = -2f;
             playerController.anim.SetInteger("WalkX", 0);
         }
-        CameraManager.instance.SwitchToCutsceneCamera(cutsceneCamIndex);
 
+        if (hideUIDuringCutscene && gameManager != null)
+        {
+            gameManager.HideUI();
+        }
+
+        CameraManager.instance.SwitchToCutsceneCamera(cutsceneCamIndex);
         playableDirector.time = 0;
         playableDirector.Play();
     }
@@ -75,5 +83,10 @@ public class CutsceneTrigger : MonoBehaviour
         }
 
         CameraManager.instance.ReturnToPlayerCamera();
+
+        if (hideUIDuringCutscene && gameManager != null)
+        {
+            gameManager.ShowUI();
+        }
     }
 }
