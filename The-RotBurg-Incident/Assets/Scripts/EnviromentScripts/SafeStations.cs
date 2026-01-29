@@ -27,6 +27,7 @@ public class SafeStations : MonoBehaviour
     private void Start()
     {
         hoverEffect.SetActive(false);
+        enemySpawnerManager.SpawnEnemies();
 
         playerController = FindAnyObjectByType<PlayerController>();
         gameManager = FindAnyObjectByType<GameManager>();

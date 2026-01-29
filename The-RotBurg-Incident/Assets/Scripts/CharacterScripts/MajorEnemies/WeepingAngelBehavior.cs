@@ -17,7 +17,6 @@ public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
     private State currentState = State.FollowState;
 
     public Transform player;
-    public DomainZoneLogic DomainZone;
     PlayerController playerController;
     Animator anim;
 
