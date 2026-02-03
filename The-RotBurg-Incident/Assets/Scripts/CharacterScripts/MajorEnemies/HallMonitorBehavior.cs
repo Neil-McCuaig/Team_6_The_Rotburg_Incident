@@ -1,285 +1,290 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Rendering.Universal;
 using UnityEngine;
 
-public class HallMonitorBehavior : MonoBehaviour, EnemyStunable, MonnsterActivation
+public class HallMonitorBehavior : MonoBehaviour, MonnsterActivation
 {
+    [Header("Overlay Settings")]
+    public GameObject overlayPrefab;
+    public Transform[] spawnPoints;
+    public Transform player;
+    private List<GameObject> activeOverlays = new List<GameObject>();
+    private List<Animator> overlayAnims = new List<Animator>();
+    private float overlayWidth;
+    private float overlayHeight;
+
+    private bool isActive;
+
     [Header("State Management")]
-    Color Sleeping = Color.black;
-    Color Go = Color.green;
-    Color Hide = Color.yellow;
-    Color Attack = Color.red;
-    public float greenLightDuration;
-    public float yellowLightDuration;
+    public float greenLightDuration = 60f;
+    public float greenLightStartUp = 2.5f;
+    public float redLightDuration = 4f;
+    public float redLightStartUp = 0.6f;
     bool greenLightBegun;
-    bool yellowLightBegun;
+    bool redLightBegun;
     bool playerCaught;
-    private Vector2 sleepingTransform;
-    public bool isActive;
-
-    [Header("Orbit Settings")]
-    public float orbitRadius;
-    public float orbitSpeed;
-    private float orbitTimer;
-    private bool isOrbiting = true;
-    private float currentAngle;
-    private bool isLockedToPlayer = true;
-
-    [Header("Timing")]
-    public float minOrbitTime;
-    public float maxOrbitTime;
-    public float preDashDelay;
-
-    [Header("Dash Settings")]
-    public float dashSpeed;
-    public float damageAmount;
-    private bool isPreparingToDash = false;
-    private bool isDashing = false;
-
-    [Header("Stun Settings")]
-    public float stunDuration;
-    private bool isStunned = false;
 
     [HideInInspector]
-    [Header("References")]
-    DomainZoneLogic DomainZone;
-    PlayerController playerController;
-    private Transform player;
-    private Animator anim;
-    public GameObject AttachedLight;
-    public Light2D lt;
+    [Header("Animation Settings")]
+    private bool beginStateCycle;
+    private float animationTimer;
+    private int eyeIndex;
 
-    private enum State { GreenLight, YellowLight, RedLight }
+    [Header("Gameplay References")]
+    PlayerController playerController;
+    public float damageAmount;
+
+    private enum State { GreenLight, RedLight }
     private State currentState = State.GreenLight;
 
-    void Awake()
-    {
-        Vector3 currentPos = transform.position;
-        sleepingTransform = new Vector2(currentPos.x, currentPos.y);
-    }
+    private float EyeStepTime => greenLightDuration / 6f;
+
     private void Start()
     {
-        player = GameObject.Find("Player").transform;
-        anim = GetComponent<Animator>();
         playerController = FindAnyObjectByType<PlayerController>();
 
-        orbitTimer = Random.Range(minOrbitTime, maxOrbitTime);
-
-        Vector3 offset = transform.position - player.position;
-        currentAngle = Mathf.Atan2(offset.y, offset.x);
-
-        DomainZone = FindAnyObjectByType<DomainZoneLogic>();
-        lt = AttachedLight.GetComponent<Light2D>();
+        SpriteRenderer sr = overlayPrefab.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            overlayWidth = sr.bounds.size.x;
+            overlayHeight = sr.bounds.size.y;
+        }
     }
 
     private void Update()
     {
         if (!isActive)
         {
-            currentState = State.GreenLight;
-            lt.color = Sleeping;
-            transform.position = sleepingTransform;
             return;
         }
+        if (activeOverlays.Count == 0)
+        {
+            SpawnOverlays();
+        }
+        OverlayGrid();
 
-            switch (currentState)
+        switch (currentState)
+        {
+            case State.GreenLight:
             {
-                case State.GreenLight:
-                    {
-                        foreach (var locker in LockerInteraction.allLockers)
-                        {
-                            locker.UnSealLockers();
-                        }
-                        anim.SetBool("IsClosed", true);
-
-                        lt.color = Go;
-                        if (!greenLightBegun)
-                        {
-                            greenLightBegun = true;
-                            StartCoroutine(GreenLightDuration());
-                        }
-                        Vector3 direction = player.position - transform.position;
-                        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                        transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
-                        Vector3 offset = new Vector3(0f, orbitRadius, 0f);
-                        transform.position = player.transform.position + offset;
-
-                        break;
-                    }
-                case State.YellowLight:
-                    {
-                        anim.SetBool("IsClosed", true);
-                        lt.color = Hide;
-                        if (!yellowLightBegun)
-                        {
-                            yellowLightBegun = true;
-                            StartCoroutine(YellowLightDuration());
-                        }
-                        Vector3 direction = player.position - transform.position;
-                        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                        transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
-                        Vector3 offset = new Vector3(0f, orbitRadius, 0f);
-                        transform.position = player.transform.position + offset;
-
-                        break;
-                    }
-                case State.RedLight:
-                    {
-                        foreach (var locker in LockerInteraction.allLockers)
-                        {
-                            locker.SealAllLockers();
-                        }
-                        lt.color = Attack;
-
-                        if (isOrbiting)
-                        {
-                            anim.SetBool("IsClosed", true);
-                            OrbitAroundPlayer();
-                            orbitTimer -= Time.deltaTime;
-                            if (playerController.inLocker == false)
-                            {
-                                playerCaught = true;
-                            }
-                            if (orbitTimer <= 0f)
-                            {
-                                if (playerCaught)
-                                {
-                                    StartCoroutine(PrepareToDash());
-                                    playerCaught = false;
-                                }
-                                else
-                                {
-                                    playerCaught = false;
-                                    ResetOrbit();
-                                    currentState = State.GreenLight;
-                                }
-                            }
-                        }
-                        else if (isPreparingToDash)
-                        {
-                            anim.SetBool("IsClosed", false);
-                            Vector3 offset = new Vector3(Mathf.Cos(currentAngle), Mathf.Sin(currentAngle), 0f) * orbitRadius;
-                            transform.position = player.position + offset;
-                        }
-                        else if (isDashing)
-                        {
-                            DashTowardPlayerWhileLocked();
-                        }
-
-                        Vector3 direction = player.position - transform.position;
-                        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                        transform.rotation = Quaternion.Euler(0f, 0f, angle + 90f);
-
-                        break;
-                    }
+                HandleGreenLight();
+                break;
             }
-    }
 
-    void OrbitAroundPlayer()
-    {
-        if (!isLockedToPlayer)
-        {
-            return;
-        }
-        currentAngle += orbitSpeed * Mathf.Deg2Rad * Time.deltaTime;
-        Vector3 offset = new Vector3(Mathf.Cos(currentAngle), Mathf.Sin(currentAngle), 0f) * orbitRadius;
-        transform.position = player.position + offset;
-    }
-
-    IEnumerator PrepareToDash()
-    {
-        if (isPreparingToDash)
-        {
-            yield break;
-        }
-        isPreparingToDash = true;
-        isOrbiting = false;
-
-        yield return new WaitForSeconds(preDashDelay);
-
-        if (!isStunned)
-        {
-            isDashing = true;
-        }
-        isPreparingToDash = false;
-    }
-
-    void DashTowardPlayerWhileLocked()
-    {
-        if (!isLockedToPlayer)
-        {
-            return;
-        }
-
-        Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * dashSpeed * Time.deltaTime;
-
-        float distance = Vector2.Distance(transform.position, player.position);
-        if (distance < 0.5f)
-        {
-            FindAnyObjectByType<PlayerHealth>().TakeDamage(damageAmount);
-            isLockedToPlayer = false;
-            isDashing = false;
-            ResetOrbit();
-            currentState = State.GreenLight;
+            case State.RedLight:
+            { 
+                HandleRedLight();
+                break;
+            }
         }
     }
 
-    public void Stun()
-    {
-        if (isStunned || isDashing || isOrbiting)
-        {
-            return;
-        }
-        anim.SetBool("IsStunned", true);
-        StopAllCoroutines();
-        isOrbiting = false;
-        isPreparingToDash = false;
-        isDashing = false;
-        isStunned = true;
-        Invoke(nameof(RecoverFromStun), stunDuration);
-    }
-
-    void RecoverFromStun()
-    {
-        isStunned = false;
-        anim.SetBool("IsStunned", false);
-        ResetOrbit();
-        currentState = State.GreenLight;
-    }
-
-    void ResetOrbit()
-    {
-        orbitTimer = Random.Range(minOrbitTime, maxOrbitTime);
-        isOrbiting = true;
-        isDashing = false;
-        isPreparingToDash = false;
-        isLockedToPlayer = true;
-    }
-
-    IEnumerator GreenLightDuration()
-    {
-        yield return new WaitForSeconds(greenLightDuration);
-        currentState = State.YellowLight;
-        greenLightBegun = false;
-    }
-    IEnumerator YellowLightDuration()
-    {
-        yield return new WaitForSeconds(yellowLightDuration);
-        currentState = State.RedLight;
-        yellowLightBegun = false;
-        if (playerController.inLocker)
-        {
-            playerCaught = false;
-        }
-        else
-        {
-            playerCaught = true;
-        }
-    }
     public void SetActiveState(bool value)
     {
+        if (isActive == value)
+        {
+            return;
+        }
         isActive = value;
+
+        if (!isActive)
+        {
+            ClearOverlays();
+            ResetCycle();
+        }
+    }
+
+    void SpawnOverlays()
+    {
+        for (int i = 0; i < Mathf.Min(6, spawnPoints.Length); i++)
+        {
+            GameObject overlay = Instantiate(overlayPrefab, spawnPoints[i].position, spawnPoints[i].rotation);
+            activeOverlays.Add(overlay);
+
+            Animator anim = overlay.GetComponent<Animator>();
+            if (anim != null)
+            {
+                overlayAnims.Add(anim);
+            }
+        }
+    }
+
+    void ClearOverlays()
+    {
+        foreach (var overlay in activeOverlays)
+        {
+            if (overlay != null)
+            {
+                Destroy(overlay);
+            }
+        }
+        activeOverlays.Clear();
+        overlayAnims.Clear();
+    }
+
+    void OverlayGrid()
+    {
+        if (activeOverlays.Count < 6)
+        {
+            return;
+        }
+
+        float leftEdge = float.MaxValue;
+        float rightEdge = float.MinValue;
+        float topEdge = float.MinValue;
+        float bottomEdge = float.MaxValue;
+
+        foreach (GameObject overlay in activeOverlays)
+        {
+            Vector3 pos = overlay.transform.position;
+
+            leftEdge = Mathf.Min(leftEdge, pos.x);
+            rightEdge = Mathf.Max(rightEdge, pos.x);
+            topEdge = Mathf.Max(topEdge, pos.y);
+            bottomEdge = Mathf.Min(bottomEdge, pos.y);
+        }
+
+        if (player.position.x - leftEdge > overlayWidth)
+        {
+            ShiftColumn(leftEdge, Vector3.right * overlayWidth * 3);
+        }
+        if (rightEdge - player.position.x > overlayWidth)
+        {
+            ShiftColumn(rightEdge, Vector3.left * overlayWidth * 3);
+        }
+        if (player.position.y - bottomEdge > overlayHeight)
+        {
+            ShiftRow(bottomEdge, Vector3.up * overlayHeight * 2);
+        }
+        if (topEdge - player.position.y > overlayHeight)
+        {
+            ShiftRow(topEdge, Vector3.down * overlayHeight * 2);
+        }
+    }
+
+    void ShiftColumn(float edge, Vector3 offset)
+    {
+        foreach (var overlay in activeOverlays)
+        {
+            if (Mathf.Abs(overlay.transform.position.x - edge) < 0.01f)
+            {
+                overlay.transform.position += offset;
+            }
+        }
+    }
+
+    void ShiftRow(float edge, Vector3 offset)
+    {
+        foreach (var overlay in activeOverlays)
+        {
+            if (Mathf.Abs(overlay.transform.position.y - edge) < 0.01f)
+            {
+                overlay.transform.position += offset;
+            }
+        }
+    }
+
+    void HandleGreenLight()
+    {
+        if (!greenLightBegun)
+        {
+            greenLightBegun = true;
+            foreach (var locker in LockerInteraction.allLockers)
+            {
+                locker.UnSealLockers();
+            }
+            animationTimer = 0f;
+            eyeIndex = 0;
+
+            StartCoroutine(GreenLightStartup());
+        }
+
+        if (!beginStateCycle)
+        {
+            return;
+        }
+
+        animationTimer += Time.deltaTime;
+        if (animationTimer >= EyeStepTime && eyeIndex < 6)
+        {
+            animationTimer = 0f;
+            eyeIndex++;
+            TriggerAll("NextState");
+        }
+    }
+
+    IEnumerator GreenLightStartup()
+    {
+        yield return new WaitForSeconds(greenLightStartUp);
+        TriggerAll("StartStates");
+        beginStateCycle = true;
+
+        yield return new WaitForSeconds(greenLightDuration);
+        beginStateCycle = false;
+        playerCaught = !playerController.inLocker;
+        SetBoolAll("PlayerCaught", playerCaught);
+
+        yield return new WaitForSeconds(redLightStartUp);
+        TriggerAll("NextState");
+        currentState = State.RedLight;
+        greenLightBegun = false;
+    }
+
+    void HandleRedLight()
+    {
+        if (!redLightBegun)
+        {
+            redLightBegun = true;
+            foreach (var locker in LockerInteraction.allLockers)
+            {
+                locker.SealAllLockers();
+            }
+            if (playerCaught)
+            {
+                FindAnyObjectByType<PlayerHealth>().TakeDamage(damageAmount);
+            }
+            StartCoroutine(RedLightDuration());
+        }
+    }
+
+    IEnumerator RedLightDuration()
+    {
+        yield return new WaitForSeconds(redLightDuration);
+        TriggerAll("ResetStates");
+        currentState = State.GreenLight;
+        redLightBegun = false;
+    }
+
+    void TriggerAll(string triggerName)
+    {
+        foreach (var anim in overlayAnims)
+        {
+            if (anim != null)
+            {
+                anim.SetTrigger(triggerName);
+            }
+        }
+    }
+
+    void SetBoolAll(string boolName, bool value)
+    {
+        foreach (var anim in overlayAnims)
+        {
+            if (anim != null)
+            {
+                anim.SetBool(boolName, value);
+            }
+        }
+    }
+
+    void ResetCycle()
+    {
+        greenLightBegun = false;
+        redLightBegun = false;
+        beginStateCycle = false;
+        animationTimer = 0f;
+        eyeIndex = 0;
+        currentState = State.GreenLight;
     }
 }
+
