@@ -523,4 +523,5 @@ public class PlayerController : MonoBehaviour
         armRender.enabled = true;
         flashLight.intensity = oriFlashIntensity;
     }
+
 }

@@ -60,9 +60,9 @@ public class CutsceneTrigger : MonoBehaviour
     {
         if (playerController != null)
         {
-            playerController.canMove = false;
-            playerController.velocity.y = -2f;
-            playerController.anim.SetInteger("WalkX", 0);
+            //playerController.canMove = false;
+           // playerController.velocity.y = -2f;
+            //playerController.anim.SetInteger("WalkX", 0);
         }
 
         if (hideUIDuringCutscene && gameManager != null)
