@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
     float lastAngle = 0f;
     public bool flipArmLeft = true;
     public SpriteRenderer armRender;
-    private bool pointingRight = true;
+    bool pointingRight;
 
     [Header("Stun-Ability Settings")]
     public float drainAmount;
@@ -150,6 +150,7 @@ public class PlayerController : MonoBehaviour
         fallSpeedYDampingChangeThreshold = -15f;
 
         lastMousePosition = Input.mousePosition;
+        pointingRight = true;
 
         if (pictureLight != null)
         {
