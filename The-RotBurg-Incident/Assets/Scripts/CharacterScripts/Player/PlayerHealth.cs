@@ -44,6 +44,7 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             chat.AddMessage("[CareTaker] OMG f's in the chat to pay repects he got wrecked", hurtEmote, true);
+            chat.SwitchMessageList(2);
             playerController.Die();
         }
         else if(spriteRenderer != null) 

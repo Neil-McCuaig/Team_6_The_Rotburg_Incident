@@ -13,12 +13,10 @@ public class TrapLogic : MonoBehaviour
     FadeToBlack fade;
     PlayerController player;
     Animator anim;
-    PlayerHealth healthMessage;
 
     void Start()
     {
         fade = FindAnyObjectByType<FadeToBlack>();
-        healthMessage = FindAnyObjectByType<PlayerHealth>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -38,10 +36,6 @@ public class TrapLogic : MonoBehaviour
                 }
                 playerPos = other.transform;
                 other.GetComponent<PlayerHealth>().TakeDamage(damageAmount);
-
-                //Should inform the variable that the player has been damaged by a trap
-                //other.GetComponent<PlayerHealth>().trapDamaged = true;
-
                 if (player.rb != null)
                 {
                     player.rb.velocity = Vector3.zero;
@@ -76,8 +70,6 @@ public class TrapLogic : MonoBehaviour
             player.rb.velocity = Vector3.zero;
         }
         fade.FadeIn();
-
-        //healthMessage.trapDamaged = false;
 
         playerPos.position = player.lastGroundedPosition;
 

@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     EnemySpawnerManager enemySpawnerManager;
     SafeStations safeStations;
 
-[Header("Camera Settings")]
+    [Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
     private float fallSpeedYDampingChangeThreshold;
 
@@ -35,11 +35,18 @@ public class PlayerController : MonoBehaviour
     private float lastAttackTime = 0f;
     public float knockBackAmount;
     public float damageAmount;
-    public GameObject attackPointA;
-    public GameObject attackPointB;
-    public GameObject attackPosition;
     public float attackRadius;
     public LayerMask enemies;
+    public GameObject attackEffectPrefab;
+    public Transform attackSpawnPosition;
+
+    [Header("Combo Settings")]
+    public float maxAttackAmount = 3;
+    public float comboResetTime = 0.6f;
+    private int currentComboCount = 0;
+    private float lastComboInputTime;
+    private bool attackDownNext = true;
+    private bool isCurrentAttackUp;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
@@ -84,6 +91,7 @@ public class PlayerController : MonoBehaviour
     float lastAngle = 0f;
     public bool flipArmLeft = true;
     public SpriteRenderer armRender;
+    bool pointingRight;
 
     [Header("Stun-Ability Settings")]
     public float drainAmount;
@@ -141,8 +149,8 @@ public class PlayerController : MonoBehaviour
         cameraFollow = FindAnyObjectByType<CameraFollowDirection>();
         fallSpeedYDampingChangeThreshold = -15f;
 
-        enemySpawnerManager.SpawnEnemies();
         lastMousePosition = Input.mousePosition;
+        pointingRight = true;
 
         if (pictureLight != null)
         {
@@ -271,7 +279,6 @@ public class PlayerController : MonoBehaviour
             anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
-            attackPosition.transform.position = attackPointA.transform.position;
 
             cameraFollow.CallTurn(false);
         }
@@ -280,7 +287,6 @@ public class PlayerController : MonoBehaviour
             anim.SetInteger("WalkX", -1);
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
-            attackPosition.transform.position = attackPointB.transform.position;
 
             cameraFollow.CallTurn(true);
         }
@@ -291,22 +297,66 @@ public class PlayerController : MonoBehaviour
 
         if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {
-            if (Time.time >= lastAttackTime + attackCooldown)
+            // Reset combo if too slow
+            if (Time.time - lastComboInputTime > comboResetTime)
             {
-                anim.SetBool("IsAttacking", true);
-                SoundManager.instance.PlaySound(SoundManager.instance.playerAttack);
+                currentComboCount = 0;
+                attackDownNext = true;
+            }
+
+            if (Time.time >= lastAttackTime + attackCooldown && currentComboCount < maxAttackAmount)
+            {
+                currentComboCount++;
+                lastComboInputTime = Time.time;
                 lastAttackTime = Time.time;
+
+                if (attackDownNext)
+                {
+                    anim.SetTrigger("AttackDown");
+                    isCurrentAttackUp = false;
+                }
+                else
+                {
+                    anim.SetTrigger("AttackUp");
+                    isCurrentAttackUp = true;
+                }
+
+                attackDownNext = !attackDownNext;
+
+                SoundManager.instance.PlaySound(SoundManager.instance.playerAttack);
             }
         }
     }
     public void PlayerAttack()
     {
-        Collider2D[] enemy = Physics2D.OverlapCircleAll(attackPosition.transform.position, attackRadius, enemies);
+        if (attackEffectPrefab != null)
+        {
+            GameObject attackEffect = Instantiate(attackEffectPrefab, attackSpawnPosition.position, arm.rotation, attackSpawnPosition);
+            SpriteRenderer sr = attackEffect.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                float z = arm.eulerAngles.z;
+                if (z > 180f)
+                {
+                    z -= 360f;
+                }
+
+                bool isBetweenNeg90And90 = z > -90f && z < 90f;
+
+                sr.flipX = false;
+
+                sr.flipY = isBetweenNeg90And90 ? isCurrentAttackUp : !isCurrentAttackUp;
+            }
+        }
+
+        Collider2D[] enemy = Physics2D.OverlapCircleAll(attackSpawnPosition.position, attackRadius, enemies);
 
         foreach (Collider2D enemyGameObject in enemy)
         {
             enemyGameObject.GetComponent<EnemyHealth>().health -= damageAmount;
+
             EnemyKnockbackable applyKnockback = enemyGameObject.GetComponent<EnemyKnockbackable>();
+
             if (applyKnockback != null)
             {
                 applyKnockback.ApplyKnockback(this.transform, knockBackAmount);
@@ -316,6 +366,12 @@ public class PlayerController : MonoBehaviour
     public void EndAttack()
     {
         anim.SetBool("IsAttacking", false);
+
+        if (currentComboCount >= maxAttackAmount || Time.time - lastComboInputTime > comboResetTime)
+        {
+            currentComboCount = 0;
+            attackDownNext = true;
+        }
     }
     public void EndCharging()
     {
@@ -324,7 +380,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(attackPosition.transform.position, attackRadius);
+        Gizmos.DrawWireSphere(attackSpawnPosition.transform.position, attackRadius);
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
@@ -400,12 +456,14 @@ public class PlayerController : MonoBehaviour
                 armRender.flipY = true;
                 pictureLight.transform.position = lightLeft.position;
                 flashLight.transform.position = lightLeft.position;
+                pointingRight = true;
             }
             else
             {
                 armRender.flipY = false;
                 pictureLight.transform.position = lightRight.position;
                 flashLight.transform.position = lightRight.position;
+                pointingRight = false;
             }
         }
 
@@ -528,4 +586,5 @@ public class PlayerController : MonoBehaviour
         armRender.enabled = true;
         flashLight.intensity = oriFlashIntensity;
     }
+
 }
