@@ -12,6 +12,7 @@ public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
 
     [Header("Light Detection")]
     public bool isInLight;
+    public bool canMove;
 
     private enum State { FollowState, HideState }
     private State currentState = State.FollowState;
@@ -53,11 +54,17 @@ public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
         {
             case State.FollowState:
                 {
-                    if(playerController.inLocker)
+                    anim.SetBool("IsHiding", false);
+                    StartCoroutine(MovementDelay());
+
+                    if (playerController.inLocker)
                     {
                         currentState = State.HideState;
                     }
-                    MoveTowardTarget();
+                    if (canMove)
+                    {
+                        MoveTowardTarget();
+                    }
                     break;
                 }
             case State.HideState:
@@ -77,6 +84,13 @@ public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
     void HandleHideState()
     {
         anim.SetBool("IsHiding", true);
+        canMove = false;
+    }
+
+    private IEnumerator MovementDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        canMove = true;
     }
 
     void MoveTowardTarget()
@@ -85,7 +99,6 @@ public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
         {
             return;
         }
-        anim.SetBool("IsHiding", false);
 
         Vector2 newPosition = Vector2.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
         transform.position = newPosition;
