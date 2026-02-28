@@ -22,7 +22,7 @@ public class HallMonitorBehavior : MonoBehaviour, MonnsterActivation
     public float redLightStartUp = 0.6f;
     bool greenLightBegun;
     bool redLightBegun;
-    bool playerCaught;
+    public bool playerCaught;
 
     [HideInInspector]
     [Header("Animation Settings")]
@@ -241,7 +241,7 @@ public class HallMonitorBehavior : MonoBehaviour, MonnsterActivation
             }
             if (playerCaught)
             {
-                //FindAnyObjectByType<PlayerHealth>().TakeDamage(damageAmount);
+                FindAnyObjectByType<PlayerHealth>().TakeDamage(damageAmount);
             }
             StartCoroutine(RedLightDuration());
         }

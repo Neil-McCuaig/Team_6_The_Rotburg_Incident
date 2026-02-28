@@ -528,16 +528,16 @@ public class PlayerController : MonoBehaviour
         DisableArmRender();
         anim.SetBool("IsDead", true);
         
-        if(hasPhone == true)
-        {
-            renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
-            renameSpawnedPhone.name = phonePrefab.name;
-        }
+        //if(hasPhone == true)
+        //{
+            //renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
+            //renameSpawnedPhone.name = phonePrefab.name;
+        //}
         
-        numOfLives = numOfLives - 1;
+        //numOfLives = numOfLives - 1;
 
         StartCoroutine(HandleDeathFadeOut());
-        LighterMode();
+        //LighterMode();
     }
 
     public void LighterMode() 
