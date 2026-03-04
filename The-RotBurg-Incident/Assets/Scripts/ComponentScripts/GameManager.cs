@@ -120,11 +120,6 @@ public class GameManager : MonoBehaviour
         {
             player.hasMetalPipe = true;
         }
-        else if (itemName == powerUp3)
-        {
-            player.hasPhone = true;
-            player.pickUpPhone();
-        }
     }
 
     public void HideUI()

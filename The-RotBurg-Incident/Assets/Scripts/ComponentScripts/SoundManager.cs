@@ -12,9 +12,11 @@ public class SoundManager : MonoBehaviour
 
     [Header("Audio Clips")]
     public AudioClip backgroundMusic;
+    [Header("Player Sounds")]
     public AudioClip playerAttack;
     public AudioClip playerJump;
     public AudioClip playerFlash;
+    [Header("Enviroment Sounds")]
     public AudioClip saveStation;
 
     private void Awake()

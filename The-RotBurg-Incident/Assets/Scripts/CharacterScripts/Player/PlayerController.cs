@@ -122,9 +122,6 @@ public class PlayerController : MonoBehaviour
     public bool hasPhone = true;
     private int numOfJumps = 2;
     public int numOfLives = 3;
-    public GameObject phonePrefab;
-    //public GameObject phoneDropPoint;
-    GameObject renameSpawnedPhone;
 
     private void Awake()
     {
