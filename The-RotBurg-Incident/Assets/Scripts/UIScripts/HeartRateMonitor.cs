@@ -39,30 +39,36 @@ public class HeartRateMonitor : MonoBehaviour
             {
                 displayFloat = 0f;
                 heartRate.color = Color.red;
+                SoundManager.instance.SwitchHeartbeat(4);
             }
             else if (hpPercent <= 10)
             {
                 targetValue = 220f;
                 heartRate.color = Color.red;
+                SoundManager.instance.SwitchHeartbeat(3);
             }
             else if (hpPercent <= 30)
             {
                 targetValue = 190f;
                 heartRate.color = Color.magenta;
+                SoundManager.instance.SwitchHeartbeat(3);
             }
             else if (hpPercent <= 50)
             {
                 targetValue = 160f;
                 heartRate.color = Color.yellow;
+                SoundManager.instance.SwitchHeartbeat(2);
             }
             else if (hpPercent <= 70)
             {
                 targetValue = 110f;
+                SoundManager.instance.SwitchHeartbeat(1);
             }
             else
             {
                 targetValue = 70f;
                 heartRate.color = Color.green;
+                SoundManager.instance.SwitchHeartbeat(0); 
             }
         }
     }

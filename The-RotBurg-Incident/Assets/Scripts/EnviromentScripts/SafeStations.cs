@@ -95,6 +95,7 @@ public class SafeStations : MonoBehaviour
     public void StopCharging()
     {
         playerController.EnableArmRender();
+        playerController.flashLight.gameObject.SetActive(true);
 
         isCharging = false;
         hoverEffect.SetActive(true);
