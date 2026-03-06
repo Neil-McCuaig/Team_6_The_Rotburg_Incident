@@ -524,34 +524,8 @@ public class PlayerController : MonoBehaviour
         collision.enabled = false;
         DisableArmRender();
         anim.SetBool("IsDead", true);
-        
-        //if(hasPhone == true)
-        //{
-            //renameSpawnedPhone = Instantiate(phonePrefab, lastGroundedPosition, Quaternion.identity);
-            //renameSpawnedPhone.name = phonePrefab.name;
-        //}
-        
-        //numOfLives = numOfLives - 1;
 
         StartCoroutine(HandleDeathFadeOut());
-        //LighterMode();
-    }
-
-    public void LighterMode() 
-    {
-        //flashLight.intensity = 0;
-        flashLight.gameObject.SetActive(false);
-        lighterLight.intensity = 1;
-        hasPhone = false;
-    }
-
-    public void pickUpPhone()
-    {
-        //flashLight.intensity = 1;
-        flashLight.gameObject.SetActive(true);
-        lighterLight.intensity = 0;
-        numOfLives = 3;
-        hasPhone = true;
     }
 
     private IEnumerator HandleDeathFadeOut()

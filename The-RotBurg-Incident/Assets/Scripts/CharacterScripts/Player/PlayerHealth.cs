@@ -41,6 +41,11 @@ public class PlayerHealth : MonoBehaviour
 
         CameraManager.instance.ScreenShake(20f, 1f);
         currentHealth -= damage;
+
+        SoundManager.instance.PlaySound(SoundManager.instance.playerHurt);
+        SoundManager.instance.PlaySound(SoundManager.instance.playerHurtSquish);
+        SoundManager.instance.PlaySound(SoundManager.instance.playerHurtSplash);
+
         if (currentHealth <= 0)
         {
             chat.AddMessage("[CareTaker] OMG f's in the chat to pay repects he got wrecked", hurtEmote, true);
