@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
     SafeStations safeStations;
+    ViewerStats viewerStats;
 
     [Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
@@ -91,7 +92,7 @@ public class PlayerController : MonoBehaviour
     float lastAngle = 0f;
     public bool flipArmLeft = true;
     public SpriteRenderer armRender;
-    bool pointingRight;
+    private bool pointingRight;
 
     [Header("Stun-Ability Settings")]
     public float drainAmount;
@@ -140,6 +141,7 @@ public class PlayerController : MonoBehaviour
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
         safeStations = FindAnyObjectByType<SafeStations>();
+        viewerStats = FindAnyObjectByType<ViewerStats>();
 
         SetRespawnPoint();
 
@@ -351,6 +353,8 @@ public class PlayerController : MonoBehaviour
         foreach (Collider2D enemyGameObject in enemy)
         {
             enemyGameObject.GetComponent<EnemyHealth>().health -= damageAmount;
+
+            viewerStats.AddViewers(10);
 
             EnemyKnockbackable applyKnockback = enemyGameObject.GetComponent<EnemyKnockbackable>();
 

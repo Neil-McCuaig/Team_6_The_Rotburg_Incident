@@ -16,6 +16,8 @@ public class SafeStations : MonoBehaviour
     private PlayerController playerController;
     private GameManager gameManager;
     private PlayerHealth health;
+    private StreamChat chat;
+    private ViewerStats viewers;
 
     [SerializeField] private AudioClip rechargeSound;
 
@@ -33,6 +35,8 @@ public class SafeStations : MonoBehaviour
         gameManager = FindAnyObjectByType<GameManager>();
         health = FindAnyObjectByType<PlayerHealth>();
         anim = playerController.GetComponent<Animator>();
+        chat = FindAnyObjectByType<StreamChat>();
+        viewers = FindAnyObjectByType<ViewerStats>();
     }
 
     private void Update()
@@ -71,7 +75,9 @@ public class SafeStations : MonoBehaviour
             hoverEffect.SetActive(false);
 
             if (isCharging)
+            {
                 StopCharging();
+            }
         }
     }
 
@@ -87,9 +93,13 @@ public class SafeStations : MonoBehaviour
         hoverEffect.SetActive(false);
 
         if (enemySpawnerManager != null)
+        {
             enemySpawnerManager.SpawnEnemies();
+        }
 
         playerController.canMove = false;
+        chat.ToggleChat(false);
+        viewers.ToggleUpgradeMenu(true);
     }
 
     public void StopCharging()
@@ -100,6 +110,8 @@ public class SafeStations : MonoBehaviour
         isCharging = false;
         hoverEffect.SetActive(true);
         playerController.canMove = true;
+        chat.ToggleChat(true);
+        viewers.ToggleUpgradeMenu(false);
     }
 
     private void ChargeBattery()

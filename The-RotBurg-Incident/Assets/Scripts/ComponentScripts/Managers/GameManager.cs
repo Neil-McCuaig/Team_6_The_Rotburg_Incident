@@ -1,0 +1,134 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class GameManager : MonoBehaviour
+{
+    [Header("PowerUp String Names")]
+    public string powerUp1 = "DoubleJump";
+    public string powerUp2 = "MetalPipe";
+    public string powerUp3 = "GroundPhone";
+
+    PlayerController player;
+    SafeStations safeStations;
+    ViewerStats viewerStats;
+    public GameObject batterySliderFill;
+    private Image sliderFill;
+
+    [Header("Battery Settings")]
+    [Range(0f, 100f)]
+    public float batteryPercentage = 100f;
+    public BatterySlider batterySlider;
+    public Light2D playerLight;
+
+    [Header("UI Settings")]
+    public RectTransform rect;
+    private Vector2 originalPos;
+    private Vector2 hiddenPos = new Vector2(9999f, 9999f);
+
+    void Awake()
+    {
+        if (rect != null)
+        {
+            originalPos = rect.anchoredPosition;
+        }
+    }
+    private void Start()
+    {
+        player = FindAnyObjectByType<PlayerController>();
+        safeStations = FindAnyObjectByType<SafeStations>();
+        viewerStats = FindAnyObjectByType<ViewerStats>();
+        batterySlider = FindAnyObjectByType<BatterySlider>();
+        if (batterySlider != null)
+        {
+            batterySlider.SetMaxBattery(batteryPercentage);
+        }
+        sliderFill = batterySliderFill.GetComponent<Image>();
+    }
+    public void Update()
+    {
+        if (batteryPercentage > 0f && batterySlider != null)
+        {
+            playerLight.enabled = true;
+            batteryPercentage -= viewerStats.batteryDrainRate * Time.deltaTime;
+            batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
+            batterySlider.SetBattery(batteryPercentage);
+
+            batterySliderFill.SetActive(true);
+        }
+        else
+        {
+            playerLight.enabled = false;
+
+            batterySliderFill.SetActive(false);
+        }
+        if (sliderFill != null)
+        {
+            if (batteryPercentage > 99f)
+            {
+                sliderFill.color = Color.green;
+            }
+            else if (batteryPercentage > 50f)
+            {
+                sliderFill.color = Color.white;
+            }
+            else if (batteryPercentage > 20f)
+            {
+                sliderFill.color = Color.yellow;
+            }
+            else if (batteryPercentage < 20f)
+            {
+                sliderFill.color = Color.red;
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene(1);
+            }
+        }
+    }
+    public void ReduceBattery(float amount)
+    {
+        if (batteryPercentage > 0f)
+        {
+            batteryPercentage -= amount;
+            batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
+            if (batterySlider != null)
+            {
+                batterySlider.SetBattery(batteryPercentage);
+            }
+        }
+    }
+    void OnEnable()
+    {
+        Inventory.OnItemAdded += CheckForItem; 
+    }
+    void OnDisable()
+    {
+        Inventory.OnItemAdded -= CheckForItem;
+    }
+    private void CheckForItem(string itemName)
+    {
+        Debug.Log(itemName);
+        if (itemName == powerUp1)
+        {
+            player.hasDoubleJump = true;
+        }
+        else if (itemName == powerUp2)
+        {
+            player.hasMetalPipe = true;
+        }
+    }
+
+    public void HideUI()
+    {
+        rect.anchoredPosition = hiddenPos;
+    }
+    public void ShowUI()
+    {
+        rect.anchoredPosition = originalPos;
+    }
+}
