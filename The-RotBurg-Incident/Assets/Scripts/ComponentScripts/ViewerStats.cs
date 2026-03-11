@@ -19,10 +19,12 @@ public class ViewerStats : MonoBehaviour
     public TextMeshProUGUI viewerText;
     public TextMeshProUGUI menuViewerText;
     public RectTransform upgradeMenu;
+
+    [Header("UI Drain Rate")]
     public TextMeshProUGUI batteryDrainLevelText;
     public TextMeshProUGUI batteryDrainCostText;
 
-    [Header("Upgrade Settings")]
+    [Header("Drain Rate Upgrades")]
     public int batteryDrainLevel = 0;
     public int batteryDrainMaxLevel = 5;
     public int batteryDrainCost = 50;
