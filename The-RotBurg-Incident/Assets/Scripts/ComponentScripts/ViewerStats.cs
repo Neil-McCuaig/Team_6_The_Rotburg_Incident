@@ -14,6 +14,7 @@ public class ViewerStats : MonoBehaviour
 
     [Header("Player Stats")]
     public float batteryDrainRate = 2;
+    public float maxAttackAmount = 1;
 
     [Header("UI Elements")]
     public TextMeshProUGUI viewerText;
@@ -24,12 +25,23 @@ public class ViewerStats : MonoBehaviour
     public TextMeshProUGUI batteryDrainLevelText;
     public TextMeshProUGUI batteryDrainCostText;
 
+    [Header("UI Num of Attacks")]
+    public TextMeshProUGUI comboAmountLevelText;
+    public TextMeshProUGUI comboAmountCostText;
+
     [Header("Drain Rate Upgrades")]
-    public int batteryDrainLevel = 0;
-    public int batteryDrainMaxLevel = 5;
-    public int batteryDrainCost = 50;
-    public int batteryDrainCostIncrase = 50;
-    public float batteryDrainDecrease = 0.3f;
+    public int batteryDrainLevel;
+    public int batteryDrainMaxLevel;
+    public int batteryDrainCost;
+    public int batteryDrainCostIncrease;
+    public float batteryDrainDecrease;
+
+    [Header("Combo Amount Upgrades")]
+    public int comboAmountLevel;
+    public int comboAmountMaxLevel;
+    public int comboAmountCost;
+    public int comboAmountCostIncrease;
+    public int comboAmountIncrease;
 
     void Start()
     {
@@ -93,11 +105,31 @@ public class ViewerStats : MonoBehaviour
         {
             batteryDrainRate -= batteryDrainDecrease;
             batteryDrainLevel++;
-            batteryDrainCost += batteryDrainCostIncrase;
+            batteryDrainCost += batteryDrainCostIncrease;
             batteryDrainLevelText.text = batteryDrainLevel + "/" + batteryDrainMaxLevel;
             batteryDrainCostText.text = "Cost: " + batteryDrainCost;
 
             Debug.Log("Battery upgraded to level " + batteryDrainLevel);
+        }
+    }
+
+    public void BuyComboAmountUpgrade()
+    {
+        if (comboAmountLevel >= comboAmountMaxLevel)
+        {
+            Debug.Log("combo amount maxed");
+            return;
+        }
+
+        if (SpendViewers(comboAmountCost))
+        {
+            maxAttackAmount += comboAmountIncrease;
+            comboAmountLevel++;
+            comboAmountCost += comboAmountCostIncrease;
+            comboAmountLevelText.text = comboAmountLevel + "/" + comboAmountMaxLevel;
+            comboAmountCostText.text = "Cost: " + comboAmountCost;
+
+            Debug.Log("Combo amount upgraded to level " + comboAmountLevel);
         }
     }
 }

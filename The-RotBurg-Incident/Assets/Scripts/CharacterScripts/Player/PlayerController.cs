@@ -42,7 +42,6 @@ public class PlayerController : MonoBehaviour
     public Transform attackSpawnPosition;
 
     [Header("Combo Settings")]
-    public float maxAttackAmount = 3;
     public float comboResetTime = 0.6f;
     public float comboLockedTime;
     public float comboAttackDelay = 0.25f;
@@ -332,7 +331,7 @@ public class PlayerController : MonoBehaviour
 
             attackDownNext = !attackDownNext;
 
-            if (currentComboCount >= maxAttackAmount)
+            if (currentComboCount >= viewerStats.maxAttackAmount)
             {
                 comboLockedTime = Time.time + attackCooldown;
                 currentComboCount = 0;
@@ -383,7 +382,7 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetBool("IsAttacking", false);
 
-        if (currentComboCount >= maxAttackAmount || Time.time - lastComboInputTime > comboResetTime)
+        if (currentComboCount >= viewerStats.maxAttackAmount || Time.time - lastComboInputTime > comboResetTime)
         {
             currentComboCount = 0;
             attackDownNext = true;
