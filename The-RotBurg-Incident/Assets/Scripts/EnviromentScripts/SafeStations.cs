@@ -21,6 +21,16 @@ public class SafeStations : MonoBehaviour
 
     [SerializeField] private AudioClip rechargeSound;
 
+    public Texture2D cursorFingerTexture;
+    public Texture2D cursorCamTexture;
+    public Vector2 hotspot = Vector2.zero;
+    public CursorMode cursorMode = CursorMode.Auto;
+
+    void OnDisable()
+    {
+        Cursor.SetCursor(null, Vector2.zero, cursorMode);
+    }
+
     private void Awake()
     {
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
@@ -83,6 +93,7 @@ public class SafeStations : MonoBehaviour
 
     private void StartCharging()
     {
+        Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
         anim.SetBool("IsCharging", true);
         anim.SetTrigger("StartCharging");
 
@@ -104,6 +115,7 @@ public class SafeStations : MonoBehaviour
 
     public void StopCharging()
     {
+        Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
         playerController.EnableArmRender();
         playerController.flashLight.gameObject.SetActive(true);
 
