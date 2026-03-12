@@ -62,7 +62,7 @@ public class SoundManager : MonoBehaviour
                 break;
             case 4:
                 newClip = flatLine;
-                return;
+                break;
         }
 
         if (newClip != currentHeartbeatClip)
