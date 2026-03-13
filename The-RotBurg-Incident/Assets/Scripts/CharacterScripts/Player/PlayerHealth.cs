@@ -48,8 +48,10 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            chat.AddMessage("[CareTaker] OMG f's in the chat to pay repects he got wrecked", hurtEmote, true);
-            chat.SwitchMessageList(2);
+            //chat.AddMessage("[CareTaker] OMG f's in the chat to pay repects he got wrecked", hurtEmote, true);
+            chat.SwitchMessageList(1);
+            chat.messageLifetime = 1f;
+            chat.spawnDelay = 0.25f;
             playerController.Die();
         }
         else if(spriteRenderer != null) 
@@ -83,5 +85,8 @@ public class PlayerHealth : MonoBehaviour
     public void ResetHealthFull()
     {
         currentHealth = maxHealth;
+        chat.SwitchMessageList(0);
+        chat.messageLifetime = 5f;
+        chat.spawnDelay = 1f;
     }
 }

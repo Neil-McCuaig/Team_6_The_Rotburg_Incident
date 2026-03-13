@@ -16,6 +16,7 @@ public class SafeStations : MonoBehaviour
     private PlayerController playerController;
     private GameManager gameManager;
     private PlayerHealth health;
+    StreamChat chat;
 
     [SerializeField] private AudioClip rechargeSound;
 
@@ -60,6 +61,7 @@ public class SafeStations : MonoBehaviour
         {
             playerInRange = true;
             hoverEffect.SetActive(true);
+            
         }
     }
 
@@ -72,6 +74,7 @@ public class SafeStations : MonoBehaviour
 
             if (isCharging)
                 StopCharging();
+            
         }
     }
 
@@ -90,6 +93,9 @@ public class SafeStations : MonoBehaviour
             enemySpawnerManager.SpawnEnemies();
 
         playerController.canMove = false;
+        playerController.canControl = false;
+       
+        
     }
 
     public void StopCharging()
@@ -100,6 +106,7 @@ public class SafeStations : MonoBehaviour
         isCharging = false;
         hoverEffect.SetActive(true);
         playerController.canMove = true;
+        playerController.canControl= true;
     }
 
     private void ChargeBattery()
