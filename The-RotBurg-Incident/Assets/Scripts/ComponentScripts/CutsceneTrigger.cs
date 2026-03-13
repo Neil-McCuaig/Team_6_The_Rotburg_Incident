@@ -56,13 +56,19 @@ public class CutsceneTrigger : MonoBehaviour
         PlayCutscene();
     }
 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        CameraManager.instance.ReturnToPlayerCamera();
+      
+    }
+
     private void PlayCutscene()
     {
         if (playerController != null)
         {
             //playerController.canMove = false;
            // playerController.velocity.y = -2f;
-            //playerController.anim.SetInteger("WalkX", 0);
+           playerController.anim.SetInteger("WalkX", 0);
         }
 
         if (hideUIDuringCutscene && gameManager != null)

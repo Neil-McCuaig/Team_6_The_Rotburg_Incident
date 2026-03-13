@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     public bool inLocker = false;
     public bool canMove = true;
     public bool hasFlashlight = true;
+    public bool canControl = true;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1f;  
@@ -149,6 +150,7 @@ public class PlayerController : MonoBehaviour
         lastMousePosition = Input.mousePosition;
         pointingRight = true;
 
+
         if (pictureLight != null)
         {
             oriPictureIntensity = pictureLight.intensity;
@@ -198,6 +200,16 @@ public class PlayerController : MonoBehaviour
         {
             CameraManager.instance.LerpedFromPlayerFalling = false;
             CameraManager.instance.LerpYDamping(false);
+        }
+       if (canControl == false)
+        {
+            canMove = false;
+            anim.SetInteger("WalkX", 0);
+
+        }
+        if (canControl == true)
+        {
+            canMove = true;
         }
     }
 
