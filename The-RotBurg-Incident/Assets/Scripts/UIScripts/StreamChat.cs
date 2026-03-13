@@ -36,7 +36,6 @@ public class StreamChat : MonoBehaviour
     public float messageLifetime = 5f;
     public float fadeDuration = 1f;
     public float spawnDelay = 2f;
-    public int maxMessages;
     public bool repeatMessages = false;
 
     [Header("Bool Checks")]
@@ -68,7 +67,9 @@ public class StreamChat : MonoBehaviour
         if (playRoutine != null)
         {
             StopCoroutine(playRoutine);
+            playRoutine = null;
         }
+
         nextIndex = 0;
         playRoutine = StartCoroutine(PlayMessages(messageLists[currentListIndex]));
     }
@@ -77,13 +78,14 @@ public class StreamChat : MonoBehaviour
     {
         while (nextIndex < list.messages.Count)
         {
-            if (nextIndex == (maxMessages - 1) && repeatMessages)
+            CreateMessage(list.messages[nextIndex]);
+
+            nextIndex++;
+
+            if (repeatMessages && nextIndex >= list.messages.Count)
             {
                 nextIndex = 0;
             }
-
-            CreateMessage(list.messages[nextIndex]);
-            nextIndex++;
 
             yield return new WaitForSeconds(spawnDelay);
         }

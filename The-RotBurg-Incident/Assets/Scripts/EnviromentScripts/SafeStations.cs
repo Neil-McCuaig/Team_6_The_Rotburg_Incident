@@ -108,7 +108,7 @@ public class SafeStations : MonoBehaviour
             enemySpawnerManager.SpawnEnemies();
         }
 
-        playerController.canMove = false;
+        playerController.canControl = false;
         chat.ToggleChat(false);
         viewers.ToggleUpgradeMenu(true);
     }
@@ -121,7 +121,7 @@ public class SafeStations : MonoBehaviour
 
         isCharging = false;
         hoverEffect.SetActive(true);
-        playerController.canMove = true;
+        playerController.canControl = true;
         chat.ToggleChat(true);
         viewers.ToggleUpgradeMenu(false);
     }
