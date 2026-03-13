@@ -16,9 +16,20 @@ public class SafeStations : MonoBehaviour
     private PlayerController playerController;
     private GameManager gameManager;
     private PlayerHealth health;
-    StreamChat chat;
+    private StreamChat chat;
+    private ViewerStats viewers;
 
     [SerializeField] private AudioClip rechargeSound;
+
+    public Texture2D cursorFingerTexture;
+    public Texture2D cursorCamTexture;
+    public Vector2 hotspot = Vector2.zero;
+    public CursorMode cursorMode = CursorMode.Auto;
+
+    void OnDisable()
+    {
+        Cursor.SetCursor(null, Vector2.zero, cursorMode);
+    }
 
     private void Awake()
     {
@@ -34,6 +45,8 @@ public class SafeStations : MonoBehaviour
         gameManager = FindAnyObjectByType<GameManager>();
         health = FindAnyObjectByType<PlayerHealth>();
         anim = playerController.GetComponent<Animator>();
+        chat = FindAnyObjectByType<StreamChat>();
+        viewers = FindAnyObjectByType<ViewerStats>();
     }
 
     private void Update()
@@ -61,7 +74,6 @@ public class SafeStations : MonoBehaviour
         {
             playerInRange = true;
             hoverEffect.SetActive(true);
-            
         }
     }
 
@@ -73,13 +85,15 @@ public class SafeStations : MonoBehaviour
             hoverEffect.SetActive(false);
 
             if (isCharging)
+            {
                 StopCharging();
-            
+            }
         }
     }
 
     private void StartCharging()
     {
+        Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
         anim.SetBool("IsCharging", true);
         anim.SetTrigger("StartCharging");
 
@@ -90,23 +104,26 @@ public class SafeStations : MonoBehaviour
         hoverEffect.SetActive(false);
 
         if (enemySpawnerManager != null)
+        {
             enemySpawnerManager.SpawnEnemies();
+        }
 
         playerController.canMove = false;
-        playerController.canControl = false;
-       
-        
+        chat.ToggleChat(false);
+        viewers.ToggleUpgradeMenu(true);
     }
 
     public void StopCharging()
     {
+        Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
         playerController.EnableArmRender();
         playerController.flashLight.gameObject.SetActive(true);
 
         isCharging = false;
         hoverEffect.SetActive(true);
         playerController.canMove = true;
-        playerController.canControl= true;
+        chat.ToggleChat(true);
+        viewers.ToggleUpgradeMenu(false);
     }
 
     private void ChargeBattery()

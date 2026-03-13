@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     PlayerHealth health;
     EnemySpawnerManager enemySpawnerManager;
     SafeStations safeStations;
+    ViewerStats viewerStats;
 
     [Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
@@ -32,8 +33,8 @@ public class PlayerController : MonoBehaviour
     public bool canControl = true;
 
     [Header("Attack Settings")]
-    public float attackCooldown = 1f;  
-    private float lastAttackTime = 0f;
+    public float attackCooldown = 1f;
+    private float nextAttackTime = 0f;
     public float knockBackAmount;
     public float damageAmount;
     public float attackRadius;
@@ -42,8 +43,9 @@ public class PlayerController : MonoBehaviour
     public Transform attackSpawnPosition;
 
     [Header("Combo Settings")]
-    public float maxAttackAmount = 3;
     public float comboResetTime = 0.6f;
+    public float comboLockedTime;
+    public float comboAttackDelay = 0.25f;
     private int currentComboCount = 0;
     private float lastComboInputTime;
     private bool attackDownNext = true;
@@ -71,7 +73,6 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool onPlatform;
     [HideInInspector]
-    //This tells the player where to teleport to when they land on a spike
     public Vector3 lastGroundedPosition;
 
     [Header("Ceiling Check")]
@@ -92,7 +93,6 @@ public class PlayerController : MonoBehaviour
     float lastAngle = 0f;
     public bool flipArmLeft = true;
     public SpriteRenderer armRender;
-    bool pointingRight;
 
     [Header("Stun-Ability Settings")]
     public float drainAmount;
@@ -141,6 +141,7 @@ public class PlayerController : MonoBehaviour
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
         collision = GetComponent<Collider2D>();
         safeStations = FindAnyObjectByType<SafeStations>();
+        viewerStats = FindAnyObjectByType<ViewerStats>();
 
         SetRespawnPoint();
 
@@ -148,7 +149,6 @@ public class PlayerController : MonoBehaviour
         fallSpeedYDampingChangeThreshold = -15f;
 
         lastMousePosition = Input.mousePosition;
-        pointingRight = true;
 
 
         if (pictureLight != null)
@@ -306,34 +306,50 @@ public class PlayerController : MonoBehaviour
 
         if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {
-            // Reset combo if too slow
-            if (Time.time - lastComboInputTime > comboResetTime)
+            if (Time.time < comboLockedTime)
+            {
+                Debug.Log("Waiting for combo cooldown...");
+                return;
+            }
+
+            // Prevent attacks from coming out too quickly
+            if (Time.time < nextAttackTime)
+            {
+                return;
+            }
+
+            if (currentComboCount > 0 && Time.time - lastComboInputTime > comboResetTime)
             {
                 currentComboCount = 0;
                 attackDownNext = true;
             }
 
-            if (Time.time >= lastAttackTime + attackCooldown && currentComboCount < maxAttackAmount)
+            currentComboCount++;
+            lastComboInputTime = Time.time;
+
+            // Set the delay before next attack
+            nextAttackTime = Time.time + comboAttackDelay;
+
+            if (attackDownNext)
             {
-                currentComboCount++;
-                lastComboInputTime = Time.time;
-                lastAttackTime = Time.time;
-
-                if (attackDownNext)
-                {
-                    anim.SetTrigger("AttackDown");
-                    isCurrentAttackUp = false;
-                }
-                else
-                {
-                    anim.SetTrigger("AttackUp");
-                    isCurrentAttackUp = true;
-                }
-
-                attackDownNext = !attackDownNext;
-
-                SoundManager.instance.PlaySound(SoundManager.instance.playerAttack);
+                anim.SetTrigger("AttackDown");
+                isCurrentAttackUp = false;
             }
+            else
+            {
+                anim.SetTrigger("AttackUp");
+                isCurrentAttackUp = true;
+            }
+
+            attackDownNext = !attackDownNext;
+
+            if (currentComboCount >= viewerStats.maxAttackAmount)
+            {
+                comboLockedTime = Time.time + attackCooldown;
+                currentComboCount = 0;
+            }
+
+            SoundManager.instance.PlaySound(SoundManager.instance.playerAttack);
         }
     }
     public void PlayerAttack()
@@ -364,6 +380,8 @@ public class PlayerController : MonoBehaviour
         {
             enemyGameObject.GetComponent<EnemyHealth>().health -= damageAmount;
 
+            viewerStats.AddViewers(10);
+
             EnemyKnockbackable applyKnockback = enemyGameObject.GetComponent<EnemyKnockbackable>();
 
             if (applyKnockback != null)
@@ -376,7 +394,7 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetBool("IsAttacking", false);
 
-        if (currentComboCount >= maxAttackAmount || Time.time - lastComboInputTime > comboResetTime)
+        if (currentComboCount >= viewerStats.maxAttackAmount || Time.time - lastComboInputTime > comboResetTime)
         {
             currentComboCount = 0;
             attackDownNext = true;
@@ -465,14 +483,12 @@ public class PlayerController : MonoBehaviour
                 armRender.flipY = true;
                 pictureLight.transform.position = lightLeft.position;
                 flashLight.transform.position = lightLeft.position;
-                pointingRight = true;
             }
             else
             {
                 armRender.flipY = false;
                 pictureLight.transform.position = lightRight.position;
                 flashLight.transform.position = lightRight.position;
-                pointingRight = false;
             }
         }
 

@@ -14,13 +14,13 @@ public class GameManager : MonoBehaviour
 
     PlayerController player;
     SafeStations safeStations;
+    ViewerStats viewerStats;
     public GameObject batterySliderFill;
     private Image sliderFill;
 
     [Header("Battery Settings")]
     [Range(0f, 100f)]
     public float batteryPercentage = 100f;
-    public float drainRatePerSecond = 5f; 
     public BatterySlider batterySlider;
     public Light2D playerLight;
 
@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     {
         player = FindAnyObjectByType<PlayerController>();
         safeStations = FindAnyObjectByType<SafeStations>();
+        viewerStats = FindAnyObjectByType<ViewerStats>();
         batterySlider = FindAnyObjectByType<BatterySlider>();
         if (batterySlider != null)
         {
@@ -52,7 +53,7 @@ public class GameManager : MonoBehaviour
         if (batteryPercentage > 0f && batterySlider != null)
         {
             playerLight.enabled = true;
-            batteryPercentage -= drainRatePerSecond * Time.deltaTime;
+            batteryPercentage -= viewerStats.batteryDrainRate * Time.deltaTime;
             batteryPercentage = Mathf.Clamp(batteryPercentage, 0f, 100f);
             batterySlider.SetBattery(batteryPercentage);
 

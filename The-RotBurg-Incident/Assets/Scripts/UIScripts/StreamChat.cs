@@ -18,11 +18,12 @@ public class StreamChat : MonoBehaviour
     [System.Serializable]
     public class ChatMessageList
     {
-        public string listName; // Helpful label in Inspector
+        public string listName; 
         public List<ChatEntry> messages = new List<ChatEntry>();
     }
 
     [Header("References")]
+    public RectTransform chatBox;
     public RectTransform contentParent;
     public ScrollRect scrollRect;
     public GameObject messagePrefab;
@@ -58,7 +59,7 @@ public class StreamChat : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
             chatVisible = !chatVisible;
-            contentParent.gameObject.SetActive(chatVisible);
+            ToggleChat(chatVisible);
         }
     }
 
@@ -130,6 +131,14 @@ public class StreamChat : MonoBehaviour
         if (scrollRect != null)
         {
             StartCoroutine(ScrollToBottom());
+        }
+    }
+
+    public void ToggleChat(bool chatToggle)
+    {
+        if (chatBox != null)
+        {
+            chatBox.gameObject.SetActive(chatToggle);
         }
     }
 
