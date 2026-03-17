@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public float maxHealth;
     public float currentHealth;
+    public float maxHealth;
 
     public float invincibilityDuration = 2f;
     private bool isInvincible = false;
@@ -15,6 +15,7 @@ public class PlayerHealth : MonoBehaviour
     private GameObject playerArm;
     private SpriteRenderer armRender;
     PlayerController playerController;
+    ViewerStats viewersStats;
     
     StreamChat chat;
     public Sprite hurtEmote;
@@ -28,6 +29,7 @@ public class PlayerHealth : MonoBehaviour
         armRender = playerArm.GetComponent<SpriteRenderer>();
         playerController = FindAnyObjectByType<PlayerController>();
         chat = FindAnyObjectByType<StreamChat>();
+        viewersStats = FindAnyObjectByType<ViewerStats>();
 
         ResetHealthFull();
     }
@@ -84,6 +86,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void ResetHealthFull()
     {
+        maxHealth = viewersStats.maxPlayerHealth;
         currentHealth = maxHealth;
         chat.SwitchMessageList(0);
         chat.messageLifetime = 5f;

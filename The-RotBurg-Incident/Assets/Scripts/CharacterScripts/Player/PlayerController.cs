@@ -1,8 +1,9 @@
 using System.Collections;
-using UnityEngine.Rendering.Universal;
+using System.Runtime.CompilerServices;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Runtime.CompilerServices;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
@@ -33,7 +34,7 @@ public class PlayerController : MonoBehaviour
     public bool canControl = true;
 
     [Header("Attack Settings")]
-    public float attackCooldown = 1f;
+    public float attackCooldown;
     private float nextAttackTime = 0f;
     public float damageAmount;
     public float attackRadius;
@@ -80,6 +81,7 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingCeiling;
 
     [Header("Arm Aiming")]
+    public Light2D personalLight;
     public Transform arm;
     public Transform aimLeft;
     public Transform aimRight;
@@ -94,7 +96,6 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer armRender;
 
     [Header("Stun-Ability Settings")]
-    public float drainAmount;
     public float flashIntensity = 1f;
     private float oriFlashIntensity;
     private float oriPictureIntensity;
@@ -148,7 +149,6 @@ public class PlayerController : MonoBehaviour
         fallSpeedYDampingChangeThreshold = -15f;
 
         lastMousePosition = Input.mousePosition;
-
 
         if (pictureLight != null)
         {
@@ -209,6 +209,12 @@ public class PlayerController : MonoBehaviour
         if (canControl == true)
         {
             canMove = true;
+        }
+
+        if (personalLight != null)
+        {
+            float personalLightRadius = viewerStats.personalLightRadius;
+            personalLight.pointLightOuterRadius = personalLightRadius;
         }
     }
 
@@ -501,7 +507,8 @@ public class PlayerController : MonoBehaviour
     void ActivateFlash()
     {
         SoundManager.instance.PlaySound(SoundManager.instance.playerFlash);
-        manager.ReduceBattery(drainAmount);
+        float flashDrainRate = viewerStats.flashDrainRate;
+        manager.ReduceBattery(flashDrainRate);
         canFlash = false;
 
         StartCoroutine(DecayFlash());

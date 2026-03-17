@@ -16,32 +16,36 @@ public class ViewerStats : MonoBehaviour
     public float batteryDrainRate = 2;
     public float maxAttackAmount = 1;
     public float knockbackAmount = 50;
+    public float flashDrainRate = 10;
+    public float personalLightRadius = 28;
+    public float maxPlayerHealth = 25;
 
     [Header("UI Elements")]
     public TextMeshProUGUI viewerText;
     public TextMeshProUGUI menuViewerText;
     public RectTransform upgradeMenu;
 
-    [Header("UI Drain Rate")]
+    [Header("Drain Rate Upgrades")]
     public TextMeshProUGUI batteryDrainLevelText;
     public TextMeshProUGUI batteryDrainCostText;
-
-    [Header("UI Num of Attacks")]
-    public TextMeshProUGUI comboAmountLevelText;
-    public TextMeshProUGUI comboAmountCostText;
-
-    [Header("UI Attack Knockback")]
-    public TextMeshProUGUI knockbackLevelText;
-    public TextMeshProUGUI knockbackCostText;
-
-    [Header("Drain Rate Upgrades")]
     public int batteryDrainLevel;
     public int batteryDrainMaxLevel;
     public int batteryDrainCost;
     public int batteryDrainCostIncrease;
     public float batteryDrainDecrease;
 
+    [Header("Flash Drain Upgrades")]
+    public TextMeshProUGUI flashDrainLevelText;
+    public TextMeshProUGUI flashDrainCostText;
+    public int flashDrainLevel;
+    public int flashDrainMaxLevel;
+    public int flashDrainCost;
+    public int flashDrainCostIncrease;
+    public float flashDrainDecrease;
+
     [Header("Combo Amount Upgrades")]
+    public TextMeshProUGUI comboAmountLevelText;
+    public TextMeshProUGUI comboAmountCostText;
     public int comboAmountLevel;
     public int comboAmountMaxLevel;
     public int comboAmountCost;
@@ -49,20 +53,51 @@ public class ViewerStats : MonoBehaviour
     public int comboAmountIncrease;
 
     [Header("Attack Knockback Upgrades")]
+    public TextMeshProUGUI knockbackLevelText;
+    public TextMeshProUGUI knockbackCostText;
     public int knockbackLevel;
     public int knockbackMaxLevel;
     public int knockbackCost;
     public int knockbackCostIncrease;
     public int knockbackIncrease;
 
+    [Header("Personal Light Radius Upgrades")]
+    public TextMeshProUGUI lightRadiusLevelText;
+    public TextMeshProUGUI lightRadiusCostText;
+    public int lightRadiusLevel;
+    public int lightRadiusMaxLevel;
+    public int lightRadiusCost;
+    public int lightRadiusCostIncrease;
+    public int lightRadiusIncrease;
+
+    [Header("Max Player Health Upgrades")]
+    public TextMeshProUGUI maxHealthLevelText;
+    public TextMeshProUGUI maxHealthCostText;
+    public int maxHealthLevel;
+    public int maxHealthMaxLevel;
+    public int maxHealthCost;
+    public int maxHealthCostIncrease;
+    public int maxHealthIncrease;
+
     void Start()
     {
         batteryDrainLevelText.text = batteryDrainLevel + "/" + batteryDrainMaxLevel;
         batteryDrainCostText.text = "Cost: " + batteryDrainCost;
+
         comboAmountLevelText.text = comboAmountLevel + "/" + comboAmountMaxLevel;
         comboAmountCostText.text = "Cost: " + comboAmountCost;
+
         knockbackLevelText.text = knockbackLevel + "/" + knockbackMaxLevel;
         knockbackCostText.text = "Cost: " + knockbackCost;
+
+        flashDrainLevelText.text = flashDrainLevel + "/" + flashDrainMaxLevel;
+        flashDrainCostText.text = "Cost: " + flashDrainCost;
+
+        lightRadiusLevelText.text = lightRadiusLevel + "/" + lightRadiusMaxLevel;
+        lightRadiusCostText.text = "Cost: " + lightRadiusCost;
+
+        maxHealthLevelText.text = maxHealthLevel + "/" + maxHealthMaxLevel;
+        maxHealthCostText.text = "Cost: " + maxHealthCost;
 
         displayedViewers = viewers;
         UpdateViewerUI();
@@ -112,7 +147,7 @@ public class ViewerStats : MonoBehaviour
 
     public void BuyBatteryDrainUpgrade()
     {
-        if (batteryDrainLevel >= batteryDrainMaxLevel - 1)
+        if (batteryDrainLevel >= batteryDrainMaxLevel)
         {
             batteryDrainLevelText.text = "Maxed ";
             batteryDrainCostText.text = "";
@@ -133,7 +168,7 @@ public class ViewerStats : MonoBehaviour
 
     public void BuyComboAmountUpgrade()
     {
-        if (comboAmountLevel >= comboAmountMaxLevel - 1)
+        if (comboAmountLevel >= comboAmountMaxLevel)
         {
             comboAmountLevelText.text = "Maxed ";
             comboAmountCostText.text = "";
@@ -154,7 +189,7 @@ public class ViewerStats : MonoBehaviour
 
     public void BuyKnockbackUpgrade()
     {
-        if (knockbackLevel >= knockbackMaxLevel - 1)
+        if (knockbackLevel >= knockbackMaxLevel)
         {
             knockbackLevelText.text = "Maxed ";
             knockbackCostText.text = "";
@@ -170,6 +205,69 @@ public class ViewerStats : MonoBehaviour
             knockbackCostText.text = "Cost: " + knockbackCost;
 
             Debug.Log("Combo amount upgraded to level " + knockbackLevel);
+        }
+    }
+
+    public void BuyFlashDrainRateUpgrade()
+    {
+        if (flashDrainLevel >= flashDrainMaxLevel)
+        {
+            flashDrainLevelText.text = "Maxed ";
+            flashDrainCostText.text = "";
+            return;
+        }
+
+        if (SpendViewers(flashDrainCost))
+        {
+            flashDrainRate -= flashDrainDecrease;
+            flashDrainLevel++;
+            flashDrainCost += flashDrainCostIncrease;
+            flashDrainLevelText.text = flashDrainLevel + "/" + flashDrainMaxLevel;
+            flashDrainCostText.text = "Cost: " + flashDrainCost;
+
+            Debug.Log("Combo amount upgraded to level " + flashDrainLevel);
+        }
+    }
+
+    public void BuyLightRadiusUpgrade()
+    {
+        if (lightRadiusLevel >= lightRadiusMaxLevel)
+        {
+            lightRadiusLevelText.text = "Maxed ";
+            lightRadiusCostText.text = "";
+            return;
+        }
+
+        if (SpendViewers(lightRadiusCost))
+        {
+            personalLightRadius += lightRadiusIncrease;
+            lightRadiusLevel++;
+            lightRadiusCost += lightRadiusCostIncrease;
+            lightRadiusLevelText.text = lightRadiusLevel + "/" + lightRadiusMaxLevel;
+            lightRadiusCostText.text = "Cost: " + lightRadiusCost;
+
+            Debug.Log("Combo amount upgraded to level " + lightRadiusLevel);
+        }
+    }
+
+    public void BuyMaxHealthUpgrade()
+    {
+        if (maxHealthLevel >= maxHealthMaxLevel)
+        {
+            maxHealthLevelText.text = "Maxed ";
+            maxHealthCostText.text = "";
+            return;
+        }
+
+        if (SpendViewers(maxHealthCost))
+        {
+            maxPlayerHealth += maxHealthIncrease;
+            maxHealthLevel++;
+            maxHealthCost += maxHealthCostIncrease;
+            maxHealthLevelText.text = maxHealthLevel + "/" + maxHealthMaxLevel;
+            maxHealthCostText.text = "Cost: " + maxHealthCost;
+
+            Debug.Log("Combo amount upgraded to level " + maxHealthLevel);
         }
     }
 }
