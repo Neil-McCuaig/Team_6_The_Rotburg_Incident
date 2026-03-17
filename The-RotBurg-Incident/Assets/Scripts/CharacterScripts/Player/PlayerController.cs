@@ -35,7 +35,6 @@ public class PlayerController : MonoBehaviour
     [Header("Attack Settings")]
     public float attackCooldown = 1f;
     private float nextAttackTime = 0f;
-    public float knockBackAmount;
     public float damageAmount;
     public float attackRadius;
     public LayerMask enemies;
@@ -386,6 +385,7 @@ public class PlayerController : MonoBehaviour
 
             if (applyKnockback != null)
             {
+                float knockBackAmount = viewerStats.knockbackAmount;
                 applyKnockback.ApplyKnockback(this.transform, knockBackAmount);
             }
         }

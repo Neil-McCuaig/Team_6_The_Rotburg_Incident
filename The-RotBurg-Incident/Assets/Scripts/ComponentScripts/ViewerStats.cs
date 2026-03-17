@@ -15,6 +15,7 @@ public class ViewerStats : MonoBehaviour
     [Header("Player Stats")]
     public float batteryDrainRate = 2;
     public float maxAttackAmount = 1;
+    public float knockbackAmount = 50;
 
     [Header("UI Elements")]
     public TextMeshProUGUI viewerText;
@@ -28,6 +29,10 @@ public class ViewerStats : MonoBehaviour
     [Header("UI Num of Attacks")]
     public TextMeshProUGUI comboAmountLevelText;
     public TextMeshProUGUI comboAmountCostText;
+
+    [Header("UI Attack Knockback")]
+    public TextMeshProUGUI knockbackLevelText;
+    public TextMeshProUGUI knockbackCostText;
 
     [Header("Drain Rate Upgrades")]
     public int batteryDrainLevel;
@@ -43,10 +48,22 @@ public class ViewerStats : MonoBehaviour
     public int comboAmountCostIncrease;
     public int comboAmountIncrease;
 
+    [Header("Attack Knockback Upgrades")]
+    public int knockbackLevel;
+    public int knockbackMaxLevel;
+    public int knockbackCost;
+    public int knockbackCostIncrease;
+    public int knockbackIncrease;
+
     void Start()
     {
-        batteryDrainLevelText.text = batteryDrainLevel + " / " + batteryDrainMaxLevel;
+        batteryDrainLevelText.text = batteryDrainLevel + "/" + batteryDrainMaxLevel;
         batteryDrainCostText.text = "Cost: " + batteryDrainCost;
+        comboAmountLevelText.text = comboAmountLevel + "/" + comboAmountMaxLevel;
+        comboAmountCostText.text = "Cost: " + comboAmountCost;
+        knockbackLevelText.text = knockbackLevel + "/" + knockbackMaxLevel;
+        knockbackCostText.text = "Cost: " + knockbackCost;
+
         displayedViewers = viewers;
         UpdateViewerUI();
     }
@@ -95,9 +112,10 @@ public class ViewerStats : MonoBehaviour
 
     public void BuyBatteryDrainUpgrade()
     {
-        if (batteryDrainLevel >= batteryDrainMaxLevel)
+        if (batteryDrainLevel >= batteryDrainMaxLevel - 1)
         {
-            Debug.Log("Battery upgrade maxed");
+            batteryDrainLevelText.text = "Maxed ";
+            batteryDrainCostText.text = "";
             return;
         }
 
@@ -115,9 +133,10 @@ public class ViewerStats : MonoBehaviour
 
     public void BuyComboAmountUpgrade()
     {
-        if (comboAmountLevel >= comboAmountMaxLevel)
+        if (comboAmountLevel >= comboAmountMaxLevel - 1)
         {
-            Debug.Log("combo amount maxed");
+            comboAmountLevelText.text = "Maxed ";
+            comboAmountCostText.text = "";
             return;
         }
 
@@ -130,6 +149,27 @@ public class ViewerStats : MonoBehaviour
             comboAmountCostText.text = "Cost: " + comboAmountCost;
 
             Debug.Log("Combo amount upgraded to level " + comboAmountLevel);
+        }
+    }
+
+    public void BuyKnockbackUpgrade()
+    {
+        if (knockbackLevel >= knockbackMaxLevel - 1)
+        {
+            knockbackLevelText.text = "Maxed ";
+            knockbackCostText.text = "";
+            return;
+        }
+
+        if (SpendViewers(knockbackCost))
+        {
+            knockbackAmount += knockbackIncrease;
+            knockbackLevel++;
+            knockbackCost += knockbackCostIncrease;
+            knockbackLevelText.text = knockbackLevel + "/" + knockbackMaxLevel;
+            knockbackCostText.text = "Cost: " + knockbackCost;
+
+            Debug.Log("Combo amount upgraded to level " + knockbackLevel);
         }
     }
 }
