@@ -13,6 +13,7 @@ public class SafeStations : MonoBehaviour
 
     private Animator anim;
     private EnemySpawnerManager enemySpawnerManager;
+    private CameraManager camManager;
     private PlayerController playerController;
     private GameManager gameManager;
     private PlayerHealth health;
@@ -34,6 +35,7 @@ public class SafeStations : MonoBehaviour
     private void Awake()
     {
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
+        camManager = FindAnyObjectByType<CameraManager>();
     }
 
     private void Start()
@@ -94,6 +96,7 @@ public class SafeStations : MonoBehaviour
     private void StartCharging()
     {
         Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
+        camManager.SwitchToUpgradeCamera();
         anim.SetBool("IsCharging", true);
         anim.SetTrigger("StartCharging");
 
@@ -116,6 +119,7 @@ public class SafeStations : MonoBehaviour
     public void StopCharging()
     {
         Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
+        camManager.ReturnToPlayerCamera();
         playerController.EnableArmRender();
         playerController.flashLight.gameObject.SetActive(true);
 
