@@ -254,7 +254,6 @@ public class PlayerController : MonoBehaviour
             if (jumpAction.WasPressedThisFrame() && ((isGrounded || onPlatform) || coyoteTimeCounter > 0f))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
-                SoundManager.instance.StopSound(SoundManager.instance.playerMove);
                 velocity.y = jumpForce;
                 coyoteTimeCounter = 0f;
             }
@@ -264,7 +263,6 @@ public class PlayerController : MonoBehaviour
             if (jumpAction.WasPressedThisFrame() && ((isGrounded || onPlatform) || coyoteTimeCounter > 0f))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
-                SoundManager.instance.StopSound(SoundManager.instance.playerMove);
                 velocity.y = jumpForce;
                 numOfJumps--;
                 coyoteTimeCounter = 0f;
@@ -272,7 +270,6 @@ public class PlayerController : MonoBehaviour
             else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && (!isGrounded || !onPlatform))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
-                SoundManager.instance.StopSound(SoundManager.instance.playerMove);
                 velocity.y = jumpForce / 1.2f;
                 numOfJumps = 0;
             }
@@ -290,8 +287,7 @@ public class PlayerController : MonoBehaviour
 
         if (moveInput.x > 0)
         {
-            Debug.Log("step");
-            
+
             anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
@@ -328,7 +324,7 @@ public class PlayerController : MonoBehaviour
         {
             SoundManager.instance.StopSound(SoundManager.instance.playerMove);
         }
-        
+
 
         if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {
