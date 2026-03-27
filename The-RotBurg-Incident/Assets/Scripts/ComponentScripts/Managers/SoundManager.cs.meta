@@ -3,7 +3,24 @@ guid: 16799c95d93718941ba5636de7d3e40f
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - SFXSource: {instanceID: 0}
+  - musicSource: {instanceID: 0}
+  - heartbeatSource: {instanceID: 0}
+  - backgroundMusic: {instanceID: 0}
+  - playerAttack: {instanceID: 0}
+  - playerJump: {instanceID: 0}
+  - playerFlash: {instanceID: 0}
+  - playerHurt: {instanceID: 0}
+  - playerHurtSquish: {instanceID: 0}
+  - playerHurtSplash: {instanceID: 0}
+  - playerMove: {instanceID: 0}
+  - saveStation: {instanceID: 0}
+  - slowHeartbeat: {instanceID: 0}
+  - mediumHeartbeat: {instanceID: 0}
+  - fastHeartbeat: {instanceID: 0}
+  - criticalHeartbeat: {instanceID: 0}
+  - flatLine: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

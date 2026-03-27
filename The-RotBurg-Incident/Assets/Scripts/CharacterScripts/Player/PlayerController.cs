@@ -3,6 +3,8 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Runtime.CompilerServices;
+using UnityEngine.Timeline;
+using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour
 {
@@ -252,6 +254,7 @@ public class PlayerController : MonoBehaviour
             if (jumpAction.WasPressedThisFrame() && ((isGrounded || onPlatform) || coyoteTimeCounter > 0f))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
+                SoundManager.instance.StopSound(SoundManager.instance.playerMove);
                 velocity.y = jumpForce;
                 coyoteTimeCounter = 0f;
             }
@@ -261,13 +264,15 @@ public class PlayerController : MonoBehaviour
             if (jumpAction.WasPressedThisFrame() && ((isGrounded || onPlatform) || coyoteTimeCounter > 0f))
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
+                SoundManager.instance.StopSound(SoundManager.instance.playerMove);
                 velocity.y = jumpForce;
                 numOfJumps--;
                 coyoteTimeCounter = 0f;
             }
             else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && (!isGrounded || !onPlatform))
             {
-                SoundManager.instance.PlaySound(SoundManager.instance.playerJump); 
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
+                SoundManager.instance.StopSound(SoundManager.instance.playerMove);
                 velocity.y = jumpForce / 1.2f;
                 numOfJumps = 0;
             }
@@ -285,6 +290,8 @@ public class PlayerController : MonoBehaviour
 
         if (moveInput.x > 0)
         {
+            Debug.Log("step");
+            
             anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
@@ -293,6 +300,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (moveInput.x < 0)
         {
+           
             anim.SetInteger("WalkX", -1);
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
@@ -300,9 +308,27 @@ public class PlayerController : MonoBehaviour
             cameraFollow.CallTurn(true);
         }
         else if (moveInput.x == 0)
-        {
+        {         
             anim.SetInteger("WalkX", 0);
         }
+        //adding in sounds to Keybinds for walking
+       if(Input.GetKeyDown(KeyCode.D))
+       {
+           SoundManager.instance.PlaySound(SoundManager.instance.playerMove);    
+       }
+        else if (Input.GetKeyUp(KeyCode.D))
+        {
+            SoundManager.instance.StopSound(SoundManager.instance.playerMove);
+        }
+        if(Input.GetKeyDown(KeyCode.A))
+        {
+            SoundManager.instance.PlaySound(SoundManager.instance.playerMove);
+        }
+        else if (Input.GetKeyUp(KeyCode.A))
+        {
+            SoundManager.instance.StopSound(SoundManager.instance.playerMove);
+        }
+        
 
         if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {

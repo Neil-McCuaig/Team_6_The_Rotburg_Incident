@@ -20,6 +20,8 @@ public class SoundManager : MonoBehaviour
     public AudioClip playerHurt;
     public AudioClip playerHurtSquish;
     public AudioClip playerHurtSplash;
+    public AudioClip playerMove;
+
 
     [Header("Enviroment Sounds")]
     public AudioClip saveStation;
@@ -41,6 +43,12 @@ public class SoundManager : MonoBehaviour
     {
         SFXSource.PlayOneShot(_sound);
     }
+
+    public void StopSound(AudioClip _sound)
+    {
+        SFXSource.Stop();
+    }
+
 
     public void SwitchHeartbeat(int level)
     {
