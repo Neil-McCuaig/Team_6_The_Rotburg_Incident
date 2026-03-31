@@ -94,14 +94,17 @@ public class PlayerHealth : MonoBehaviour
             if (killer.GetComponent<JumpingEnemyController>() != null)
             {
                 deathType = DeathType.Pouncer;
+                Destroy(killer);
             }
             else if (killer.GetComponent<FlyingEnemyController>() != null)
             {
-                deathType = DeathType.Flyer;  
+                deathType = DeathType.Flyer;
+                Destroy(killer);
             }
             else if (killer.GetComponent<ExsplodeEnemyController>() != null)
             {
                 deathType = DeathType.Popper;
+                Destroy(killer);
             }
             else if (killer.GetComponent<WeepingAngelBehavior>() != null)
             {
