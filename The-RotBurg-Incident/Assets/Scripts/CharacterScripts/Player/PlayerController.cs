@@ -4,6 +4,7 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
+using static PlayerController;
 
 public class PlayerController : MonoBehaviour
 {
@@ -123,6 +124,17 @@ public class PlayerController : MonoBehaviour
     public bool hasPhone = true;
     private int numOfJumps = 2;
     public int numOfLives = 3;
+
+    public enum DeathType
+    {
+        Normal,
+        Pouncer,
+        Flyer,
+        Popper,
+        WeepingAngel,
+        HallMonitor
+    }
+    private DeathType currentDeathType = DeathType.Normal;
 
     private void Awake()
     {
@@ -551,16 +563,48 @@ public class PlayerController : MonoBehaviour
     {
         transform.position = respawnPoint;
         health.ResetHealthFull();
+        if (currentDeathType == DeathType.WeepingAngel)
+        {
+            health.ResetWeepingSpriteRenderer();
+        }
     }
 
-    public void Die()
+    public void Die(DeathType deathType = DeathType.Normal)
     {
         isDead = true;
         collision.enabled = false;
         DisableArmRender();
+
         anim.SetBool("IsDead", true);
 
+        currentDeathType = deathType;
+        anim.SetTrigger(GetDeathTrigger(currentDeathType));
+
         StartCoroutine(HandleDeathFadeOut());
+    }
+
+    private string GetDeathTrigger(DeathType type)
+    {
+        switch (type)
+        {
+            case DeathType.Pouncer:
+                return "PouncerDeath";
+
+            case DeathType.Flyer:
+                return "FlyerDeath";
+
+            case DeathType.Popper:
+                return "PopperDeath";
+
+            case DeathType.WeepingAngel:
+                return "WeepingDeath";
+
+            case DeathType.HallMonitor:
+                return "HallMonitorDeath";
+
+            default:
+                return "NormalDeath"; 
+        }
     }
 
     private IEnumerator HandleDeathFadeOut()

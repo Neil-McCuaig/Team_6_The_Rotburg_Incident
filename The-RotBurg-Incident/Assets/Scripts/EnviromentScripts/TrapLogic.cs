@@ -35,7 +35,7 @@ public class TrapLogic : MonoBehaviour
                     StartCoroutine(TeleportAfterDelay(playerPos, player));
                 }
                 playerPos = other.transform;
-                other.GetComponent<PlayerHealth>().TakeDamage(damageAmount);
+                other.GetComponent<PlayerHealth>().TakeDamage(damageAmount, gameObject);
                 if (player.rb != null)
                 {
                     player.rb.velocity = Vector3.zero;

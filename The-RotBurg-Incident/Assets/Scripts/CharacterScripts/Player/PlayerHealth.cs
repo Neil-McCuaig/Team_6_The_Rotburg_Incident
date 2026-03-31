@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static PlayerController;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class PlayerHealth : MonoBehaviour
     StreamChat chat;
     public Sprite hurtEmote;
 
-    //public bool trapDamaged = false;
+    public SpriteRenderer weepingSprite;
 
     private void Start()
     {
@@ -34,7 +35,7 @@ public class PlayerHealth : MonoBehaviour
         ResetHealthFull();
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, GameObject attacker)
     {
         if (isInvincible)
         {
@@ -50,11 +51,11 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            Die(attacker);
             //chat.AddMessage("[CareTaker] OMG f's in the chat to pay repects he got wrecked", hurtEmote, true);
             chat.SwitchMessageList(1);
             chat.messageLifetime = 1f;
             chat.spawnDelay = 0.25f;
-            playerController.Die();
         }
         else if(spriteRenderer != null) 
         {
@@ -84,6 +85,42 @@ public class PlayerHealth : MonoBehaviour
         isInvincible = false;
     }
 
+    private void Die(GameObject killer)
+    {
+        DeathType deathType = DeathType.Normal;
+
+        if (killer != null && killer.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            if (killer.GetComponent<JumpingEnemyController>() != null)
+            {
+                deathType = DeathType.Pouncer;
+            }
+            else if (killer.GetComponent<FlyingEnemyController>() != null)
+            {
+                deathType = DeathType.Flyer;  
+            }
+            else if (killer.GetComponent<ExsplodeEnemyController>() != null)
+            {
+                deathType = DeathType.Popper;
+            }
+            else if (killer.GetComponent<WeepingAngelBehavior>() != null)
+            {
+                deathType = DeathType.WeepingAngel;
+                weepingSprite = killer.GetComponent<SpriteRenderer>();
+                if (weepingSprite != null)
+                {
+                    weepingSprite.enabled = false;
+                }
+            }
+            else if (killer.GetComponent<DamagePlayer>() != null) // Hall Monitor
+            {
+                deathType = DeathType.HallMonitor;
+            }
+        }
+
+        playerController.Die(deathType);
+    }
+
     public void ResetHealthFull()
     {
         maxHealth = viewersStats.maxPlayerHealth;
@@ -91,5 +128,10 @@ public class PlayerHealth : MonoBehaviour
         chat.SwitchMessageList(0);
         chat.messageLifetime = 5f;
         chat.spawnDelay = 1f;
+    }
+
+    public void ResetWeepingSpriteRenderer()
+    {
+        weepingSprite.enabled = true;
     }
 }

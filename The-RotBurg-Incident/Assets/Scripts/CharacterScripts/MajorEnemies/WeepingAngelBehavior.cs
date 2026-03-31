@@ -77,7 +77,7 @@ public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
         float distance = Vector2.Distance(transform.position, player.position);
         if (distance < 0.5f)
         {
-            FindAnyObjectByType<PlayerHealth>().TakeDamage(100f);
+            FindAnyObjectByType<PlayerHealth>().TakeDamage(100f, this.gameObject);
             transform.position = sleepingTransform;
         }
     }
