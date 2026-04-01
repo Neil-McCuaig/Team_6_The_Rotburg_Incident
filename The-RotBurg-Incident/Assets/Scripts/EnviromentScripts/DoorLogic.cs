@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DoorLogic : MonoBehaviour
 {
+    SoundManager soundManager;
     [Header("Teleport Settings")]
     public Transform teleportDestination;
     public float fadeDuration;
@@ -64,6 +65,7 @@ public class DoorLogic : MonoBehaviour
         fader.FadeOut();
         playerRenderer.enabled = false;
         playerArm.SetActive(false);
+        SoundManager.instance.StopSound(SoundManager.instance.playerMove);
 
         yield return new WaitForSeconds(fadeDuration);
 
