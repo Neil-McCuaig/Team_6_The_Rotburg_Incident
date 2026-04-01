@@ -1,8 +1,7 @@
 using System.Collections;
-using UnityEngine.Rendering.Universal;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Runtime.CompilerServices;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
@@ -33,9 +32,8 @@ public class PlayerController : MonoBehaviour
     public bool canControl = true;
 
     [Header("Attack Settings")]
-    public float attackCooldown = 1f;
+    public float attackCooldown;
     private float nextAttackTime = 0f;
-    public float knockBackAmount;
     public float damageAmount;
     public float attackRadius;
     public LayerMask enemies;
@@ -81,6 +79,7 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingCeiling;
 
     [Header("Arm Aiming")]
+    public Light2D personalLight;
     public Transform arm;
     public Transform aimLeft;
     public Transform aimRight;
@@ -95,7 +94,6 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer armRender;
 
     [Header("Stun-Ability Settings")]
-    public float drainAmount;
     public float flashIntensity = 1f;
     private float oriFlashIntensity;
     private float oriPictureIntensity;
@@ -124,6 +122,17 @@ public class PlayerController : MonoBehaviour
     private int numOfJumps = 2;
     public int numOfLives = 3;
 
+    public enum DeathType
+    {
+        Normal,
+        Pouncer,
+        Flyer,
+        Popper,
+        WeepingAngel,
+        HallMonitor
+    }
+    private DeathType currentDeathType = DeathType.Normal;
+
     private void Awake()
     {
         var playerActions = inputActions.FindActionMap("BaseGameplay");
@@ -149,7 +158,6 @@ public class PlayerController : MonoBehaviour
         fallSpeedYDampingChangeThreshold = -15f;
 
         lastMousePosition = Input.mousePosition;
-
 
         if (pictureLight != null)
         {
@@ -211,6 +219,12 @@ public class PlayerController : MonoBehaviour
         {
             canMove = true;
         }
+
+        if (personalLight != null)
+        {
+            float personalLightRadius = viewerStats.personalLightRadius;
+            personalLight.pointLightOuterRadius = personalLightRadius;
+        }
     }
 
     void FixedUpdate()
@@ -267,7 +281,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && (!isGrounded || !onPlatform))
             {
-                SoundManager.instance.PlaySound(SoundManager.instance.playerJump); 
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce / 1.2f;
                 numOfJumps = 0;
             }
@@ -285,6 +299,7 @@ public class PlayerController : MonoBehaviour
 
         if (moveInput.x > 0)
         {
+
             anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
@@ -293,6 +308,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (moveInput.x < 0)
         {
+
             anim.SetInteger("WalkX", -1);
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
@@ -303,6 +319,24 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetInteger("WalkX", 0);
         }
+        //adding in sounds to Keybinds for walking
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            SoundManager.instance.PlaySound(SoundManager.instance.playerMove);
+        }
+        else if (Input.GetKeyUp(KeyCode.D))
+        {
+            SoundManager.instance.StopSound(SoundManager.instance.playerMove);
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            SoundManager.instance.PlaySound(SoundManager.instance.playerMove);
+        }
+        else if (Input.GetKeyUp(KeyCode.A))
+        {
+            SoundManager.instance.StopSound(SoundManager.instance.playerMove);
+        }
+
 
         if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {
@@ -386,6 +420,7 @@ public class PlayerController : MonoBehaviour
 
             if (applyKnockback != null)
             {
+                float knockBackAmount = viewerStats.knockbackAmount;
                 applyKnockback.ApplyKnockback(this.transform, knockBackAmount);
             }
         }
@@ -501,7 +536,8 @@ public class PlayerController : MonoBehaviour
     void ActivateFlash()
     {
         SoundManager.instance.PlaySound(SoundManager.instance.playerFlash);
-        manager.ReduceBattery(drainAmount);
+        float flashDrainRate = viewerStats.flashDrainRate;
+        manager.ReduceBattery(flashDrainRate);
         canFlash = false;
 
         StartCoroutine(DecayFlash());
@@ -544,16 +580,48 @@ public class PlayerController : MonoBehaviour
     {
         transform.position = respawnPoint;
         health.ResetHealthFull();
+        if (currentDeathType == DeathType.WeepingAngel)
+        {
+            health.ResetWeepingSpriteRenderer();
+        }
     }
 
-    public void Die()
+    public void Die(DeathType deathType = DeathType.Normal)
     {
         isDead = true;
         collision.enabled = false;
         DisableArmRender();
+
         anim.SetBool("IsDead", true);
 
+        currentDeathType = deathType;
+        anim.SetTrigger(GetDeathTrigger(currentDeathType));
+
         StartCoroutine(HandleDeathFadeOut());
+    }
+
+    private string GetDeathTrigger(DeathType type)
+    {
+        switch (type)
+        {
+            case DeathType.Pouncer:
+                return "PouncerDeath";
+
+            case DeathType.Flyer:
+                return "FlyerDeath";
+
+            case DeathType.Popper:
+                return "PopperDeath";
+
+            case DeathType.WeepingAngel:
+                return "WeepingDeath";
+
+            case DeathType.HallMonitor:
+                return "HallMonitorDeath";
+
+            default:
+                return "NormalDeath"; 
+        }
     }
 
     private IEnumerator HandleDeathFadeOut()

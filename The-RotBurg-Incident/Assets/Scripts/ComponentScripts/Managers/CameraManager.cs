@@ -10,6 +10,9 @@ public class CameraManager : MonoBehaviour
     [Header("Player Camera")]
     [SerializeField] private CinemachineVirtualCamera playerCamera;
 
+    [Header("Upgrade Camera")]
+    [SerializeField] private CinemachineVirtualCamera upgradeCamera;
+
     [Header("Cutscene Cameras")]
     [SerializeField] private CinemachineVirtualCamera[] cutsceneCameras;
 
@@ -91,6 +94,14 @@ public class CameraManager : MonoBehaviour
         cutsceneCam.Priority = 20;
 
         CacheCameraComponents(cutsceneCam);
+    }
+
+    public void SwitchToUpgradeCamera()
+    {
+        ResetAllCameraPriorities();
+
+        upgradeCamera.Priority = 20;
+        CacheCameraComponents(upgradeCamera);
     }
 
     public void ReturnToPlayerCamera()

@@ -239,10 +239,6 @@ public class HallMonitorBehavior : MonoBehaviour, MonnsterActivation
             {
                 locker.SealAllLockers();
             }
-            if (playerCaught)
-            {
-                //FindAnyObjectByType<PlayerHealth>().TakeDamage(damageAmount);
-            }
             StartCoroutine(RedLightDuration());
         }
     }
