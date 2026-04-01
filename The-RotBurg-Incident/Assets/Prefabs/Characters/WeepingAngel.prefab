@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7632087451673820795}
   - component: {fileID: 2052068303141068930}
   - component: {fileID: 7647322438111124516}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WeepingAngel
   m_TagString: Weeping
   m_Icon: {fileID: 0}

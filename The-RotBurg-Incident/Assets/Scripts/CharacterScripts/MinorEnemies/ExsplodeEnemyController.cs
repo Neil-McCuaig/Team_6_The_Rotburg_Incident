@@ -221,12 +221,15 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockb
 
     public void ExsplodeEnemy()
     {
-        Instantiate(exsplosionObject, transform.position + new Vector3(0f, 3f, 0f), Quaternion.identity);
-
         Collider2D playerHit = Physics2D.OverlapCircle(transform.position, explosionRadius, playerMask);
         if (playerHit != null && playerHit.CompareTag("Player"))
         {
-            FindAnyObjectByType<PlayerHealth>().TakeDamage(20f);
+            FindAnyObjectByType<PlayerHealth>().TakeDamage(20f, gameObject);
+        }
+
+        if (!playerController.isDead)
+        {
+            Instantiate(exsplosionObject, transform.position + new Vector3(0f, 3f, 0f), Quaternion.identity);
         }
 
         isDead = true;

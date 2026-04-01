@@ -12,50 +12,109 @@ public class ViewerStats : MonoBehaviour
     public int displayedViewers;
     public float countSpeed = 5;
 
-    [Header("Player Stats")]
-    public float batteryDrainRate = 2;
-    public float maxAttackAmount = 1;
+    [Header("Player Stats Base Values")]
+    public float baseBatteryDrainRate = 2f;
+    public float baseMaxAttackAmount = 1f;
+    public float baseKnockbackAmount = 50f;
+    public float baseFlashDrainRate = 10f;
+    public float basePersonalLightRadius = 28f;
+    public float baseMaxPlayerHealth = 25f;
+
+    [Header("Player Stats Current Values")]
+    public float batteryDrainRate;
+    public float maxAttackAmount;
+    public float knockbackAmount;
+    public float flashDrainRate;
+    public float personalLightRadius;
+    public float maxPlayerHealth;
 
     [Header("UI Elements")]
     public TextMeshProUGUI viewerText;
     public TextMeshProUGUI menuViewerText;
     public RectTransform upgradeMenu;
 
-    [Header("UI Drain Rate")]
-    public TextMeshProUGUI batteryDrainLevelText;
-    public TextMeshProUGUI batteryDrainCostText;
-
-    [Header("UI Num of Attacks")]
-    public TextMeshProUGUI comboAmountLevelText;
-    public TextMeshProUGUI comboAmountCostText;
-
     [Header("Drain Rate Upgrades")]
+    public TextMeshProUGUI batteryDrainCostText;
+    public Animator batteryDrainAnim;
     public int batteryDrainLevel;
     public int batteryDrainMaxLevel;
     public int batteryDrainCost;
     public int batteryDrainCostIncrease;
     public float batteryDrainDecrease;
 
+    [Header("Flash Drain Upgrades")]
+    public TextMeshProUGUI flashDrainCostText;
+    public Animator flashDrainAnim;
+    public int flashDrainLevel;
+    public int flashDrainMaxLevel;
+    public int flashDrainCost;
+    public int flashDrainCostIncrease;
+    public float flashDrainDecrease;
+
     [Header("Combo Amount Upgrades")]
+    public TextMeshProUGUI comboAmountCostText;
+    public Animator comboAmountAnim;
     public int comboAmountLevel;
     public int comboAmountMaxLevel;
     public int comboAmountCost;
     public int comboAmountCostIncrease;
     public int comboAmountIncrease;
 
-    void Start()
+    [Header("Attack Knockback Upgrades")]
+    public TextMeshProUGUI knockbackCostText;
+    public Animator knockbackAnim;
+    public int knockbackLevel;
+    public int knockbackMaxLevel;
+    public int knockbackCost;
+    public int knockbackCostIncrease;
+    public int knockbackIncrease;
+
+    [Header("Personal Light Radius Upgrades")]
+    public TextMeshProUGUI lightRadiusCostText;
+    public Animator lightRadiusAnim;
+    public int lightRadiusLevel;
+    public int lightRadiusMaxLevel;
+    public int lightRadiusCost;
+    public int lightRadiusCostIncrease;
+    public int lightRadiusIncrease;
+
+    [Header("Max Player Health Upgrades")]
+    public TextMeshProUGUI maxHealthCostText;
+    public Animator maxHealthAnim;
+    public int maxHealthLevel;
+    public int maxHealthMaxLevel;
+    public int maxHealthCost;
+    public int maxHealthCostIncrease;
+    public int maxHealthIncrease;
+
+    void Awake()
     {
-        batteryDrainLevelText.text = batteryDrainLevel + " / " + batteryDrainMaxLevel;
-        batteryDrainCostText.text = "Cost: " + batteryDrainCost;
-        displayedViewers = viewers;
-        UpdateViewerUI();
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    private void Update()
+    void Start()
+    {
+        ApplyUpgradeValues();
+        UpdateAllUI();
+        displayedViewers = viewers;
+    }
+
+    void Update()
     {
         displayedViewers = (int)Mathf.MoveTowards(displayedViewers, viewers, countSpeed * Time.deltaTime);
-
         UpdateViewerUI();
+
+        if (batteryDrainAnim && flashDrainAnim && lightRadiusAnim && maxHealthAnim && knockbackAnim && comboAmountAnim != null)
+        {
+            UpdateUIAnimations();
+        }
     }
 
     public void AddViewers(int amount)
@@ -83,6 +142,13 @@ public class ViewerStats : MonoBehaviour
             viewerText.text = "LIVE • " + displayedViewers.ToString("N0") + " viewers";
             menuViewerText.text = displayedViewers.ToString("N0") + " viewers";
         }
+
+        batteryDrainCostText.text = batteryDrainLevel >= batteryDrainMaxLevel ? "" : "Cost: " + batteryDrainCost;
+        flashDrainCostText.text = flashDrainLevel >= flashDrainMaxLevel ? "" : "Cost: " + flashDrainCost;
+        lightRadiusCostText.text = lightRadiusLevel >= lightRadiusMaxLevel ? "" : "Cost: " + lightRadiusCost;
+        maxHealthCostText.text = maxHealthLevel >= maxHealthMaxLevel ? "" : "Cost: " + maxHealthCost;
+        knockbackCostText.text = knockbackLevel >= knockbackMaxLevel ? "" : "Cost: " + knockbackCost;
+        comboAmountCostText.text = comboAmountLevel >= comboAmountMaxLevel ? "" : "Cost: " + comboAmountCost;
     }
 
     public void ToggleUpgradeMenu(bool menuToggle)
@@ -93,43 +159,52 @@ public class ViewerStats : MonoBehaviour
         }
     }
 
-    public void BuyBatteryDrainUpgrade()
+    public void BuyBatteryDrainUpgrade() => BuyUpgrade(ref batteryDrainLevel, batteryDrainMaxLevel, ref batteryDrainCost, batteryDrainCostIncrease, batteryDrainDecrease, true, "Battery upgraded to level ");
+    public void BuyFlashDrainRateUpgrade() => BuyUpgrade(ref flashDrainLevel, flashDrainMaxLevel, ref flashDrainCost, flashDrainCostIncrease, flashDrainDecrease, true, "Flash drain upgraded to level ");
+    public void BuyComboAmountUpgrade() => BuyUpgrade(ref comboAmountLevel, comboAmountMaxLevel, ref comboAmountCost, comboAmountCostIncrease, comboAmountIncrease, false, "Combo amount upgraded to level ");
+    public void BuyKnockbackUpgrade() => BuyUpgrade(ref knockbackLevel, knockbackMaxLevel, ref knockbackCost, knockbackCostIncrease, knockbackIncrease, false, "Knockback upgraded to level ");
+    public void BuyLightRadiusUpgrade() => BuyUpgrade(ref lightRadiusLevel, lightRadiusMaxLevel, ref lightRadiusCost, lightRadiusCostIncrease, lightRadiusIncrease, false, "Light radius upgraded to level ");
+    public void BuyMaxHealthUpgrade() => BuyUpgrade(ref maxHealthLevel, maxHealthMaxLevel, ref maxHealthCost, maxHealthCostIncrease, maxHealthIncrease, false, "Max health upgraded to level ");
+
+    void BuyUpgrade(ref int level, int maxLevel, ref int cost, int costIncrease, float statIncrease, bool isDecrease, string debugMessage)
     {
-        if (batteryDrainLevel >= batteryDrainMaxLevel)
+        if (level >= maxLevel)
         {
-            Debug.Log("Battery upgrade maxed");
             return;
         }
 
-        if (SpendViewers(batteryDrainCost))
+        if (SpendViewers(cost))
         {
-            batteryDrainRate -= batteryDrainDecrease;
-            batteryDrainLevel++;
-            batteryDrainCost += batteryDrainCostIncrease;
-            batteryDrainLevelText.text = batteryDrainLevel + "/" + batteryDrainMaxLevel;
-            batteryDrainCostText.text = "Cost: " + batteryDrainCost;
-
-            Debug.Log("Battery upgraded to level " + batteryDrainLevel);
+            level++;
+            cost += costIncrease;
+            ApplyUpgradeValues();
+            Debug.Log(debugMessage + level);
         }
     }
 
-    public void BuyComboAmountUpgrade()
+    void ApplyUpgradeValues()
     {
-        if (comboAmountLevel >= comboAmountMaxLevel)
-        {
-            Debug.Log("combo amount maxed");
-            return;
-        }
+        batteryDrainRate = baseBatteryDrainRate - (batteryDrainDecrease * batteryDrainLevel);
+        flashDrainRate = baseFlashDrainRate - (flashDrainDecrease * flashDrainLevel);
+        maxAttackAmount = baseMaxAttackAmount + (comboAmountIncrease * comboAmountLevel);
+        knockbackAmount = baseKnockbackAmount + (knockbackIncrease * knockbackLevel);
+        personalLightRadius = basePersonalLightRadius + (lightRadiusIncrease * lightRadiusLevel);
+        maxPlayerHealth = baseMaxPlayerHealth + (maxHealthIncrease * maxHealthLevel);
+    }
 
-        if (SpendViewers(comboAmountCost))
-        {
-            maxAttackAmount += comboAmountIncrease;
-            comboAmountLevel++;
-            comboAmountCost += comboAmountCostIncrease;
-            comboAmountLevelText.text = comboAmountLevel + "/" + comboAmountMaxLevel;
-            comboAmountCostText.text = "Cost: " + comboAmountCost;
+    void UpdateUIAnimations()
+    {
+        batteryDrainAnim.SetInteger("UpgradeLevel", batteryDrainLevel);
+        flashDrainAnim.SetInteger("UpgradeLevel", flashDrainLevel);
+        lightRadiusAnim.SetInteger("UpgradeLevel", lightRadiusLevel);
+        maxHealthAnim.SetInteger("UpgradeLevel", maxHealthLevel);
+        knockbackAnim.SetInteger("UpgradeLevel", knockbackLevel);
+        comboAmountAnim.SetInteger("UpgradeLevel", comboAmountLevel);
+    }
 
-            Debug.Log("Combo amount upgraded to level " + comboAmountLevel);
-        }
+    void UpdateAllUI()
+    {
+        UpdateViewerUI();
+        UpdateUIAnimations();
     }
 }

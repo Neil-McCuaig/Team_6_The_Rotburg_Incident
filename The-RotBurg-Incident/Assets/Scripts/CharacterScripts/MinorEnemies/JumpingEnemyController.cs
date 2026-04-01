@@ -39,7 +39,7 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockba
     private float stunCountdown;
 
     [Header("References")]
-    public Transform player;
+    private Transform player;
     private Rigidbody2D rb;
     private Animator enemyAnim;
     private Collider2D enemyCollider;
@@ -229,7 +229,7 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockba
         {
             if (currentState != State.Stunned)
             {
-                FindAnyObjectByType<PlayerHealth>().TakeDamage(attackDamage);
+                FindAnyObjectByType<PlayerHealth>().TakeDamage(attackDamage, gameObject);
                 isBounce = true;
                 Vector2 awayFromPlayer = (transform.position - collision.transform.position).normalized;
                 rb.velocity = awayFromPlayer * bounceForce;

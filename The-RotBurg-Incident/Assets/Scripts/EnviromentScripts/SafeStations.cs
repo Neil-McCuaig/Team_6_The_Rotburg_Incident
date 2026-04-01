@@ -11,8 +11,11 @@ public class SafeStations : MonoBehaviour
     private bool playerInRange = false;
     public bool isCharging = false;
 
+    public bool openUpgradesOnInteract;
+
     private Animator anim;
     private EnemySpawnerManager enemySpawnerManager;
+    private CameraManager camManager;
     private PlayerController playerController;
     private GameManager gameManager;
     private PlayerHealth health;
@@ -34,6 +37,7 @@ public class SafeStations : MonoBehaviour
     private void Awake()
     {
         enemySpawnerManager = FindAnyObjectByType<EnemySpawnerManager>();
+        camManager = FindAnyObjectByType<CameraManager>();
     }
 
     private void Start()
@@ -64,6 +68,13 @@ public class SafeStations : MonoBehaviour
             if (playerController.moveInput.x != 0)
             {
                 anim.SetBool("IsCharging", false);
+
+                if (openUpgradesOnInteract)
+                {
+                    Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
+                    camManager.ReturnToPlayerCamera();
+                    viewers.ToggleUpgradeMenu(false);
+                }
             }
         }
     }
@@ -93,7 +104,6 @@ public class SafeStations : MonoBehaviour
 
     private void StartCharging()
     {
-        Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
         anim.SetBool("IsCharging", true);
         anim.SetTrigger("StartCharging");
 
@@ -110,12 +120,10 @@ public class SafeStations : MonoBehaviour
 
         playerController.canControl = false;
         chat.ToggleChat(false);
-        viewers.ToggleUpgradeMenu(true);
     }
 
     public void StopCharging()
     {
-        Cursor.SetCursor(cursorCamTexture, hotspot, cursorMode);
         playerController.EnableArmRender();
         playerController.flashLight.gameObject.SetActive(true);
 
@@ -123,7 +131,6 @@ public class SafeStations : MonoBehaviour
         hoverEffect.SetActive(true);
         playerController.canControl = true;
         chat.ToggleChat(true);
-        viewers.ToggleUpgradeMenu(false);
     }
 
     private void ChargeBattery()
@@ -140,5 +147,12 @@ public class SafeStations : MonoBehaviour
         SoundManager.instance.PlaySound(rechargeSound);
         StartCharging();
         health.ResetHealthFull();
+
+        if (openUpgradesOnInteract)
+        {
+            Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
+            camManager.SwitchToUpgradeCamera();
+            viewers.ToggleUpgradeMenu(true);
+        }
     }
 }

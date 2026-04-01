@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 7277556230597604838}
   - component: {fileID: 5785263466516363196}
   - component: {fileID: 87107073541091054}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HallMonitor
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -266,16 +266,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dce91af0f2e7c54ba0f806668cf4a6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  overlayPrefab: {fileID: 0}
+  spawnPoints: []
+  player: {fileID: 0}
   greenLightDuration: 20
-  yellowLightDuration: 5
-  orbitRadius: 20
-  orbitSpeed: 300
-  minOrbitTime: 3
-  maxOrbitTime: 6
-  preDashDelay: 0.5
-  dashSpeed: 100
+  greenLightStartUp: 2.5
+  redLightDuration: 4
+  redLightStartUp: 0.6
+  playerCaught: 0
   damageAmount: 30
-  stunDuration: 2
-  DomainZone: {fileID: 0}
-  AttachedLight: {fileID: 7248202538987814839}
-  lt: {fileID: 4772626372077426641}

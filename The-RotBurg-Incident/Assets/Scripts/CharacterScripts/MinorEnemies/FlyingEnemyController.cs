@@ -381,13 +381,13 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
                 StopAllCoroutines();
                 rb.velocity = Vector2.zero;
                 BounceFromPlayer();
-                FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+                FindAnyObjectByType<PlayerHealth>().TakeDamage(10f, gameObject);
                 currentState = State.HoveringIdle;
                 return;
             }
             if (currentState != State.StunState)
             {
-                FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+                FindAnyObjectByType<PlayerHealth>().TakeDamage(10f, gameObject);
                 BounceFromPlayer();
             }
         }
