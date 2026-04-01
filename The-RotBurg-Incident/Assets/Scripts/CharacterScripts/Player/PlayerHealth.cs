@@ -21,7 +21,7 @@ public class PlayerHealth : MonoBehaviour
     StreamChat chat;
     public Sprite hurtEmote;
 
-    public SpriteRenderer weepingSprite;
+    private SpriteRenderer weepingSprite;
 
     private void Start()
     {

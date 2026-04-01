@@ -148,7 +148,7 @@ public class SafeStations : MonoBehaviour
         StartCharging();
         health.ResetHealthFull();
 
-        if (openUpgradesOnInteract)
+        if (openUpgradesOnInteract && !playerController.isDead)
         {
             Cursor.SetCursor(cursorFingerTexture, hotspot, cursorMode);
             camManager.SwitchToUpgradeCamera();

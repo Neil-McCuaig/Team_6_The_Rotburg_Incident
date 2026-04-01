@@ -1,10 +1,7 @@
 using System.Collections;
-using System.Runtime.CompilerServices;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
-using static PlayerController;
 
 public class PlayerController : MonoBehaviour
 {
@@ -284,7 +281,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (jumpAction.WasPressedThisFrame() && numOfJumps > 0 && (!isGrounded || !onPlatform))
             {
-                SoundManager.instance.PlaySound(SoundManager.instance.playerJump); 
+                SoundManager.instance.PlaySound(SoundManager.instance.playerJump);
                 velocity.y = jumpForce / 1.2f;
                 numOfJumps = 0;
             }
@@ -302,6 +299,7 @@ public class PlayerController : MonoBehaviour
 
         if (moveInput.x > 0)
         {
+
             anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
@@ -310,6 +308,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (moveInput.x < 0)
         {
+
             anim.SetInteger("WalkX", -1);
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
@@ -320,6 +319,24 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetInteger("WalkX", 0);
         }
+        //adding in sounds to Keybinds for walking
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            SoundManager.instance.PlaySound(SoundManager.instance.playerMove);
+        }
+        else if (Input.GetKeyUp(KeyCode.D))
+        {
+            SoundManager.instance.StopSound(SoundManager.instance.playerMove);
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            SoundManager.instance.PlaySound(SoundManager.instance.playerMove);
+        }
+        else if (Input.GetKeyUp(KeyCode.A))
+        {
+            SoundManager.instance.StopSound(SoundManager.instance.playerMove);
+        }
+
 
         if (attackAction.WasPressedThisFrame() && hasMetalPipe)
         {
