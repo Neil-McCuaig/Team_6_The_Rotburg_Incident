@@ -99,7 +99,7 @@ public class EnemyController : MonoBehaviour, EnemyStunable
     {
         if (other.gameObject.CompareTag("Player") && !isStunned)
         {
-            FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+            FindAnyObjectByType<PlayerHealth>().TakeDamage(10f, gameObject);
         }
     }
 }

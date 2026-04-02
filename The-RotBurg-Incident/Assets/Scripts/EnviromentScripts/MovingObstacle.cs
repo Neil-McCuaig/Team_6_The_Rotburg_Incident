@@ -37,7 +37,7 @@ public class MovingObstacle : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            FindAnyObjectByType<PlayerHealth>().TakeDamage(10f);
+            FindAnyObjectByType<PlayerHealth>().TakeDamage(10f, gameObject);
         }
         if(other.CompareTag("Enemy"))
         {
