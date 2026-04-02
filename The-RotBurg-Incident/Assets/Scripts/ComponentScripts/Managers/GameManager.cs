@@ -1,20 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+
     [Header("PowerUp String Names")]
     public string powerUp1 = "DoubleJump";
     public string powerUp2 = "MetalPipe";
     public string powerUp3 = "GroundPhone";
 
-    PlayerController player;
-    SafeStations safeStations;
-    ViewerStats viewerStats;
+    public PlayerController player;
+    public SafeStations safeStations;
+    public ViewerStats viewerStats;
     public GameObject batterySliderFill;
     private Image sliderFill;
 
@@ -34,6 +37,15 @@ public class GameManager : MonoBehaviour
         if (rect != null)
         {
             originalPos = rect.anchoredPosition;
+        }
+
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
     private void Start()
@@ -88,6 +100,16 @@ public class GameManager : MonoBehaviour
             {
                 SceneManager.LoadScene(1);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            SaveSystem.Save();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SaveSystem.Load();
         }
     }
     public void ReduceBattery(float amount)

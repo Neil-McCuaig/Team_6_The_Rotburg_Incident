@@ -654,4 +654,19 @@ public class PlayerController : MonoBehaviour
         flashLight.intensity = oriFlashIntensity;
     }
 
+    public void Save(ref PlayerSavedata data)
+    {
+        data.Position = lastGroundedPosition;
+    }
+
+    public void Load(ref PlayerSavedata data)
+    {
+        transform.position = data.Position;
+    }
+}
+
+[System.Serializable]
+public struct PlayerSavedata
+{
+    public Vector3 Position;
 }
