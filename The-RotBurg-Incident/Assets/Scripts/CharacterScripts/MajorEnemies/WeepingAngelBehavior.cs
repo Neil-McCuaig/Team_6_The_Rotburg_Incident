@@ -17,7 +17,7 @@ public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
     private enum State { FollowState, HideState }
     private State currentState = State.FollowState;
 
-    public Transform player;
+    Transform player;
     PlayerController playerController;
     Animator anim;
 
@@ -31,6 +31,7 @@ public class WeepingAngelBehavior : MonoBehaviour, MonnsterActivation
     {
         anim = GetComponent<Animator>();
         playerController = FindAnyObjectByType<PlayerController>();
+        player = playerController.transform;
     }
 
     void Update()

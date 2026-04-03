@@ -7,7 +7,7 @@ public class HallMonitorBehavior : MonoBehaviour, MonnsterActivation
     [Header("Overlay Settings")]
     public GameObject overlayPrefab;
     public Transform[] spawnPoints;
-    public Transform player;
+    Transform player;
     private List<GameObject> activeOverlays = new List<GameObject>();
     private List<Animator> overlayAnims = new List<Animator>();
     private float overlayWidth;
@@ -42,6 +42,7 @@ public class HallMonitorBehavior : MonoBehaviour, MonnsterActivation
     private void Start()
     {
         playerController = FindAnyObjectByType<PlayerController>();
+        player = playerController.transform;
 
         SpriteRenderer sr = overlayPrefab.GetComponent<SpriteRenderer>();
         if (sr != null)
@@ -55,6 +56,7 @@ public class HallMonitorBehavior : MonoBehaviour, MonnsterActivation
     {
         if (!isActive)
         {
+            StopAllCoroutines();
             return;
         }
         if (activeOverlays.Count == 0)
@@ -67,6 +69,7 @@ public class HallMonitorBehavior : MonoBehaviour, MonnsterActivation
         {
             case State.GreenLight:
             {
+                
                 HandleGreenLight();
                 break;
             }

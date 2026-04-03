@@ -345,7 +345,6 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            // Prevent attacks from coming out too quickly
             if (Time.time < nextAttackTime)
             {
                 return;
@@ -359,8 +358,6 @@ public class PlayerController : MonoBehaviour
 
             currentComboCount++;
             lastComboInputTime = Time.time;
-
-            // Set the delay before next attack
             nextAttackTime = Time.time + comboAttackDelay;
 
             if (attackDownNext)

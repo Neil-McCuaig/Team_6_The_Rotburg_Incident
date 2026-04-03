@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PauseMenuManager : MonoBehaviour
 {
@@ -30,6 +31,18 @@ public class PauseMenuManager : MonoBehaviour
     public Texture2D cursorFingerTexture;
     public Vector2 hotspot = Vector2.zero;
     public CursorMode cursorMode = CursorMode.Auto;
+
+    [Header("Event System GameObjects")]
+    public GameObject pausedFirstButton;
+    public GameObject settingsFirstButton;
+    public GameObject settingsClosedButton;
+    public GameObject videoSubMenuFirstButton;
+    public GameObject audioSubMenuFirstButton;
+    public GameObject audioSubMenuClosedButton;
+    public GameObject menuQuitCheckFirstButton;
+    public GameObject menuQuitCheckClosedButton;
+    public GameObject gameQuitCheckFirstButton;
+    public GameObject gameQuitCheckClosedButton;
 
     private void Start()
     {
@@ -88,6 +101,9 @@ public class PauseMenuManager : MonoBehaviour
         Time.timeScale = 0f;
         isPaused = true;
         inSettingsMenu = false;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(pausedFirstButton);
     }
 
     public void Resume()
@@ -106,6 +122,9 @@ public class PauseMenuManager : MonoBehaviour
         settingsMenuUI.SetActive(true);
         inSettingsMenu = true;
         DisableSubMenus();
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(settingsFirstButton);
     }
 
     public void CloseSettings()
@@ -114,17 +133,29 @@ public class PauseMenuManager : MonoBehaviour
         pauseMenuUI.SetActive(true);
         inSettingsMenu = false;
         DisableSubMenus();
-    }
 
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(settingsClosedButton);
+    }
     public void AudioSubMenu()
     {
         DisableSubMenus();
         audioSubMenu.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(audioSubMenuFirstButton);
+    }
+    public void CloseAudioSubMenu()
+    {
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(audioSubMenuClosedButton);
     }
     public void VideoSubMenu()
     {
         DisableSubMenus();
         videoSubMenu.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(videoSubMenuFirstButton);
     }
     public void ControlsSubMenu()
     {
@@ -148,18 +179,30 @@ public class PauseMenuManager : MonoBehaviour
     public void OpenQuitCheck()
     {
         quitCheck.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(gameQuitCheckFirstButton);
     }
     public void CloseQuitCheck()
     {
         quitCheck.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(gameQuitCheckClosedButton);
     }
     public void OpenMenuCheck()
     {
         menuCheck.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(menuQuitCheckFirstButton);
     }
     public void CloseMenuCheck()
     {
         menuCheck.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(menuQuitCheckClosedButton);
     }
     public void QuitGame()
     {
@@ -170,7 +213,6 @@ public class PauseMenuManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene("Menu");
     }
-
     public void ResetGame()
     {
         Time.timeScale = 1f;
@@ -185,6 +227,4 @@ public class PauseMenuManager : MonoBehaviour
     {
         Cursor.SetCursor(null, Vector2.zero, cursorMode);
     }
-
-
 }
