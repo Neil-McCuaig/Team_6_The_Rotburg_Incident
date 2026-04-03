@@ -37,6 +37,7 @@ public class StreamChat : MonoBehaviour
     public float fadeDuration = 1f;
     public float spawnDelay = 2f;
     public bool repeatMessages = false;
+    public int maxMessages;
 
     [Header("Bool Checks")]
     public bool autoStart = true;
@@ -96,8 +97,15 @@ public class StreamChat : MonoBehaviour
         {
             return;
         }
+
         GameObject newMsg = Instantiate(messagePrefab, contentParent);
         newMsg.transform.SetAsLastSibling();
+
+        if (contentParent.childCount > maxMessages)
+        {
+            Transform oldest = contentParent.GetChild(0);
+            Destroy(oldest.gameObject);
+        }
 
         TextMeshProUGUI text = newMsg.GetComponentInChildren<TextMeshProUGUI>();
         Image img = newMsg.GetComponentInChildren<Image>();
@@ -159,8 +167,11 @@ public class StreamChat : MonoBehaviour
         float t = 0f;
         while (t < fadeDuration)
         {
-            t += Time.deltaTime;
-            cg.alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);
+            if (cg != null)
+            {
+                t += Time.deltaTime;
+                cg.alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);
+            }
             yield return null;
         }
 
