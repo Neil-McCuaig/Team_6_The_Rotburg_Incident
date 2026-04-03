@@ -342,7 +342,6 @@ public class PlayerController : MonoBehaviour
         {
             if (Time.time < comboLockedTime)
             {
-                Debug.Log("Waiting for combo cooldown...");
                 return;
             }
 

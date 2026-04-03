@@ -13,12 +13,12 @@ public class ViewerStats : MonoBehaviour
     public float countSpeed = 5;
 
     [Header("Player Stats Base Values")]
-    public float baseBatteryDrainRate = 2f;
-    public float baseMaxAttackAmount = 1f;
-    public float baseKnockbackAmount = 50f;
-    public float baseFlashDrainRate = 10f;
-    public float basePersonalLightRadius = 28f;
-    public float baseMaxPlayerHealth = 25f;
+    public float baseBatteryDrainRate;
+    public float baseMaxAttackAmount;
+    public float baseKnockbackAmount;
+    public float baseFlashDrainRate;
+    public float basePersonalLightRadius;
+    public float baseMaxPlayerHealth;
 
     [Header("Player Stats Current Values")]
     public float batteryDrainRate;

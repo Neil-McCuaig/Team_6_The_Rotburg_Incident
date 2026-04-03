@@ -57,7 +57,7 @@ public class TrapLogic : MonoBehaviour
         {
             player.rb.velocity = Vector3.zero;
         }
-        player.canMove = false;
+        player.canControl = false;
         fade.FadeOut();
 
         yield return new WaitForSeconds(fadeOutDelay);
@@ -74,6 +74,6 @@ public class TrapLogic : MonoBehaviour
         playerPos.position = player.lastGroundedPosition;
 
         yield return new WaitForSeconds(fadeInDelay);
-        player.canMove = true;
+        player.canControl = true;
     }
 }

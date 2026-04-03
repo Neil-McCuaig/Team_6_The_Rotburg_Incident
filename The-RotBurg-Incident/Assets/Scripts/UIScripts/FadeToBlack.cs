@@ -20,7 +20,6 @@ public class FadeToBlack : MonoBehaviour
 
     private IEnumerator Fade(float from, float to)
     {
-        Debug.Log("It's getting as far as the IEnumerator Fade");
         float t = 0f;
         Color color = fadeImage.color;
 
@@ -30,7 +29,6 @@ public class FadeToBlack : MonoBehaviour
             float alpha = Mathf.Lerp(from, to, t / fadeDuration);
             fadeImage.color = new Color(color.r, color.g, color.b, alpha);
             yield return null;
-            Debug.Log("It's getting as far as the While loop");
         }
 
         fadeImage.color = new Color(color.r, color.g, color.b, to);
