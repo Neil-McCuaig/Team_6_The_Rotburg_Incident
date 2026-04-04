@@ -25,6 +25,10 @@ public class Chat_Vision : MonoBehaviour
     void Update()
     {
         //When the cooldown time hits zero, switch to the default chat index
+        if (chatCooldownCurrentTime > 0 && chat.currentListIndex != chat.defaultChatlist)
+        {
+            chatCooldownCurrentTime -= Time.deltaTime;
+        }
         if (chatCooldownCurrentTime <= 0)
         {
             //readyToSwitchChats = true;
@@ -48,14 +52,15 @@ public class Chat_Vision : MonoBehaviour
             chat.SwitchMessageList(5);
             chat.messageLifetime = 2.5f;
             chat.spawnDelay = 1f;
-            chatCooldownCurrentTime -= Time.deltaTime;
+            //Only ticks down a fraction of a sec.
+            //chatCooldownCurrentTime -= Time.deltaTime;
         }
         if (flyer != null)
         {
             chat.SwitchMessageList(7);
             chat.messageLifetime = 2.5f;
             chat.spawnDelay = 1f;
-            chatCooldownCurrentTime -= Time.deltaTime;
+            //chatCooldownCurrentTime -= Time.deltaTime;
         }
     }
 }
