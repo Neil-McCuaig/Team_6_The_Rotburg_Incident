@@ -23,8 +23,8 @@ public class PlayerHealth : MonoBehaviour
 
     private SpriteRenderer weepingSprite;
 
-    public float chatDamageTime;
-    public float chatDamageCurrentTime;
+    //public float chatDamageTime;
+    //public float chatDamageCurrentTime;
 
     private void Start()
     {
@@ -37,7 +37,7 @@ public class PlayerHealth : MonoBehaviour
 
         ResetHealthFull();
 
-        chatDamageTime = 5f;
+        //chatDamageTime = 5f;
     }
 
     public void TakeDamage(float damage, GameObject attacker)

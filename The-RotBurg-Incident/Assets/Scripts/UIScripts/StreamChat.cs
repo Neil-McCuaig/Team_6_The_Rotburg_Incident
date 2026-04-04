@@ -46,6 +46,9 @@ public class StreamChat : MonoBehaviour
     private int nextIndex;
     private Coroutine playRoutine;
 
+    [Header("Chat Defaults")]
+    public int defaultChatlist;
+
     void Start()
     {
         if (autoStart && messageLists.Count > 0)
@@ -62,7 +65,6 @@ public class StreamChat : MonoBehaviour
             ToggleChat(chatVisible);
         }
     }
-
     public void PlayCurrentList()
     {
         if (playRoutine != null)
@@ -210,6 +212,11 @@ public class StreamChat : MonoBehaviour
         ChatEntry entry = new ChatEntry { messageText = text, emoji = emoji, animateEmoji = animate };
 
         CreateMessage(entry);
+    }
+
+    public void SetDefaultChatlist()
+    {
+        defaultChatlist = currentListIndex;
     }
    
 }
