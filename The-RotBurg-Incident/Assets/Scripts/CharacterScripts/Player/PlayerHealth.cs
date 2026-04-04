@@ -23,6 +23,9 @@ public class PlayerHealth : MonoBehaviour
 
     private SpriteRenderer weepingSprite;
 
+    public float chatDamageTime;
+    public float chatDamageCurrentTime;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -33,6 +36,8 @@ public class PlayerHealth : MonoBehaviour
         viewersStats = FindAnyObjectByType<ViewerStats>();
 
         ResetHealthFull();
+
+        chatDamageTime = 5f;
     }
 
     public void TakeDamage(float damage, GameObject attacker)
@@ -48,6 +53,11 @@ public class PlayerHealth : MonoBehaviour
         SoundManager.instance.PlaySound(SoundManager.instance.playerHurt);
         SoundManager.instance.PlaySound(SoundManager.instance.playerHurtSquish);
         SoundManager.instance.PlaySound(SoundManager.instance.playerHurtSplash);
+
+        //Does not reset to the default
+        //chat.SwitchMessageList(2);
+        //chat.messageLifetime = 1f;
+        //chat.spawnDelay = 0.5f;
 
         if (currentHealth <= 0)
         {
@@ -70,6 +80,11 @@ public class PlayerHealth : MonoBehaviour
         float elapsed = 0f;
         Color originalColor = spriteRenderer.color;
 
+        //Does not reset to the default without the area below the while loop having chat.SwitchMessageList(0)
+        //chat.SwitchMessageList(2);
+        //chat.messageLifetime = 1f;
+        //chat.spawnDelay = 0.4f;
+
         while (elapsed < invincibilityDuration)
         {
             float newAlpha = spriteRenderer.color.a == 1f ? 0f : 1f;
@@ -83,6 +98,8 @@ public class PlayerHealth : MonoBehaviour
         // Reset to fully visible
         spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
         isInvincible = false;
+        //Does not last for as long as I'd like, but technically works.
+        //chat.SwitchMessageList(0);
     }
 
     private void Die(GameObject killer)
