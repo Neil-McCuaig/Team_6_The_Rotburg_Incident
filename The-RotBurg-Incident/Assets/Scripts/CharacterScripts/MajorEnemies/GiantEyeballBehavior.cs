@@ -20,6 +20,7 @@ public class GiantEyeballBehavior : MonoBehaviour, MonnsterActivation, EnemyStun
 
     Transform player;
     PlayerController playerController;
+    SpriteRenderer spriteRenderer;
     Animator anim;
 
 
@@ -31,6 +32,7 @@ public class GiantEyeballBehavior : MonoBehaviour, MonnsterActivation, EnemyStun
     private void Start()
     {
         anim = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         playerController = FindAnyObjectByType<PlayerController>();
         player = playerController.transform;
         stunCountdown = stunTimer;
@@ -41,6 +43,7 @@ public class GiantEyeballBehavior : MonoBehaviour, MonnsterActivation, EnemyStun
         if (!isActive)
         {
             transform.position = sleepingTransform;
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
             return;
         }
 
@@ -53,6 +56,7 @@ public class GiantEyeballBehavior : MonoBehaviour, MonnsterActivation, EnemyStun
         {
             case State.FollowState:
                 {
+                    spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
                     if (playerController.inLocker)
                     {
                         currentState = State.Stunned;
@@ -76,7 +80,7 @@ public class GiantEyeballBehavior : MonoBehaviour, MonnsterActivation, EnemyStun
         }
 
         float distance = Vector2.Distance(transform.position, player.position);
-        if (distance < 0.5f)
+        if (distance < 1.5f)
         {
             FindAnyObjectByType<PlayerHealth>().TakeDamage(100f, this.gameObject);
             transform.position = sleepingTransform;

@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 22
   m_Sprite: {fileID: 21300000, guid: 118a3044645311643afc2cdb4ead2072, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -104,7 +104,6 @@ MonoBehaviour:
   isActive: 0
   isStunned: 0
   stunTimer: 3
-  player: {fileID: 0}
 --- !u!95 &1946901511389326501
 Animator:
   serializedVersion: 5

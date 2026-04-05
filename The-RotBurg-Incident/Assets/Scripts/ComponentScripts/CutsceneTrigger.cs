@@ -10,14 +10,18 @@ public class CutsceneTrigger : MonoBehaviour
 
     [Header("Timeline")]
     [SerializeField] private PlayableDirector playableDirector;
+    [SerializeField] public Transform playerPosDuringCutscene;
+    [SerializeField] public Transform playerPosAfterCutscene;
 
     [Header("Trigger Settings")]
     [SerializeField] private bool triggerOnlyOnce = true;
     [SerializeField] private bool hideUIDuringCutscene = false;
 
+    public Transform player;
     private bool hasTriggered;
     PlayerController playerController;
     GameManager gameManager;
+    private Rigidbody2D rb;
 
     private void OnEnable()
     {
@@ -38,7 +42,13 @@ public class CutsceneTrigger : MonoBehaviour
     private void Start()
     {
         playerController = FindAnyObjectByType<PlayerController>();
+        player = GameObject.FindWithTag("Player").transform;
         gameManager = FindAnyObjectByType<GameManager>();
+
+        if (player != null)
+        {
+            rb = player.GetComponent<Rigidbody2D>();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -56,36 +66,61 @@ public class CutsceneTrigger : MonoBehaviour
         PlayCutscene();
     }
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        CameraManager.instance.ReturnToPlayerCamera();
-      
-    }
-
     private void PlayCutscene()
     {
         if (playerController != null)
         {
-            //playerController.canMove = false;
-           // playerController.velocity.y = -2f;
-           playerController.anim.SetInteger("WalkX", 0);
+            playerController.canControl = false;
+            playerController.velocity = Vector2.zero;
+            playerController.anim.SetInteger("WalkX", 0);
         }
+
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+        }
+
+        CameraManager.instance.SwitchToCutsceneCamera(cutsceneCamIndex);
+
+        if (playerPosDuringCutscene != null)
+        {
+            player.position = playerPosDuringCutscene.position;
+        }
+        else
+        {
+            Debug.LogWarning("Missing playerPosDuringCutscene");
+        }
+
+        CameraManager.instance.SwitchToCutsceneCamera(cutsceneCamIndex);
 
         if (hideUIDuringCutscene && gameManager != null)
         {
             gameManager.HideUI();
         }
 
-        CameraManager.instance.SwitchToCutsceneCamera(cutsceneCamIndex);
         playableDirector.time = 0;
         playableDirector.Play();
     }
 
     private void OnTimelineStopped(PlayableDirector director)
     {
+        if (playerPosAfterCutscene != null)
+        {
+            player.position = playerPosAfterCutscene.position;
+        }
+        else
+        {
+            Debug.LogWarning("Missing playerPosAfterCutscene");
+        }
+
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
         if (playerController != null)
         {
-            playerController.canMove = true;
+            playerController.canControl = true;
         }
 
         CameraManager.instance.ReturnToPlayerCamera();
