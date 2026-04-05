@@ -119,6 +119,10 @@ public class PlayerHealth : MonoBehaviour
             {
                 deathType = DeathType.HallMonitor;
             }
+            else if (killer.GetComponent<FleshWallBehavior>() != null) 
+            {
+                deathType = DeathType.FleshWall;
+            }
         }
 
         playerController.Die(deathType);

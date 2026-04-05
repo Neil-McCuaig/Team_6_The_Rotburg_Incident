@@ -129,7 +129,8 @@ public class PlayerController : MonoBehaviour
         Flyer,
         Popper,
         WeepingAngel,
-        HallMonitor
+        HallMonitor,
+        FleshWall
     }
     private DeathType currentDeathType = DeathType.Normal;
 
@@ -614,6 +615,9 @@ public class PlayerController : MonoBehaviour
 
             case DeathType.HallMonitor:
                 return "HallMonitorDeath";
+
+            case DeathType.FleshWall:
+                return "FleshWallDeath";
 
             default:
                 return "NormalDeath"; 
