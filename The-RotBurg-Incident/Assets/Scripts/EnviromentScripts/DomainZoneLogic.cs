@@ -38,10 +38,13 @@ public class DomainZoneLogic : MonoBehaviour
             {
                 foreach (GameObject obj in targets)
                 {
-                    MonnsterActivation activatable = obj.GetComponent<MonnsterActivation>();
-                    if (activatable != null)
+                    if (obj != null)
                     {
-                        activatable.SetActiveState(false);
+                        MonnsterActivation activatable = obj.GetComponent<MonnsterActivation>();
+                        if (activatable != null)
+                        {
+                            activatable.SetActiveState(false);
+                        }
                     }
                 }
             }
