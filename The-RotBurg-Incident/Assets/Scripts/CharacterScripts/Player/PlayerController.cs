@@ -8,6 +8,10 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     public Rigidbody2D rb;
     public SpriteRenderer spriteRenderer;
+    public SpriteRenderer dogRenderer;
+    public GameObject dogPos;
+    public Transform dogPosLeft;
+    public Transform dogPosRight;
     public Animator anim;
     private Collider2D collision;
     GameManager manager;
@@ -119,6 +123,7 @@ public class PlayerController : MonoBehaviour
     public bool hasDoubleJump = false;
     public bool hasMetalPipe = false;
     public bool hasPhone = true;
+    public bool hasDog;
     private int numOfJumps = 2;
     public int numOfLives = 3;
 
@@ -130,6 +135,7 @@ public class PlayerController : MonoBehaviour
         Popper,
         WeepingAngel,
         HallMonitor,
+        GiantEyeball,
         FleshWall
     }
     private DeathType currentDeathType = DeathType.Normal;
@@ -159,6 +165,9 @@ public class PlayerController : MonoBehaviour
         fallSpeedYDampingChangeThreshold = -15f;
 
         lastMousePosition = Input.mousePosition;
+
+        Transform child = transform.Find("Puppy-Backback");
+        SpriteRenderer dogRenderer = child.GetComponent<SpriteRenderer>();
 
         if (pictureLight != null)
         {
@@ -300,19 +309,23 @@ public class PlayerController : MonoBehaviour
 
         if (moveInput.x > 0)
         {
-
             anim.SetInteger("WalkX", 1);
             spriteRenderer.flipX = false;
             arm.position = aimLeft.position;
+
+            dogRenderer.flipX = false;
+            dogPos.transform.position = dogPosLeft.position;
 
             cameraFollow.CallTurn(false);
         }
         else if (moveInput.x < 0)
         {
-
             anim.SetInteger("WalkX", -1);
             spriteRenderer.flipX = true;
             arm.position = aimRight.position;
+
+            dogRenderer.flipX = true;
+            dogPos.transform.position = dogPosRight.position;
 
             cameraFollow.CallTurn(true);
         }
@@ -586,6 +599,7 @@ public class PlayerController : MonoBehaviour
     public void Die(DeathType deathType = DeathType.Normal)
     {
         isDead = true;
+        DisableDog();
         collision.enabled = false;
         DisableArmRender();
 
@@ -616,6 +630,9 @@ public class PlayerController : MonoBehaviour
             case DeathType.HallMonitor:
                 return "HallMonitorDeath";
 
+            case DeathType.GiantEyeball:
+                return "GiantEyeDeath";
+
             case DeathType.FleshWall:
                 return "FleshWallDeath";
 
@@ -637,6 +654,7 @@ public class PlayerController : MonoBehaviour
 
         safeStations.TriggerCharge();
         isDead = false;
+        EnableDog();
         collision.enabled = true;
         enemySpawnerManager.SpawnEnemies();
         Respawn();
@@ -652,6 +670,18 @@ public class PlayerController : MonoBehaviour
     {
         armRender.enabled = true;
         flashLight.intensity = oriFlashIntensity;
+    }
+
+    public void EnableDog()
+    {
+        if (hasDog)
+        {
+            dogRenderer.color = new Color(dogRenderer.color.r, dogRenderer.color.g, dogRenderer.color.b, 1f);
+        }
+    }
+    public void DisableDog()
+    {
+        dogRenderer.color = new Color(dogRenderer.color.r, dogRenderer.color.g, dogRenderer.color.b, 0f);
     }
 
     public void Save(ref PlayerSavedata data)
