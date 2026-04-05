@@ -45,11 +45,13 @@ public class Chat_Vision : MonoBehaviour
         //}
         JumpingEnemyController pouncer = other.GetComponent<JumpingEnemyController>();
         FlyingEnemyController flyer = other.GetComponent<FlyingEnemyController>();
+        ExsplodeEnemyController popper = other.GetComponent<ExsplodeEnemyController>();
+        WeepingAngelBehavior angel = other.GetComponent<WeepingAngelBehavior>();
 
         if (pouncer != null)
         {
             //&& readyToSwitchChats == true
-            chat.SwitchMessageList(5);
+            chat.SwitchMessageList(11);
             chat.messageLifetime = 2.5f;
             chat.spawnDelay = 1f;
             //Only ticks down a fraction of a sec.
@@ -57,10 +59,23 @@ public class Chat_Vision : MonoBehaviour
         }
         if (flyer != null)
         {
-            chat.SwitchMessageList(7);
+            chat.SwitchMessageList(12);
             chat.messageLifetime = 2.5f;
             chat.spawnDelay = 1f;
             //chatCooldownCurrentTime -= Time.deltaTime;
         }
+        if (popper != null)
+        {
+            chat.SwitchMessageList(13);
+            chat.messageLifetime = 2.5f;
+            chat.spawnDelay = 1f;
+        }
+        if (angel != null)
+        {
+            chat.SwitchMessageList(15);
+            chat.messageLifetime = 2f;
+            chat.spawnDelay = 1.2f;
+        }
+
     }
 }
