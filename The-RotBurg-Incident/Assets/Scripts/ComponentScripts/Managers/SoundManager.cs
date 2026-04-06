@@ -24,6 +24,9 @@ public class SoundManager : MonoBehaviour
     public AudioClip uiHover;
     public AudioClip uiOk;
     public AudioClip uiBack;
+    public AudioClip doorOpen;
+    public AudioClip doorClose;
+    public AudioClip doorBoth;
 
 
     [Header("Enviroment Sounds")]

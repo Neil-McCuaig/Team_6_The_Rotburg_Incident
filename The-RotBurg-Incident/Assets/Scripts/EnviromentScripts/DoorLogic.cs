@@ -37,8 +37,10 @@ public class DoorLogic : MonoBehaviour
             if (teleportDestination == null || player == null)
             {
                 return;
+                
             }
             StartCoroutine(TeleportPlayer());
+            SoundManager.instance.PlaySound(SoundManager.instance.doorClose);
         }
     }
 
@@ -75,5 +77,6 @@ public class DoorLogic : MonoBehaviour
         anim.SetBool("IsOpen", true);
         fader.FadeIn();
         playerController.inLocker = false;
+        //SoundManager.instance.PlaySound(SoundManager.instance.doorOpen);
     }
 }
