@@ -336,7 +336,7 @@ public class PlayerController : MonoBehaviour
             anim.SetInteger("WalkX", 0);
         }
         //adding in sounds to Keybinds for walking
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D) && isGrounded == true)
         {
             SoundManager.instance.PlaySound(SoundManager.instance.playerMove);
         }
