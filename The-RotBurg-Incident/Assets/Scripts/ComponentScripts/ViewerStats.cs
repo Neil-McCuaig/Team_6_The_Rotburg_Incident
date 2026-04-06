@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ViewerStats : MonoBehaviour
 {
@@ -87,6 +88,9 @@ public class ViewerStats : MonoBehaviour
     public int maxHealthCostIncrease;
     public int maxHealthIncrease;
 
+    [Header("Event System GameObjects")]
+    public GameObject firstUpgradeMenuButton;
+
     void Awake()
     {
         if (Instance == null)
@@ -156,6 +160,12 @@ public class ViewerStats : MonoBehaviour
         if (upgradeMenu != null)
         {
             upgradeMenu.gameObject.SetActive(menuToggle);
+
+            if(menuToggle)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+                EventSystem.current.SetSelectedGameObject(firstUpgradeMenuButton);
+            }
         }
     }
 
