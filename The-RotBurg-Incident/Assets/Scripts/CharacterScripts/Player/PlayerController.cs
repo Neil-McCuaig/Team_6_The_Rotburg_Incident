@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     EnemySpawnerManager enemySpawnerManager;
     SafeStations safeStations;
     ViewerStats viewerStats;
+    ResetLight resetLight;
 
     [Header("Camera Settings")]
     CameraFollowDirection cameraFollow;
@@ -158,6 +159,7 @@ public class PlayerController : MonoBehaviour
         collision = GetComponent<Collider2D>();
         safeStations = FindAnyObjectByType<SafeStations>();
         viewerStats = FindAnyObjectByType<ViewerStats>();
+        resetLight = FindAnyObjectByType<ResetLight>();
 
         SetRespawnPoint();
 
@@ -590,6 +592,7 @@ public class PlayerController : MonoBehaviour
     {
         transform.position = respawnPoint;
         health.ResetHealthFull();
+        resetLight.ResetLightColor();
         if (currentDeathType == DeathType.WeepingAngel)
         {
             health.ResetWeepingSpriteRenderer();
@@ -634,6 +637,7 @@ public class PlayerController : MonoBehaviour
                 return "GiantEyeDeath";
 
             case DeathType.FleshWall:
+                spriteRenderer.flipX = false;
                 return "FleshWallDeath";
 
             default:
