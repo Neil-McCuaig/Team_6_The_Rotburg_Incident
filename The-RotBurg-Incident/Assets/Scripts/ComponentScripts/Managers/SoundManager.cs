@@ -21,6 +21,9 @@ public class SoundManager : MonoBehaviour
     public AudioClip playerHurtSquish;
     public AudioClip playerHurtSplash;
     public AudioClip playerMove;
+    public AudioClip uiHover;
+    public AudioClip uiOk;
+    public AudioClip uiBack;
 
 
     [Header("Enviroment Sounds")]

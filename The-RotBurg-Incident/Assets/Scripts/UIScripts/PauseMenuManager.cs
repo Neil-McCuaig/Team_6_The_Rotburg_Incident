@@ -81,15 +81,19 @@ public class PauseMenuManager : MonoBehaviour
             if (isPaused)
             {
                 Resume();
+                SoundManager.instance.PlaySound(SoundManager.instance.uiBack);
+
             }
             else
             {
                 PauseGame();
+                SoundManager.instance.PlaySound(SoundManager.instance.uiBack);
             }
         }
         if (inSettingsMenu && Input.GetKeyDown(KeyCode.Escape))
         {
             CloseSettings();
+            SoundManager.instance.PlaySound(SoundManager.instance.uiBack);
         }
     }
 
@@ -125,6 +129,7 @@ public class PauseMenuManager : MonoBehaviour
 
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(settingsFirstButton);
+        SoundManager.instance.PlaySound(SoundManager.instance.uiOk);
     }
 
     public void CloseSettings()
@@ -136,6 +141,7 @@ public class PauseMenuManager : MonoBehaviour
 
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(settingsClosedButton);
+        SoundManager.instance.PlaySound(SoundManager.instance.uiBack);
     }
     public void AudioSubMenu()
     {
@@ -143,11 +149,13 @@ public class PauseMenuManager : MonoBehaviour
         audioSubMenu.SetActive(true);
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(audioSubMenuFirstButton);
+        SoundManager.instance.PlaySound(SoundManager.instance.uiOk);
     }
     public void CloseAudioSubMenu()
     {
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(audioSubMenuClosedButton);
+        SoundManager.instance.PlaySound(SoundManager.instance.uiBack);
     }
     public void VideoSubMenu()
     {
@@ -156,11 +164,13 @@ public class PauseMenuManager : MonoBehaviour
 
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(videoSubMenuFirstButton);
+        SoundManager.instance.PlaySound(SoundManager.instance.uiOk);
     }
     public void ControlsSubMenu()
     {
         DisableSubMenus();
         controlsSubMenu.SetActive(true);
+        SoundManager.instance.PlaySound(SoundManager.instance.uiOk);
     }
     private void DisableSubMenus()
     {
@@ -196,6 +206,7 @@ public class PauseMenuManager : MonoBehaviour
 
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(menuQuitCheckFirstButton);
+        SoundManager.instance.PlaySound(SoundManager.instance.uiOk);
     }
     public void CloseMenuCheck()
     {
@@ -203,15 +214,18 @@ public class PauseMenuManager : MonoBehaviour
 
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(menuQuitCheckClosedButton);
+        SoundManager.instance.PlaySound(SoundManager.instance.uiBack);
     }
     public void QuitGame()
     {
         Application.Quit();
+        SoundManager.instance.PlaySound(SoundManager.instance.uiOk);
     }
     public void BackToMainMenu()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("Menu");
+        SoundManager.instance.PlaySound(SoundManager.instance.uiOk);
     }
     public void ResetGame()
     {
@@ -221,6 +235,12 @@ public class PauseMenuManager : MonoBehaviour
         {
             playerController.Die();
         }
+    }
+
+    public void HoverMouse()
+    {
+        GameObject audioSubMenu;
+        SoundManager.instance.PlaySound(SoundManager.instance.uiHover);
     }
 
     void OnDisable()
