@@ -23,7 +23,7 @@ public class EnemyHealth : MonoBehaviour
             currentHealth = health;
             anim.SetTrigger("Attacked");
         }
-        if (health <= 0)
+        if (health <= 0 && !isDead)
         {
             isDead = true;
             anim.SetBool("IsDead", true);
