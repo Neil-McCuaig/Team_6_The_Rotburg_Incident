@@ -376,6 +376,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
         {
             if (isDashing)
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerHurt);
                 isDashing = false;
                 isCharging = false;
                 StopAllCoroutines();
@@ -387,6 +388,7 @@ public class FlyingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockbac
             }
             if (currentState != State.StunState)
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerHurt);
                 FindAnyObjectByType<PlayerHealth>().TakeDamage(10f, gameObject);
                 BounceFromPlayer();
             }

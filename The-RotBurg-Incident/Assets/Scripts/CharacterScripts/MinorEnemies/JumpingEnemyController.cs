@@ -229,6 +229,7 @@ public class JumpingEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockba
         {
             if (currentState != State.Stunned)
             {
+                SoundManager.instance.PlaySound(SoundManager.instance.playerHurt);
                 FindAnyObjectByType<PlayerHealth>().TakeDamage(attackDamage, gameObject);
                 isBounce = true;
                 Vector2 awayFromPlayer = (transform.position - collision.transform.position).normalized;

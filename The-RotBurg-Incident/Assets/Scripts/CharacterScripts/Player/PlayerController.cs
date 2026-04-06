@@ -395,7 +395,7 @@ public class PlayerController : MonoBehaviour
                 currentComboCount = 0;
             }
 
-            SoundManager.instance.PlaySound(SoundManager.instance.playerAttack);
+            SoundManager.instance.PlaySound(SoundManager.instance.playerMiss);
         }
     }
     public void PlayerAttack()
@@ -619,18 +619,23 @@ public class PlayerController : MonoBehaviour
         switch (type)
         {
             case DeathType.Pouncer:
+                SoundManager.instance.PlaySound(SoundManager.instance.pouncerKill);
                 return "PouncerDeath";
 
             case DeathType.Flyer:
+                SoundManager.instance.PlaySound(SoundManager.instance.flyingKill);
                 return "FlyerDeath";
 
             case DeathType.Popper:
+                SoundManager.instance.PlaySound(SoundManager.instance.explodingKill);
                 return "PopperDeath";
 
             case DeathType.WeepingAngel:
+                SoundManager.instance.PlaySound(SoundManager.instance.angelKill);
                 return "WeepingDeath";
 
             case DeathType.HallMonitor:
+                SoundManager.instance.PlaySound(SoundManager.instance.redlightKill);
                 return "HallMonitorDeath";
 
             case DeathType.GiantEyeball:

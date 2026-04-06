@@ -15,6 +15,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip backgroundMusic;
     [Header("Player Sounds")]
     public AudioClip playerAttack;
+    public AudioClip playerMiss;
     public AudioClip playerJump;
     public AudioClip playerFlash;
     public AudioClip playerHurt;
@@ -28,9 +29,24 @@ public class SoundManager : MonoBehaviour
     public AudioClip doorClose;
     public AudioClip doorBoth;
 
+    [Header("Enemy Sounds")]
+    public AudioClip pouncerGeneral;
+    public AudioClip pouncerKill;
+    public AudioClip angelGeneral;
+    public AudioClip angelKill;
+    public AudioClip flyingGeneral;
+    public AudioClip flyingKill;
+    public AudioClip explodingGeneral;
+    public AudioClip explodingBoom;
+    public AudioClip explodingKill;
+    public AudioClip redlightGeneral;
+    public AudioClip redlightKill;  
+
 
     [Header("Enviroment Sounds")]
     public AudioClip saveStation;
+    public AudioClip lockerOpen;
+    public AudioClip lockerClose;
 
     [Header("Heartbeat Clips")]
     public AudioClip slowHeartbeat;
