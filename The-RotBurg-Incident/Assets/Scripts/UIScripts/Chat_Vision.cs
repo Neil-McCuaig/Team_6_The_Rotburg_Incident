@@ -48,7 +48,8 @@ public class Chat_Vision : MonoBehaviour
         ExsplodeEnemyController popper = other.GetComponent<ExsplodeEnemyController>();
         WeepingAngelBehavior angel = other.GetComponent<WeepingAngelBehavior>();
 
-        if (pouncer != null)
+        //At the moment, if a lot of enemies are in one area, it spawns a fuckton of messages. This needs fixed.
+        if (pouncer != null && chat.currentListIndex != 11)
         {
             //&& readyToSwitchChats == true
             chat.SwitchMessageList(11);
@@ -57,20 +58,20 @@ public class Chat_Vision : MonoBehaviour
             //Only ticks down a fraction of a sec.
             //chatCooldownCurrentTime -= Time.deltaTime;
         }
-        if (flyer != null)
+        if (flyer != null && chat.currentListIndex != 12)
         {
             chat.SwitchMessageList(12);
             chat.messageLifetime = 2.5f;
             chat.spawnDelay = 1f;
             //chatCooldownCurrentTime -= Time.deltaTime;
         }
-        if (popper != null)
+        if (popper != null && chat.currentListIndex != 13)
         {
             chat.SwitchMessageList(13);
             chat.messageLifetime = 2.5f;
             chat.spawnDelay = 1f;
         }
-        if (angel != null)
+        if (angel != null && chat.currentListIndex != 15)
         {
             chat.SwitchMessageList(15);
             chat.messageLifetime = 2f;

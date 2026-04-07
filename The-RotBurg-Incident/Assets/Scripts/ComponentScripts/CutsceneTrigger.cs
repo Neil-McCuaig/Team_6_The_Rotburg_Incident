@@ -19,7 +19,7 @@ public class CutsceneTrigger : MonoBehaviour
 
     public Transform player;
     private bool hasTriggered;
-    PlayerController playerController;
+    public PlayerController playerController;
     GameManager gameManager;
     private Rigidbody2D rb;
 
