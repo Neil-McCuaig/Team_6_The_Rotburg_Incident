@@ -42,10 +42,12 @@ public class LockerInteraction : MonoBehaviour
             if (!playerInside)
             {
                 EnterLocker();
+                SoundManager.instance.PlaySound(SoundManager.instance.lockerClose);
             }
             else
             {
                 ExitLocker();
+                SoundManager.instance.PlaySound(SoundManager.instance.lockerOpen);
             }
         }
 

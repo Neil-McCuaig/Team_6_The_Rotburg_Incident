@@ -225,6 +225,8 @@ public class ExsplodeEnemyController : MonoBehaviour, EnemyStunable, EnemyKnockb
         if (playerHit != null && playerHit.CompareTag("Player"))
         {
             FindAnyObjectByType<PlayerHealth>().TakeDamage(20f, gameObject);
+            SoundManager.instance.PlaySound(SoundManager.instance.playerHurt);
+            SoundManager.instance.PlaySound(SoundManager.instance.explodingBoom);
         }
 
         if (!playerController.isDead)
