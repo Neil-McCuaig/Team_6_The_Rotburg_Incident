@@ -10,6 +10,7 @@ TagManager:
   - StunTrigger
   - FlashLight
   - Weeping
+  - Dog
   layers:
   - Default
   - TransparentFX

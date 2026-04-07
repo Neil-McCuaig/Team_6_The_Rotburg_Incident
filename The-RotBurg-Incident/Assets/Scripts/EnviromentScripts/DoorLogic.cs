@@ -19,12 +19,14 @@ public class DoorLogic : MonoBehaviour
     PlayerController playerController;
     GameObject playerArm;
     SpriteRenderer playerRenderer;
+    SpriteRenderer dogRenderer;
 
     private void Start()
     {
         player = GameObject.FindWithTag("Player").transform;
         playerArm = GameObject.FindWithTag("PlayerArm");
         playerRenderer = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
+        dogRenderer = GameObject.FindWithTag("Dog").GetComponent<SpriteRenderer>();
 
         fader = FindAnyObjectByType<FadeToBlack>();
         playerController = FindAnyObjectByType<PlayerController>();
@@ -64,6 +66,7 @@ public class DoorLogic : MonoBehaviour
         anim.SetBool("IsOpen", false);
         fader.FadeOut();
         playerRenderer.enabled = false;
+        dogRenderer.enabled = false;
         playerArm.SetActive(false);
         SoundManager.instance.StopSound(SoundManager.instance.playerMove);
 
@@ -71,6 +74,7 @@ public class DoorLogic : MonoBehaviour
 
         player.position = teleportDestination.position;
         playerRenderer.enabled = true;
+        dogRenderer.enabled = true;
         playerArm.SetActive(true);
         anim.SetBool("IsOpen", true);
         fader.FadeIn();
