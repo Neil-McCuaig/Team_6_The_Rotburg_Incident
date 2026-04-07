@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     EnemySpawnerManager enemySpawnerManager;
     SafeStations safeStations;
     ViewerStats viewerStats;
-    ResetLight resetLight;
+    public ResetLight resetLight;
 
     [Header("Camera Settings")]
     CameraFollowDirection cameraFollow;

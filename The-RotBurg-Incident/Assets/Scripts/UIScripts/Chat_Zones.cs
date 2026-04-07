@@ -11,7 +11,7 @@ public class Chat_Zones : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        chat = FindAnyObjectByType<StreamChat>();
     }
 
     // Update is called once per frame
@@ -25,9 +25,9 @@ public class Chat_Zones : MonoBehaviour
     //Default index.
     public void OnTriggerEnter2D(Collider2D other)
     {
-        PlayerController player = GetComponent<PlayerController>();
+        //PlayerController player = FindAnyObjectByType<PlayerController>();
 
-        if(player != null)
+        if (other.CompareTag("Player"))
         {
             chat.SwitchMessageList(chatZoneNumber);
             chat.SetDefaultChatlist();
