@@ -187,7 +187,7 @@ MonoBehaviour:
   hoverEffect: {fileID: 7501636407905041313, guid: 8bf5a2ffb62b2594d8b5003461312a4f, type: 3}
   chargeRate: 40
   isCharging: 0
-  openUpgradesOnInteract: 0
+  openUpgradesOnInteract: 1
   rechargeSound: {fileID: 8300000, guid: 733b082f641afe345bc306b2778624f3, type: 3}
   cursorFingerTexture: {fileID: 2800000, guid: fa2dc4460714bba4cbc63b1d8e98859a, type: 3}
   cursorCamTexture: {fileID: 2800000, guid: 0a028bec62adea24c84b1aec0c262e3e, type: 3}
